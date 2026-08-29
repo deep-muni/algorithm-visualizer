@@ -1,17 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Box,
-  Container,
-  Flex,
-  Grid,
-  Text,
-  Heading,
-  Separator,
-  Button,
-  Badge,
-} from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
+import { Box, Container, Flex, Grid, Text, Heading, Separator, Button, Badge } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
 import { VisualizerBarChart } from '@/components/visualizer/visualizer-bar-chart';
 import { VisualizerControls } from '@/components/visualizer/visualizer-controls';
@@ -19,13 +10,14 @@ import { ArrayConfigBar } from '@/components/visualizer/array-config-bar';
 import { CodePanel } from '@/components/visualizer/code-panel';
 import { ComplexityCard } from '@/components/visualizer/complexity-card';
 import { algorithms } from '@/data';
-import type { AlgorithmInfo } from '@/types/algorithm';
+import type { AlgorithmInfo, AlgorithmId } from '@/types/algorithm';
 
 interface AlgorithmPageClientProps {
   algorithm: AlgorithmInfo;
 }
 
 export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
+  const router = useRouter();
   const {
     steps,
     currentStep,
@@ -58,46 +50,75 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
         { color: '#34d399', label: 'Sorted' },
       ];
 
+  const sortingAlgos = algorithms.filter((a) => a.category === 'sorting');
+  const searchingAlgos = algorithms.filter((a) => a.category === 'searching');
+
   return (
     <Container maxW="1200px" py={8} px={4}>
-      <Flex justify="space-between" align="center" mb={6} wrap="wrap" gap={2}>
+      {/* Breadcrumb / Top Bar */}
+      <Flex justify="space-between" align="center" mb={6} gap={4}>
         <Link href="/" style={{ textDecoration: 'none' }}>
           <Button
             size="xs"
-            variant="ghost"
-            color="whiteAlpha.800"
-            _hover={{ color: 'white', bg: 'whiteAlpha.200' }}
+            variant="outline"
+            borderColor="whiteAlpha.300"
+            color="whiteAlpha.900"
+            _hover={{ borderColor: 'indigo.400', bg: 'whiteAlpha.100' }}
             fontFamily="var(--font-mono)"
           >
-            ← Back to Algorithms
+            ← All Algorithms
           </Button>
         </Link>
 
-        <Flex gap={1} wrap="wrap">
-          {algorithms.map((algo) => {
-            const isActive = algo.id === algorithm.id;
-            return (
-              <Link key={algo.id} href={`/algorithm/${algo.id}`} style={{ textDecoration: 'none' }}>
-                <Button
-                  size="xs"
-                  variant={isActive ? 'solid' : 'ghost'}
-                  bg={isActive ? 'indigo.600' : 'transparent'}
-                  color={isActive ? 'white' : 'whiteAlpha.700'}
-                  _hover={{ bg: isActive ? 'indigo.500' : 'whiteAlpha.200', color: 'white' }}
-                  borderRadius="md"
-                  fontFamily="var(--font-mono)"
-                >
-                  {algo.name}
-                </Button>
-              </Link>
-            );
-          })}
+        {/* Algorithm Switcher Dropdown */}
+        <Flex align="center" gap={2}>
+          <Text fontSize="xs" color="whiteAlpha.700" fontFamily="var(--font-mono)" display={{ base: 'none', sm: 'block' }}>
+            Switch:
+          </Text>
+          <Box position="relative">
+            <select
+              value={algorithm.id}
+              onChange={(e) => router.push(`/algorithm/${e.target.value as AlgorithmId}`)}
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '6px',
+                padding: '4px 10px',
+                fontSize: '12px',
+                fontFamily: 'var(--font-mono)',
+                outline: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <optgroup label="Sorting Algorithms" style={{ backgroundColor: '#16162a', color: '#a5b4fc' }}>
+                {sortingAlgos.map((a) => (
+                  <option key={a.id} value={a.id} style={{ backgroundColor: '#13131a', color: '#ffffff' }}>
+                    {a.name}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Searching Algorithms" style={{ backgroundColor: '#16162a', color: '#c084fc' }}>
+                {searchingAlgos.map((a) => (
+                  <option key={a.id} value={a.id} style={{ backgroundColor: '#13131a', color: '#ffffff' }}>
+                    {a.name}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+          </Box>
         </Flex>
       </Flex>
 
+      {/* Header Info */}
       <Box mb={6}>
         <Flex align="center" gap={3} mb={2}>
-          <Heading as="h1" fontSize={{ base: '2xl', md: '3xl' }} fontWeight="bold" color="white">
+          <Heading
+            as="h1"
+            fontSize={{ base: '2xl', md: '3xl' }}
+            fontWeight="bold"
+            color="white"
+          >
             {algorithm.name}
           </Heading>
           <Badge
@@ -140,7 +161,11 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               align="center"
               minH="44px"
             >
-              <Text fontSize="sm" color="whiteAlpha.900" fontFamily="var(--font-mono)">
+              <Text
+                fontSize="sm"
+                color="whiteAlpha.900"
+                fontFamily="var(--font-mono)"
+              >
                 {currentStepData?.description ?? ''}
               </Text>
             </Flex>
@@ -223,8 +248,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             <Separator my={4} borderColor="whiteAlpha.300" />
 
             <Text fontSize="xs" color="whiteAlpha.800" lineHeight="tall">
-              Use the controls to step through the algorithm one frame at a time, or press play to
-              watch it run automatically.
+              Use the controls to step through the algorithm one frame at a time, or press play to watch it run automatically.
             </Text>
           </Box>
         </Box>
