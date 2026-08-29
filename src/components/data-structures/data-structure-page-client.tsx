@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Container, Grid, Box, Flex, Text, Separator, Button, Badge } from '@chakra-ui/react';
+import { useState, useEffect, useCallback } from 'react';
+import { Container, Grid, Box, Flex, Text, Separator, Button } from '@chakra-ui/react';
 import type { DataStructureInfo } from '@/types/algorithm';
 import { CodePanel, ComplexityCard, PageNavHeader } from '@/components/shared';
 import { StackVisualizer } from './stack-visualizer';
 import { QueueVisualizer } from './queue-visualizer';
 import { LinkedListVisualizer } from './linked-list-visualizer';
 import { getLegendItems } from '@/lib/algorithm-utils';
+import { soundEngine } from '@/lib/audio-synthesizer';
 import { COLOR_TOKENS } from '@/config/colors';
 
 interface DataStructurePageClientProps {
@@ -16,6 +17,20 @@ interface DataStructurePageClientProps {
 
 export function DataStructurePageClient({ dataStructure }: DataStructurePageClientProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => soundEngine.isMuted());
+
+  const toggleSound = useCallback(() => {
+    const muted = soundEngine.toggleMute();
+    setIsMuted(muted);
+  }, []);
+
+  const handleShare = () => {
+    if (typeof window === 'undefined') return;
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -33,11 +48,17 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
       } else if (e.code === 'Escape' && isFullscreen) {
         e.preventDefault();
         setIsFullscreen(false);
+      } else if (e.code === 'KeyM') {
+        e.preventDefault();
+        toggleSound();
+      } else if (e.code === 'KeyS') {
+        e.preventDefault();
+        handleShare();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen]);
+  }, [isFullscreen, toggleSound]);
 
   const legendItems = getLegendItems(dataStructure.category);
 
@@ -47,6 +68,10 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
         title={dataStructure.name}
         category={dataStructure.category}
         currentId={dataStructure.id}
+        isMuted={isMuted}
+        onToggleSound={toggleSound}
+        onShare={handleShare}
+        isCopied={copied}
         isFullscreen={isFullscreen}
         onToggleFullscreen={() => setIsFullscreen((prev) => !prev)}
       />
@@ -77,26 +102,7 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
         }
       >
         {isFullscreen && (
-          <Flex
-            justify="space-between"
-            align="center"
-            mb={4}
-            pb={3}
-            borderBottom="1px solid var(--color-border)"
-          >
-            <Flex align="center" gap={3}>
-              <Badge colorPalette="teal" size="md" variant="subtle">
-                FOCUS MODE (100% CANVAS)
-              </Badge>
-              <Text
-                fontSize="md"
-                fontWeight="bold"
-                fontFamily="var(--font-mono)"
-                color="var(--color-text)"
-              >
-                {dataStructure.name}
-              </Text>
-            </Flex>
+          <Flex justify="flex-end" mb={2}>
             <Button
               size="xs"
               variant="outline"
@@ -110,7 +116,7 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
               onClick={() => setIsFullscreen(false)}
               fontFamily="var(--font-mono)"
             >
-              ✕ Exit Focus (Key: Z or Esc)
+              ✕ Exit Focus (Esc / Z)
             </Button>
           </Flex>
         )}

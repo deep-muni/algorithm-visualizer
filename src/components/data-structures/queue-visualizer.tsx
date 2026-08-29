@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Flex, Button, Input, Text, Badge, IconButton, Separator } from '@chakra-ui/react';
+import { Box, Flex, Button, Input, Text, Badge, Separator } from '@chakra-ui/react';
 import { useQueueVisualizer } from '@/hooks/use-queue-visualizer';
 import { COLOR_TOKENS } from '@/config/colors';
 
@@ -12,12 +12,10 @@ export function QueueVisualizer() {
     frontPeeked,
     error,
     inputValue,
-    isMuted,
     setInputValue,
     dequeue,
     front,
     clear,
-    toggleSound,
     handleEnqueueSubmit,
   } = useQueueVisualizer();
 
@@ -366,19 +364,6 @@ export function QueueVisualizer() {
           >
             🗑️ Clear (Key: C)
           </Button>
-
-          <IconButton
-            aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-            variant="ghost"
-            size="xs"
-            borderRadius="full"
-            color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
-            onClick={toggleSound}
-            title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
-          >
-            {isMuted ? '🔇' : '🔊'}
-          </IconButton>
         </Flex>
       </Flex>
 

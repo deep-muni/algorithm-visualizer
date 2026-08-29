@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Flex, Button, Input, Text, Badge, IconButton, Separator } from '@chakra-ui/react';
+import { Box, Flex, Button, Input, Text, Badge, Separator } from '@chakra-ui/react';
 import {
   useLinkedListVisualizer,
   type VisualizerTab,
@@ -34,7 +34,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
     insertingAtIndex,
     animatingStatus,
     isAnimating,
-    isMuted,
     setActiveTab,
     setSpeed,
     setInsertValue,
@@ -52,7 +51,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
     fillRandomSample,
     reverseList,
     clear,
-    toggleSound,
     handleInsertHead,
     handleInsertTail,
     handleInsertAtSubmit,
@@ -484,19 +482,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 </Button>
               ))}
             </Flex>
-
-            <IconButton
-              aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-              variant="ghost"
-              size="xs"
-              borderRadius="full"
-              color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-              _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
-              onClick={toggleSound}
-              title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
-            >
-              {isMuted ? '🔇' : '🔊'}
-            </IconButton>
           </Flex>
         </Flex>
 

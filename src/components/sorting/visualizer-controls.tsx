@@ -10,8 +10,6 @@ interface VisualizerControlsProps {
   speed: number;
   comparisonCount?: number;
   swapCount?: number;
-  isMuted?: boolean;
-  isFullscreen?: boolean;
   onPlay: () => void;
   onPause: () => void;
   onStepBack: () => void;
@@ -20,8 +18,6 @@ interface VisualizerControlsProps {
   onReset: () => void;
   onSpeedChange: (speed: number) => void;
   onRegenerate: () => void;
-  onToggleSound?: () => void;
-  onToggleFullscreen?: () => void;
 }
 
 const speedOptions = [
@@ -38,8 +34,6 @@ export function VisualizerControls({
   speed,
   comparisonCount = 0,
   swapCount = 0,
-  isMuted = true,
-  isFullscreen = false,
   onPlay,
   onPause,
   onStepBack,
@@ -48,8 +42,6 @@ export function VisualizerControls({
   onReset,
   onSpeedChange,
   onRegenerate,
-  onToggleSound,
-  onToggleFullscreen,
 }: VisualizerControlsProps) {
   const isPlaying = playbackState === 'playing';
   const isDone = playbackState === 'done';
@@ -239,40 +231,6 @@ export function VisualizerControls({
           >
             ▸
           </IconButton>
-
-          {onToggleSound && (
-            <IconButton
-              aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-              variant="ghost"
-              size="sm"
-              borderRadius="full"
-              color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-              _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
-              onClick={onToggleSound}
-              title={isMuted ? 'Enable sound synthesis (Key: M)' : 'Mute sound synthesis (Key: M)'}
-            >
-              {isMuted ? '🔇' : '🔊'}
-            </IconButton>
-          )}
-
-          {onToggleFullscreen && (
-            <IconButton
-              aria-label={isFullscreen ? 'Exit Focus Mode' : 'Enter Focus Mode'}
-              variant="ghost"
-              size="sm"
-              borderRadius="full"
-              color={isFullscreen ? COLOR_TOKENS.default : COLOR_TOKENS.textMuted}
-              _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
-              onClick={onToggleFullscreen}
-              title={
-                isFullscreen
-                  ? 'Exit Fullscreen Focus (Key: Z or Esc)'
-                  : 'Fullscreen Focus Canvas (Key: Z)'
-              }
-            >
-              {isFullscreen ? '✕' : '⛶'}
-            </IconButton>
-          )}
         </Flex>
 
         <Flex align="center" gap={1}>

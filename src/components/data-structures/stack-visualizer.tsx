@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Flex, Button, Input, Text, Badge, IconButton, Separator } from '@chakra-ui/react';
+import { Box, Flex, Button, Input, Text, Badge, Separator } from '@chakra-ui/react';
 import { useStackVisualizer } from '@/hooks/use-stack-visualizer';
 import { COLOR_TOKENS } from '@/config/colors';
 
@@ -12,12 +12,10 @@ export function StackVisualizer() {
     peekedIndex,
     error,
     inputValue,
-    isMuted,
     setInputValue,
     pop,
     peek,
     clear,
-    toggleSound,
     handlePushSubmit,
   } = useStackVisualizer();
 
@@ -335,19 +333,6 @@ export function StackVisualizer() {
           >
             🗑️ Clear (Key: C)
           </Button>
-
-          <IconButton
-            aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-            variant="ghost"
-            size="xs"
-            borderRadius="full"
-            color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
-            onClick={toggleSound}
-            title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
-          >
-            {isMuted ? '🔇' : '🔊'}
-          </IconButton>
         </Flex>
       </Flex>
 

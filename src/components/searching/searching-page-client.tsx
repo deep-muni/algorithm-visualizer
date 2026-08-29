@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Box, Container, Flex, Grid, Text, Separator, Button } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
 import { VisualizerBarChart } from '@/components/sorting/visualizer-bar-chart';
@@ -41,7 +41,7 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const handleShare = () => {
+  const handleShare = useCallback(() => {
     if (typeof window === 'undefined') return;
     const dataStr = array.length > 0 ? array.join(',') : '';
     const url = dataStr
@@ -50,7 +50,7 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }, [array, speed]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -68,11 +68,14 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
       } else if (e.code === 'Escape' && isFullscreen) {
         e.preventDefault();
         setIsFullscreen(false);
+      } else if (e.code === 'KeyS') {
+        e.preventDefault();
+        handleShare();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen]);
+  }, [isFullscreen, handleShare]);
 
   const isRunning = playbackState === 'playing';
   const legendItems = getLegendItems(algorithm.category);
@@ -176,8 +179,6 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
           speed={speed}
           comparisonCount={comparisonCount}
           swapCount={swapCount}
-          isMuted={isMuted}
-          isFullscreen={isFullscreen}
           onPlay={play}
           onPause={pause}
           onStepBack={stepBackward}
@@ -186,8 +187,6 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
           onReset={reset}
           onSpeedChange={setSpeed}
           onRegenerate={regenerate}
-          onToggleSound={toggleSound}
-          onToggleFullscreen={() => setIsFullscreen((prev) => !prev)}
         />
       </Box>
 
