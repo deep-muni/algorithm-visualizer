@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { AlgorithmId, VisualizationStep } from '@/types/algorithm';
 import { generateSteps, generateRandomArray, DEFAULT_ARRAY } from '@/lib/visualizers';
 
@@ -30,9 +30,24 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
   );
   const [currentStep, setCurrentStep] = useState(0);
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle');
-  const [speed, setSpeed] = useState(500);
+  const [speed, setSpeedState] = useState(450);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const currentStepRef = useRef(currentStep);
+  const stepsRef = useRef(steps);
+  const isPlayingRef = useRef(false);
+
+  useEffect(() => {
+    currentStepRef.current = currentStep;
+  }, [currentStep]);
+
+  useEffect(() => {
+    stepsRef.current = steps;
+  }, [steps]);
+
+  useEffect(() => {
+    isPlayingRef.current = playbackState === 'playing';
+  }, [playbackState]);
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -41,32 +56,50 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
     }
   }, []);
 
-  const play = useCallback(() => {
-    if (currentStep >= steps.length - 1) return;
-
-    setPlaybackState('playing');
-    intervalRef.current = setInterval(() => {
-      setCurrentStep((prev) => {
-        if (prev >= steps.length - 1) {
-          clearTimer();
-          setPlaybackState('done');
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, speed);
-  }, [currentStep, steps.length, speed, clearTimer]);
-
   const pause = useCallback(() => {
     clearTimer();
     setPlaybackState('paused');
   }, [clearTimer]);
 
+  const play = useCallback(() => {
+    if (currentStepRef.current >= stepsRef.current.length - 1) return;
+
+    clearTimer();
+    setPlaybackState('playing');
+
+    intervalRef.current = setInterval(() => {
+      if (currentStepRef.current >= stepsRef.current.length - 1) {
+        clearTimer();
+        setPlaybackState('done');
+        return;
+      }
+      setCurrentStep((prev) => prev + 1);
+    }, speed);
+  }, [speed, clearTimer]);
+
+  const setSpeed = useCallback(
+    (newSpeed: number) => {
+      setSpeedState(newSpeed);
+      if (isPlayingRef.current) {
+        clearTimer();
+        intervalRef.current = setInterval(() => {
+          if (currentStepRef.current >= stepsRef.current.length - 1) {
+            clearTimer();
+            setPlaybackState('done');
+            return;
+          }
+          setCurrentStep((prev) => prev + 1);
+        }, newSpeed);
+      }
+    },
+    [clearTimer]
+  );
+
   const stepForward = useCallback(() => {
     clearTimer();
     setPlaybackState('paused');
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-  }, [clearTimer, steps.length]);
+    setCurrentStep((prev) => Math.min(prev + 1, stepsRef.current.length - 1));
+  }, [clearTimer]);
 
   const stepBackward = useCallback(() => {
     clearTimer();
@@ -93,9 +126,47 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
   );
 
   const regenerate = useCallback(() => {
-    const newArr = generateRandomArray();
+    const newArr = generateRandomArray(array.length);
     setCustomArray(newArr);
-  }, [setCustomArray]);
+  }, [array.length, setCustomArray]);
+
+  // Keyboard shortcut listeners and cleanup on unmount
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT'
+      ) {
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (isPlayingRef.current) {
+          pause();
+        } else {
+          play();
+        }
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        stepForward();
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        stepBackward();
+      } else if (e.code === 'KeyR') {
+        e.preventDefault();
+        reset();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimer();
+    };
+  }, [play, pause, stepForward, stepBackward, reset, clearTimer]);
 
   return {
     array,

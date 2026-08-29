@@ -65,7 +65,7 @@ export function VisualizerControls({
         </Text>
       </Flex>
 
-      {/* Main Transport Controls */}
+      {/* Main Transport Controls with Keyboard Shortcut Hints */}
       <Flex align="center" gap={2}>
         <IconButton
           aria-label="New random array"
@@ -89,7 +89,7 @@ export function VisualizerControls({
           _hover={{ color: 'var(--color-text)', bg: 'var(--color-surface-light)' }}
           onClick={onReset}
           disabled={currentStep === 0 && playbackState === 'idle'}
-          title="Reset to beginning"
+          title="Reset to beginning (Key: R)"
         >
           ⏮
         </IconButton>
@@ -103,7 +103,7 @@ export function VisualizerControls({
           _hover={{ color: 'var(--color-text)', bg: 'var(--color-surface-light)' }}
           onClick={onStepBack}
           disabled={!canGoBack}
-          title="Step backward"
+          title="Step backward (Key: ←)"
         >
           ◂
         </IconButton>
@@ -119,7 +119,7 @@ export function VisualizerControls({
           boxShadow="0 0 16px rgba(129, 140, 248, 0.45)"
           onClick={isPlaying ? onPause : onPlay}
           disabled={isDone && !canGoForward}
-          title={isPlaying ? 'Pause' : 'Play animation'}
+          title={isPlaying ? 'Pause (Space)' : 'Play animation (Space)'}
         >
           {isPlaying ? '⏸' : isDone ? '✓' : '▶'}
         </IconButton>
@@ -133,7 +133,7 @@ export function VisualizerControls({
           _hover={{ color: 'var(--color-text)', bg: 'var(--color-surface-light)' }}
           onClick={onStepForward}
           disabled={!canGoForward}
-          title="Step forward"
+          title="Step forward (Key: →)"
         >
           ▸
         </IconButton>

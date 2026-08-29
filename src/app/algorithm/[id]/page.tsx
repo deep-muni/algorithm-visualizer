@@ -1,11 +1,17 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { algorithmMap } from '@/data';
+import { algorithmMap, algorithms } from '@/data';
 import { AlgorithmPageClient } from '@/components/visualizer/algorithm-page-client';
 import type { AlgorithmId } from '@/types/algorithm';
 
 interface AlgorithmPageProps {
   params: Promise<{ id: string }>;
+}
+
+export function generateStaticParams() {
+  return algorithms.map((algo) => ({
+    id: algo.id,
+  }));
 }
 
 export async function generateMetadata({ params }: AlgorithmPageProps): Promise<Metadata> {
@@ -15,6 +21,10 @@ export async function generateMetadata({ params }: AlgorithmPageProps): Promise<
   return {
     title: algorithm.name,
     description: algorithm.shortDescription,
+    openGraph: {
+      title: `${algorithm.name} | Algorithm Visualizer`,
+      description: algorithm.shortDescription,
+    },
   };
 }
 
