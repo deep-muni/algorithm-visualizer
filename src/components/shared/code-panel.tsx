@@ -16,6 +16,9 @@ export function CodePanel({ code }: CodePanelProps) {
   return (
     <Box
       w="full"
+      h="full"
+      display="flex"
+      flexDirection="column"
       borderRadius="xl"
       border="1px solid"
       borderColor={COLOR_TOKENS.border}
@@ -30,6 +33,7 @@ export function CodePanel({ code }: CodePanelProps) {
         bg={COLOR_TOKENS.surfaceLight}
         borderBottom="1px solid"
         borderColor={COLOR_TOKENS.border}
+        flexShrink={0}
       >
         <Flex gap={1.5}>
           {languages.map((lang) => {
@@ -69,7 +73,7 @@ export function CodePanel({ code }: CodePanelProps) {
         </Button>
       </Flex>
 
-      <Box overflowX="auto" p={4}>
+      <Box flex={1} minH={0} overflowY="auto" overflowX="auto" p={4}>
         <Flex minW="max-content">
           <Box
             userSelect="none"

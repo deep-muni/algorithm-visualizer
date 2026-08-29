@@ -93,26 +93,43 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
         />
       </Box>
 
-      <Grid templateColumns={{ base: '1fr', lg: '1.2fr 0.8fr' }} gap={6} mb={8} alignItems="start">
-        <Box
-          bg={COLOR_TOKENS.surface}
-          borderRadius="2xl"
-          border="1px solid"
-          borderColor={COLOR_TOKENS.border}
-          p={5}
-        >
-          <Text
-            fontSize="xs"
-            fontWeight="semibold"
-            color={COLOR_TOKENS.textMuted}
-            fontFamily="var(--font-mono)"
-            textTransform="uppercase"
-            letterSpacing="0.05em"
-            mb={3}
+      <Grid
+        templateColumns={{ base: '1fr', lg: '1.2fr 0.8fr' }}
+        gap={6}
+        mb={8}
+        alignItems="stretch"
+      >
+        <Box position="relative" w="full" minH={{ base: '420px', lg: 'auto' }}>
+          <Box
+            position={{ base: 'relative', lg: 'absolute' }}
+            top={0}
+            bottom={0}
+            left={0}
+            right={0}
+            display="flex"
+            flexDirection="column"
+            bg={COLOR_TOKENS.surface}
+            borderRadius="2xl"
+            border="1px solid"
+            borderColor={COLOR_TOKENS.border}
+            p={5}
           >
-            Implementation Code
-          </Text>
-          <CodePanel code={algorithm.code} />
+            <Text
+              fontSize="xs"
+              fontWeight="semibold"
+              color={COLOR_TOKENS.textMuted}
+              fontFamily="var(--font-mono)"
+              textTransform="uppercase"
+              letterSpacing="0.05em"
+              mb={3}
+              flexShrink={0}
+            >
+              Implementation Code
+            </Text>
+            <Box flex={1} minH={0} overflow="hidden">
+              <CodePanel code={algorithm.code} />
+            </Box>
+          </Box>
         </Box>
 
         <Box display="flex" flexDirection="column" gap={6}>
