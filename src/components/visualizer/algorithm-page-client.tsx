@@ -10,7 +10,7 @@ import {
   Text,
   Heading,
   Separator,
-  Button,
+  IconButton,
   Badge,
 } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
@@ -69,16 +69,18 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
       <Flex justify="space-between" align="center" mb={5} wrap="wrap" gap={3}>
         <Flex align="center" gap={3}>
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <Button
-              size="xs"
+            <IconButton
+              aria-label="Back to all algorithms"
               variant="outline"
+              size="xs"
+              borderRadius="md"
               borderColor="var(--color-border)"
               color="var(--color-text)"
               _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
-              fontFamily="var(--font-mono)"
+              title="Back to all algorithms"
             >
-              ← All Algorithms
-            </Button>
+              ←
+            </IconButton>
           </Link>
 
           <Heading
