@@ -77,7 +77,7 @@ export function TopActions() {
       border="1px solid"
       borderColor="var(--color-border)"
       p="3px"
-      boxShadow="0 4px 16px rgba(0, 0, 0, 0.2)"
+      boxShadow="0 4px 16px var(--color-shadow)"
     >
       <Flex align="center" gap={1}>
         <IconButton
