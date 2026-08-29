@@ -5,4 +5,3 @@ export * from './algorithm-switcher';
 export * from './code-panel';
 export * from './complexity-card';
 export * from './top-actions';
-export * from './visualizer-header-bar';

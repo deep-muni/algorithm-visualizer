@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Flex, Button, Input, Text, Badge } from '@chakra-ui/react';
+import { Box, Flex, Button, Input, Text, Badge, IconButton, Separator } from '@chakra-ui/react';
 import { useQueueVisualizer } from '@/hooks/use-queue-visualizer';
-import { VisualizerHeaderBar } from '@/components/shared';
 import { COLOR_TOKENS } from '@/config/colors';
 
 export function QueueVisualizer() {
@@ -23,16 +22,6 @@ export function QueueVisualizer() {
   } = useQueueVisualizer();
 
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [copied, setCopied] = useState(false);
-
-  const handleShare = () => {
-    if (typeof window === 'undefined') return;
-    const dataStr = items.join(',');
-    const url = `${window.location.origin}${window.location.pathname}?items=${dataStr}`;
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const getSimulatedAddress = (idx: number) => {
     const base = 0x7ffd10;
@@ -41,115 +30,6 @@ export function QueueVisualizer() {
 
   return (
     <Box>
-      <VisualizerHeaderBar
-        badgeLabel="QUEUE (FIFO)"
-        badgePalette="purple"
-        telemetry={[
-          {
-            label: 'Capacity',
-            value: `${items.length} / 6`,
-            color: items.length >= 6 ? COLOR_TOKENS.danger : COLOR_TOKENS.default,
-          },
-          { label: 'Time Complexity', value: 'O(1)', isBadge: true },
-        ]}
-        isMuted={isMuted}
-        onToggleSound={toggleSound}
-        onShare={handleShare}
-        isCopied={copied}
-      />
-
-      <Flex
-        direction={{ base: 'column', md: 'row' }}
-        gap={3}
-        justify="space-between"
-        align="center"
-        mb={5}
-        p={3}
-        bg={COLOR_TOKENS.surfaceLight}
-        borderRadius="xl"
-        border="1px solid"
-        borderColor={COLOR_TOKENS.border}
-      >
-        <Flex as="form" onSubmit={handleEnqueueSubmit} align="center" gap={2} wrap="wrap">
-          <Input
-            size="xs"
-            placeholder="Value"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            w="80px"
-            bg="var(--color-bg)"
-            color={COLOR_TOKENS.text}
-            borderColor={COLOR_TOKENS.border}
-            fontFamily="var(--font-mono)"
-          />
-          <Button
-            type="submit"
-            size="xs"
-            bg={COLOR_TOKENS.default}
-            color="white"
-            _hover={{ filter: 'brightness(1.15)', bg: COLOR_TOKENS.default, color: 'white' }}
-            fontFamily="var(--font-mono)"
-            disabled={items.length >= 6}
-          >
-            + Enqueue (Key: E)
-          </Button>
-        </Flex>
-
-        <Flex align="center" gap={2} wrap="wrap">
-          <Button
-            size="xs"
-            variant="outline"
-            borderColor={COLOR_TOKENS.border}
-            color={COLOR_TOKENS.danger}
-            _hover={{
-              borderColor: COLOR_TOKENS.danger,
-              color: COLOR_TOKENS.danger,
-              bg: 'rgba(248, 113, 113, 0.1)',
-            }}
-            onClick={dequeue}
-            disabled={items.length === 0}
-            fontFamily="var(--font-mono)"
-          >
-            - Dequeue (Key: D)
-          </Button>
-
-          <Button
-            size="xs"
-            variant="outline"
-            borderColor={COLOR_TOKENS.border}
-            color={COLOR_TOKENS.compare}
-            _hover={{
-              borderColor: COLOR_TOKENS.compare,
-              color: COLOR_TOKENS.compare,
-              bg: 'rgba(251, 191, 36, 0.1)',
-            }}
-            onClick={front}
-            disabled={items.length === 0}
-            fontFamily="var(--font-mono)"
-          >
-            👁️ Front (Key: F)
-          </Button>
-
-          <Button
-            size="xs"
-            variant="ghost"
-            color={COLOR_TOKENS.textMuted}
-            _hover={{ color: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.1)' }}
-            onClick={clear}
-            disabled={items.length === 0}
-            fontFamily="var(--font-mono)"
-          >
-            🗑️ Clear (Key: C)
-          </Button>
-        </Flex>
-      </Flex>
-
-      {error && (
-        <Text fontSize="xs" color={COLOR_TOKENS.danger} mb={3} fontFamily="var(--font-mono)">
-          {error}
-        </Text>
-      )}
-
       <Flex
         minH="320px"
         align="center"
@@ -351,6 +231,155 @@ export function QueueVisualizer() {
         >
           {operationLog}
         </Text>
+      </Flex>
+
+      {error && (
+        <Text fontSize="xs" color={COLOR_TOKENS.danger} mt={2} fontFamily="var(--font-mono)">
+          {error}
+        </Text>
+      )}
+
+      <Separator my={4} borderColor={COLOR_TOKENS.border} />
+
+      <Flex
+        direction={{ base: 'column', md: 'row' }}
+        gap={3}
+        justify="space-between"
+        align="center"
+        p={3}
+        bg={COLOR_TOKENS.surfaceLight}
+        borderRadius="xl"
+        border="1px solid"
+        borderColor={COLOR_TOKENS.border}
+      >
+        <Flex align="center" gap={2} wrap="wrap">
+          <Flex
+            align="center"
+            gap={1.5}
+            px={2.5}
+            py={1}
+            bg="var(--color-bg)"
+            borderRadius="md"
+            border="1px solid"
+            borderColor={COLOR_TOKENS.border}
+          >
+            <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+              Capacity:
+            </Text>
+            <Text
+              fontSize="xs"
+              fontWeight="bold"
+              color={items.length >= 6 ? COLOR_TOKENS.danger : COLOR_TOKENS.default}
+              fontFamily="var(--font-mono)"
+            >
+              {items.length} / 6
+            </Text>
+          </Flex>
+
+          <Flex
+            align="center"
+            gap={1.5}
+            px={2.5}
+            py={1}
+            bg="var(--color-bg)"
+            borderRadius="md"
+            border="1px solid"
+            borderColor={COLOR_TOKENS.border}
+          >
+            <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+              Time:
+            </Text>
+            <Badge colorPalette="indigo" size="xs" variant="subtle" fontFamily="var(--font-mono)">
+              O(1)
+            </Badge>
+          </Flex>
+        </Flex>
+
+        <Flex align="center" gap={2} wrap="wrap">
+          <Flex as="form" onSubmit={handleEnqueueSubmit} align="center" gap={2}>
+            <Input
+              size="xs"
+              placeholder="Value"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              w="80px"
+              bg="var(--color-bg)"
+              color={COLOR_TOKENS.text}
+              borderColor={COLOR_TOKENS.border}
+              fontFamily="var(--font-mono)"
+            />
+            <Button
+              type="submit"
+              size="xs"
+              bg={COLOR_TOKENS.default}
+              color="white"
+              _hover={{ filter: 'brightness(1.15)', bg: COLOR_TOKENS.default, color: 'white' }}
+              fontFamily="var(--font-mono)"
+              disabled={items.length >= 6}
+            >
+              + Enqueue (Key: E)
+            </Button>
+          </Flex>
+
+          <Button
+            size="xs"
+            variant="outline"
+            borderColor={COLOR_TOKENS.border}
+            color={COLOR_TOKENS.danger}
+            _hover={{
+              borderColor: COLOR_TOKENS.danger,
+              color: COLOR_TOKENS.danger,
+              bg: 'rgba(248, 113, 113, 0.1)',
+            }}
+            onClick={dequeue}
+            disabled={items.length === 0}
+            fontFamily="var(--font-mono)"
+          >
+            - Dequeue (Key: D)
+          </Button>
+
+          <Button
+            size="xs"
+            variant="outline"
+            borderColor={COLOR_TOKENS.border}
+            color={COLOR_TOKENS.compare}
+            _hover={{
+              borderColor: COLOR_TOKENS.compare,
+              color: COLOR_TOKENS.compare,
+              bg: 'rgba(251, 191, 36, 0.1)',
+            }}
+            onClick={front}
+            disabled={items.length === 0}
+            fontFamily="var(--font-mono)"
+          >
+            👁️ Front (Key: F)
+          </Button>
+
+          <Button
+            size="xs"
+            variant="ghost"
+            color={COLOR_TOKENS.textMuted}
+            _hover={{ color: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.1)' }}
+            onClick={clear}
+            disabled={items.length === 0}
+            fontFamily="var(--font-mono)"
+          >
+            🗑️ Clear (Key: C)
+          </Button>
+
+          <IconButton
+            aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
+            variant="ghost"
+            size="xs"
+            borderRadius="full"
+            color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
+            onClick={toggleSound}
+            title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
+          >
+            {isMuted ? '🔇' : '🔊'}
+          </IconButton>
+        </Flex>
       </Flex>
 
       <Flex justify="center" align="center" gap={2} mt={3} opacity={0.6}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Box, Container, Flex, Grid, Text, Separator, Badge, Button } from '@chakra-ui/react';
+import { Box, Container, Flex, Grid, Text, Separator, Button } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
 import { VisualizerBarChart } from './visualizer-bar-chart';
 import { VisualizerControls } from './visualizer-controls';
@@ -115,26 +115,7 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
         }
       >
         {isFullscreen && (
-          <Flex
-            justify="space-between"
-            align="center"
-            mb={4}
-            pb={3}
-            borderBottom="1px solid var(--color-border)"
-          >
-            <Flex align="center" gap={3}>
-              <Badge colorPalette="indigo" size="md" variant="subtle">
-                FOCUS MODE (100% CANVAS)
-              </Badge>
-              <Text
-                fontSize="md"
-                fontWeight="bold"
-                fontFamily="var(--font-mono)"
-                color="var(--color-text)"
-              >
-                {algorithm.name}
-              </Text>
-            </Flex>
+          <Flex justify="flex-end" mb={2}>
             <Button
               size="xs"
               variant="outline"
@@ -148,12 +129,10 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
               onClick={() => setIsFullscreen(false)}
               fontFamily="var(--font-mono)"
             >
-              ✕ Exit Focus (Key: Z or Esc)
+              ✕ Exit Focus (Esc / Z)
             </Button>
           </Flex>
         )}
-
-        <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} currentArray={array} />
 
         {currentStepData && <VisualizerBarChart step={currentStepData} />}
 
@@ -177,6 +156,14 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
             {currentStepData?.description ?? ''}
           </Text>
         </Flex>
+
+        <Box mt={4}>
+          <ArrayConfigBar
+            onArrayChange={setCustomArray}
+            disabled={isRunning}
+            currentArray={array}
+          />
+        </Box>
 
         <Separator my={4} borderColor={COLOR_TOKENS.border} />
 
