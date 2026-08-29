@@ -18,7 +18,7 @@ import { VisualizerBarChart } from '@/components/sorting/visualizer-bar-chart';
 import { VisualizerControls } from '@/components/sorting/visualizer-controls';
 import { ArrayConfigBar } from '@/components/sorting/array-config-bar';
 import { CodePanel, ComplexityCard } from '@/components/shared';
-import { sortingAlgorithms, searchingAlgorithms } from '@/data';
+import { dataStructures, sortingAlgorithms, searchingAlgorithms } from '@/data';
 import { getLegendItems } from '@/lib/algorithm-utils';
 import { COLOR_TOKENS } from '@/config/colors';
 import type { AlgorithmInfo } from '@/types/algorithm';
@@ -94,8 +94,11 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
             value={algorithm.id}
             onChange={(e) => {
               const targetId = e.target.value;
-              const isTargetSorting = sortingAlgorithms.some((a) => a.id === targetId);
-              router.push(`/${isTargetSorting ? 'sorting' : 'searching'}/${targetId}`);
+              const isDS = dataStructures.some((d) => d.id === targetId);
+              const isSort = sortingAlgorithms.some((s) => s.id === targetId);
+              if (isDS) router.push(`/data-structures/${targetId}`);
+              else if (isSort) router.push(`/sorting/${targetId}`);
+              else router.push(`/searching/${targetId}`);
             }}
             style={{
               backgroundColor: 'var(--color-surface)',
@@ -134,6 +137,20 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
                   style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
                 >
                   {a.name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup
+              label="Data Structures"
+              style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-sorted)' }}
+            >
+              {dataStructures.map((d) => (
+                <option
+                  key={d.id}
+                  value={d.id}
+                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
+                >
+                  {d.name}
                 </option>
               ))}
             </optgroup>
