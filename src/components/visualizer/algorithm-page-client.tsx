@@ -219,10 +219,10 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
       </Box>
 
       {/* ========================================================================= */}
-      {/* 2. SUPPORTING DETAILS & CODE (2-Column Grid with scrolling code panel) */}
+      {/* 2. SUPPORTING DETAILS & CODE (2-Column Grid where Code takes full height) */}
       {/* ========================================================================= */}
-      <Grid templateColumns={{ base: '1fr', lg: '1.25fr 0.75fr' }} gap={6} mb={8}>
-        {/* Left: Code Implementation Panel with scrolling */}
+      <Grid templateColumns={{ base: '1fr', lg: '1.25fr 0.75fr' }} gap={6} mb={8} alignItems="stretch">
+        {/* Left: Code Implementation Panel stretching full height */}
         <Box
           bg="var(--color-surface)"
           borderRadius="2xl"
@@ -231,6 +231,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
           p={5}
           display="flex"
           flexDirection="column"
+          h="full"
         >
           <Text
             fontSize="xs"
@@ -243,11 +244,13 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
           >
             Implementation Code
           </Text>
-          <CodePanel code={algorithm.code} />
+          <Box flex={1} minH="0" display="flex" flexDirection="column">
+            <CodePanel code={algorithm.code} />
+          </Box>
         </Box>
 
         {/* Right: Complexity Breakdown + Color Legend */}
-        <Box display="flex" flexDirection="column" gap={6}>
+        <Box display="flex" flexDirection="column" gap={6} h="full">
           {/* Complexity Card */}
           <Box
             bg="var(--color-surface)"
@@ -270,6 +273,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             border="1px solid"
             borderColor="var(--color-border)"
             p={5}
+            flex={1}
           >
             <Text
               fontSize="xs"
