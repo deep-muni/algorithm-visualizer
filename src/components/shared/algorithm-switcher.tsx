@@ -117,8 +117,8 @@ export function AlgorithmSwitcher({ currentId }: AlgorithmSwitcherProps) {
         <Box
           position="absolute"
           top="calc(100% + 8px)"
-          right={{ base: '0', sm: 'auto' }}
-          left={{ base: 'auto', sm: '0' }}
+          right={0}
+          left="auto"
           w="300px"
           maxH="420px"
           overflowY="auto"
@@ -127,7 +127,7 @@ export function AlgorithmSwitcher({ currentId }: AlgorithmSwitcherProps) {
           border="1px solid"
           borderColor={COLOR_TOKENS.border}
           borderRadius="2xl"
-          boxShadow="0 16px 40px rgba(0, 0, 0, 0.45)"
+          boxShadow="0 16px 40px var(--color-shadow)"
           p={2}
           zIndex={50}
         >
