@@ -7,33 +7,39 @@ import { sortingAlgorithms, searchingAlgorithms, dataStructures } from '@/data';
 import { COLOR_TOKENS } from '@/config/colors';
 
 type FilterCategory = 'all' | 'data-structures' | 'sorting' | 'searching';
-type ComplexityFilter = 'all' | 'O(1)' | 'O(log n)' | 'O(n log n)' | 'O(n^2)';
+
+const AVAILABLE_COMPLEXITIES = ['all', 'O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'] as const;
+
+type ComplexityOption = (typeof AVAILABLE_COMPLEXITIES)[number];
+
+function normalizeComplexity(comp: string): string {
+  return comp.replace(/n\^2/g, 'n²').trim();
+}
 
 function getComplexityColor(comp: string) {
-  if (comp === 'O(1)' || (comp.includes('log n') && !comp.includes('n log n'))) {
+  const norm = normalizeComplexity(comp);
+  if (norm === 'O(1)' || (norm.includes('log n') && !norm.includes('n log n'))) {
     return COLOR_TOKENS.success;
   }
-  if (comp.includes('n log n') || comp === 'O(n)') {
+  if (norm.includes('n log n') || norm === 'O(n)') {
     return COLOR_TOKENS.warning;
   }
   return COLOR_TOKENS.danger;
 }
 
+function matchesComplexity(itemComplexity: string, selected: ComplexityOption): boolean {
+  if (selected === 'all') return true;
+  const normItem = normalizeComplexity(itemComplexity);
+  const normSel = normalizeComplexity(selected);
+  return normItem === normSel;
+}
+
 export function HomeCatalog() {
   const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('all');
-  const [selectedComplexity, setSelectedComplexity] = useState<ComplexityFilter>('all');
+  const [selectedComplexity, setSelectedComplexity] = useState<ComplexityOption>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const query = searchQuery.toLowerCase().trim();
-
-  const matchesComplexity = (compStr: string, filter: ComplexityFilter): boolean => {
-    if (filter === 'all') return true;
-    if (filter === 'O(1)') return compStr.includes('O(1)');
-    if (filter === 'O(log n)') return compStr.includes('log n') && !compStr.includes('n log n');
-    if (filter === 'O(n log n)') return compStr.includes('n log n') || compStr.includes('n log² n');
-    if (filter === 'O(n^2)') return compStr.includes('n²') || compStr.includes('n^2');
-    return true;
-  };
 
   const filteredDataStructures = useMemo(() => {
     return dataStructures.filter((ds) => {
@@ -44,9 +50,10 @@ export function HomeCatalog() {
         ds.shortDescription.toLowerCase().includes(query);
       const compMatch =
         selectedComplexity === 'all' ||
+        matchesComplexity(ds.complexity.search, selectedComplexity) ||
         matchesComplexity(ds.complexity.insertion, selectedComplexity) ||
         matchesComplexity(ds.complexity.access, selectedComplexity) ||
-        matchesComplexity(ds.complexity.search, selectedComplexity);
+        matchesComplexity(ds.complexity.deletion, selectedComplexity);
       return catMatch && textMatch && compMatch;
     });
   }, [selectedCategory, query, selectedComplexity]);
@@ -60,8 +67,7 @@ export function HomeCatalog() {
         algo.shortDescription.toLowerCase().includes(query);
       const compMatch =
         selectedComplexity === 'all' ||
-        matchesComplexity(algo.complexity.worst, selectedComplexity) ||
-        matchesComplexity(algo.complexity.average, selectedComplexity);
+        matchesComplexity(algo.complexity.worst, selectedComplexity);
       return catMatch && textMatch && compMatch;
     });
   }, [selectedCategory, query, selectedComplexity]);
@@ -75,8 +81,7 @@ export function HomeCatalog() {
         algo.shortDescription.toLowerCase().includes(query);
       const compMatch =
         selectedComplexity === 'all' ||
-        matchesComplexity(algo.complexity.worst, selectedComplexity) ||
-        matchesComplexity(algo.complexity.average, selectedComplexity);
+        matchesComplexity(algo.complexity.worst, selectedComplexity);
       return catMatch && textMatch && compMatch;
     });
   }, [selectedCategory, query, selectedComplexity]);
@@ -314,7 +319,7 @@ export function HomeCatalog() {
           </Flex>
         </Box>
 
-        {/* Complexity Filter */}
+        {/* Complexity Filter with all available Big-O types */}
         <Box
           bg={COLOR_TOKENS.surface}
           borderRadius="2xl"
@@ -335,30 +340,28 @@ export function HomeCatalog() {
           </Text>
 
           <Flex gap={1.5} wrap="wrap">
-            {(['all', 'O(1)', 'O(log n)', 'O(n log n)', 'O(n^2)'] as ComplexityFilter[]).map(
-              (comp) => {
-                const isCompActive = selectedComplexity === comp;
-                return (
-                  <Button
-                    key={comp}
-                    size="xs"
-                    variant={isCompActive ? 'solid' : 'outline'}
-                    bg={isCompActive ? COLOR_TOKENS.default : 'transparent'}
-                    color={isCompActive ? 'white' : COLOR_TOKENS.textMuted}
-                    borderColor={isCompActive ? COLOR_TOKENS.default : COLOR_TOKENS.border}
-                    _hover={{
-                      bg: isCompActive ? 'var(--color-indigo-dim)' : COLOR_TOKENS.surfaceLight,
-                    }}
-                    borderRadius="lg"
-                    fontFamily="var(--font-mono)"
-                    fontSize="2xs"
-                    onClick={() => setSelectedComplexity(comp)}
-                  >
-                    {comp === 'all' ? 'All Rates' : comp}
-                  </Button>
-                );
-              }
-            )}
+            {AVAILABLE_COMPLEXITIES.map((comp) => {
+              const isCompActive = selectedComplexity === comp;
+              return (
+                <Button
+                  key={comp}
+                  size="xs"
+                  variant={isCompActive ? 'solid' : 'outline'}
+                  bg={isCompActive ? COLOR_TOKENS.default : 'transparent'}
+                  color={isCompActive ? 'white' : COLOR_TOKENS.textMuted}
+                  borderColor={isCompActive ? COLOR_TOKENS.default : COLOR_TOKENS.border}
+                  _hover={{
+                    bg: isCompActive ? 'var(--color-indigo-dim)' : COLOR_TOKENS.surfaceLight,
+                  }}
+                  borderRadius="lg"
+                  fontFamily="var(--font-mono)"
+                  fontSize="2xs"
+                  onClick={() => setSelectedComplexity(comp)}
+                >
+                  {comp === 'all' ? 'All Rates' : comp}
+                </Button>
+              );
+            })}
           </Flex>
         </Box>
 
