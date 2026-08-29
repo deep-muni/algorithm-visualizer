@@ -54,8 +54,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body suppressHydrationWarning>
         <ThemeProvider>
+          <TopActions />
           <ChakraProvider>
-            <TopActions />
             <main>{children}</main>
           </ChakraProvider>
         </ThemeProvider>
