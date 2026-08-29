@@ -1,20 +1,21 @@
-# Sort & Search Visualizer
+# Algorithm Visualizer
 
-An interactive web application for visualizing classic sorting and searching algorithms, with complexity analysis and copyable reference implementations in **TypeScript**, **Java**, and **Python**.
+An interactive, extensible web application for visualizing classic computer science algorithms (sorting, searching, and more), with step-by-step animations, time & space complexity analysis, and copyable reference implementations in **TypeScript**, **Java**, and **Python**.
 
 ---
 
 ## ✨ Features
 
-- **Interactive Visualizations**: Step through algorithm execution frame-by-frame with play, pause, step forward/backward, reset, and adjustable playback speeds.
-- **Color-Coded Step Indicators**: Visually distinguish comparisons, swaps/moves, and sorted/found elements.
+- **Hero Visualizer Stage**: Clean, focused stage where the algorithm execution takes the spotlight.
+- **Interactive Playback Controls**: Step frame-by-frame with play, pause, step forward/backward, skip to end, reset, and speed adjustments (0.5x, 1x, 2x, 4x).
+- **Color-Coded Step Indicators**: Visually distinguish comparing, swapping, and sorted/found elements.
 - **Dynamic Array Configurations**:
   - Presets: Random, Reversed, Nearly Sorted, Duplicates / Few Unique
-  - Custom array size selector (8, 12, 16, 20 elements)
+  - Array size selector (8, 12, 16, 20 elements)
   - Custom number input (comma-separated values)
 - **Multi-Language Code Export**: Toggle between clean, production-ready code snippets in TypeScript, Java, and Python with a 1-click copy button.
-- **Time & Space Complexity Breakdown**: Best case, average case, worst case, space complexity, stability, and in-place sorting badges.
-- **Algorithms Supported**:
+- **Dark / Light Mode Support**: Smooth theme switching with persistent preferences.
+- **Extensible Algorithm Architecture**:
   - **Sorting**: Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, Heap Sort
   - **Searching**: Linear Search, Binary Search
 
@@ -56,7 +57,7 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Available Scripts
 
