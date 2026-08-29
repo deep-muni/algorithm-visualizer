@@ -60,11 +60,11 @@ export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
               <Text
                 fontSize={{ base: '10px', md: '11px' }}
                 fontWeight={isActive ? 'bold' : 'medium'}
-                color={isActive ? 'white' : 'var(--color-text-muted)'}
+                color={isActive ? color : 'var(--color-text)'}
                 mb="4px"
                 fontFamily="var(--font-mono)"
                 style={{
-                  transform: isActive ? 'scale(1.15)' : 'scale(1)',
+                  transform: isActive ? 'scale(1.18)' : 'scale(1)',
                   transition: 'transform 0.15s ease, color 0.15s ease',
                 }}
               >
@@ -101,12 +101,13 @@ export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
       >
         {array.map((_, index) => {
           const isActive = comparing.includes(index) || swapping.includes(index);
+          const color = getBarColor(index, comparing, swapping, sorted);
           return (
             <Flex key={index} justify="center" align="center" flex={1} maxW="54px">
               <Text
                 fontSize="10px"
                 fontFamily="var(--font-mono)"
-                color={isActive ? 'var(--color-indigo)' : 'var(--color-text-muted)'}
+                color={isActive ? color : 'var(--color-text-muted)'}
                 fontWeight={isActive ? 'bold' : 'normal'}
               >
                 [{index}]
