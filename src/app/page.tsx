@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Container, Heading, Text, SimpleGrid, Box, Flex, Badge } from '@chakra-ui/react';
 import { algorithms } from '@/data';
 import { groupAlgorithms } from '@/lib/algorithm-utils';
+import { COLOR_TOKENS } from '@/config/colors';
 import type { AlgorithmInfo } from '@/types/algorithm';
 
 function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
@@ -10,22 +11,22 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
   return (
     <Link href={`/algorithm/${algo.id}`} style={{ textDecoration: 'none' }}>
       <Box
-        bg="var(--color-surface)"
+        bg={COLOR_TOKENS.surface}
         borderRadius="2xl"
         border="1px solid"
-        borderColor="var(--color-border)"
+        borderColor={COLOR_TOKENS.border}
         p={5}
         h="full"
         cursor="pointer"
         transition="border-color 0.2s, transform 0.2s, box-shadow 0.2s"
         _hover={{
-          borderColor: 'var(--color-indigo)',
+          borderColor: COLOR_TOKENS.default,
           transform: 'translateY(-3px)',
           boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
         }}
       >
         <Flex justify="space-between" align="flex-start" mb={3}>
-          <Heading as="h3" fontSize="lg" color="var(--color-text)" fontWeight="bold">
+          <Heading as="h3" fontSize="lg" color={COLOR_TOKENS.text} fontWeight="bold">
             {algo.name}
           </Heading>
           <Badge
@@ -41,41 +42,46 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
           </Badge>
         </Flex>
 
-        <Text fontSize="sm" color="var(--color-text-muted)" mb={4} lineHeight="tall">
+        <Text fontSize="sm" color={COLOR_TOKENS.textMuted} mb={4} lineHeight="tall">
           {algo.shortDescription}
         </Text>
 
         <Flex gap={2} flexWrap="wrap">
           <Box
-            bg="var(--color-surface-light)"
+            bg={COLOR_TOKENS.surfaceLight}
             border="1px solid"
-            borderColor="var(--color-border)"
+            borderColor={COLOR_TOKENS.border}
             borderRadius="md"
             px={2}
             py={1}
           >
-            <Text fontSize="xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
+            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
               Avg
             </Text>
-            <Text fontSize="xs" fontFamily="var(--font-mono)" color="#fbbf24" fontWeight="bold">
+            <Text
+              fontSize="xs"
+              fontFamily="var(--font-mono)"
+              color={COLOR_TOKENS.warning}
+              fontWeight="bold"
+            >
               {algo.complexity.average}
             </Text>
           </Box>
           <Box
-            bg="var(--color-surface-light)"
+            bg={COLOR_TOKENS.surfaceLight}
             border="1px solid"
-            borderColor="var(--color-border)"
+            borderColor={COLOR_TOKENS.border}
             borderRadius="md"
             px={2}
             py={1}
           >
-            <Text fontSize="xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
+            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
               Space
             </Text>
             <Text
               fontSize="xs"
               fontFamily="var(--font-mono)"
-              color="var(--color-indigo)"
+              color={COLOR_TOKENS.default}
               fontWeight="bold"
             >
               {algo.complexity.space}
@@ -83,9 +89,9 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
           </Box>
           {algo.stable !== undefined && (
             <Box
-              bg="var(--color-surface-light)"
+              bg={COLOR_TOKENS.surfaceLight}
               border="1px solid"
-              borderColor="var(--color-border)"
+              borderColor={COLOR_TOKENS.border}
               borderRadius="md"
               px={2}
               py={1}
@@ -93,7 +99,7 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
               <Text
                 fontSize="xs"
                 fontFamily="var(--font-mono)"
-                color={algo.stable ? '#34d399' : '#f87171'}
+                color={algo.stable ? COLOR_TOKENS.success : COLOR_TOKENS.danger}
                 fontWeight="bold"
               >
                 {algo.stable ? 'Stable' : 'Unstable'}
@@ -116,7 +122,7 @@ export default function HomePage() {
           as="h1"
           fontSize={{ base: '3xl', md: '5xl' }}
           fontWeight="bold"
-          color="var(--color-text)"
+          color={COLOR_TOKENS.text}
           mb={4}
           lineHeight="1.1"
         >
@@ -124,7 +130,7 @@ export default function HomePage() {
         </Heading>
         <Text
           fontSize={{ base: 'md', md: 'lg' }}
-          color="var(--color-text-muted)"
+          color={COLOR_TOKENS.textMuted}
           maxW="640px"
           mx="auto"
           lineHeight="tall"
@@ -137,7 +143,7 @@ export default function HomePage() {
 
       <Box mb={12}>
         <Flex align="center" gap={3} mb={6}>
-          <Heading as="h2" fontSize="xl" color="var(--color-text)" fontWeight="bold">
+          <Heading as="h2" fontSize="xl" color={COLOR_TOKENS.text} fontWeight="bold">
             Sorting Algorithms
           </Heading>
           <Badge colorPalette="indigo" variant="subtle" borderRadius="full" px={2}>
@@ -154,7 +160,7 @@ export default function HomePage() {
 
       <Box mb={12}>
         <Flex align="center" gap={3} mb={6}>
-          <Heading as="h2" fontSize="xl" color="var(--color-text)" fontWeight="bold">
+          <Heading as="h2" fontSize="xl" color={COLOR_TOKENS.text} fontWeight="bold">
             Searching Algorithms
           </Heading>
           <Badge colorPalette="purple" variant="subtle" borderRadius="full" px={2}>

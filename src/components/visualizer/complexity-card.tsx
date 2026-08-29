@@ -1,5 +1,6 @@
 import { Box, Grid, Text, Badge } from '@chakra-ui/react';
 import type { ComplexityInfo } from '@/types/algorithm';
+import { COLOR_TOKENS } from '@/config/colors';
 
 interface ComplexityCardProps {
   complexity: ComplexityInfo;
@@ -9,17 +10,17 @@ interface ComplexityCardProps {
 
 function ComplexityBadge({ label, value }: { label: string; value: string }) {
   const isGood = value.includes('n)') || value.includes('log n)') || value === 'O(1)';
-  const color = isGood ? '#34d399' : '#fbbf24';
+  const color = isGood ? COLOR_TOKENS.success : COLOR_TOKENS.warning;
 
   return (
     <Box
-      bg="var(--color-surface-light)"
+      bg={COLOR_TOKENS.surfaceLight}
       borderRadius="lg"
       p={3}
       border="1px solid"
-      borderColor="var(--color-border)"
+      borderColor={COLOR_TOKENS.border}
     >
-      <Text fontSize="xs" color="var(--color-text-muted)" mb={1} fontFamily="var(--font-mono)">
+      <Text fontSize="xs" color={COLOR_TOKENS.textMuted} mb={1} fontFamily="var(--font-mono)">
         {label}
       </Text>
       <Text fontSize="sm" fontFamily="var(--font-mono)" fontWeight="bold" color={color}>
@@ -35,7 +36,7 @@ export function ComplexityCard({ complexity, stable, inPlace }: ComplexityCardPr
       <Text
         fontSize="xs"
         fontWeight="semibold"
-        color="var(--color-text-muted)"
+        color={COLOR_TOKENS.textMuted}
         fontFamily="var(--font-mono)"
         textTransform="uppercase"
         letterSpacing="0.05em"

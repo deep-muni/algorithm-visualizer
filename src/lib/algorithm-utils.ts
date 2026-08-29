@@ -1,4 +1,5 @@
 import type { AlgorithmCategory, AlgorithmInfo } from '@/types/algorithm';
+import { COLOR_TOKENS } from '@/config/colors';
 
 export interface LegendItem {
   color: string;
@@ -8,16 +9,16 @@ export interface LegendItem {
 export function getLegendItems(category: AlgorithmCategory): LegendItem[] {
   if (category === 'searching') {
     return [
-      { color: 'var(--color-indigo)', label: 'Array Element' },
-      { color: '#fbbf24', label: 'Comparing / Inspecting' },
-      { color: '#34d399', label: 'Target Found' },
+      { color: COLOR_TOKENS.default, label: 'Array Element' },
+      { color: COLOR_TOKENS.compare, label: 'Comparing / Inspecting' },
+      { color: COLOR_TOKENS.sorted, label: 'Target Found' },
     ];
   }
   return [
-    { color: 'var(--color-indigo)', label: 'Unsorted' },
-    { color: '#fbbf24', label: 'Comparing' },
-    { color: '#f87171', label: 'Swapping' },
-    { color: '#34d399', label: 'Sorted' },
+    { color: COLOR_TOKENS.default, label: 'Unsorted' },
+    { color: COLOR_TOKENS.compare, label: 'Comparing' },
+    { color: COLOR_TOKENS.swap, label: 'Swapping' },
+    { color: COLOR_TOKENS.sorted, label: 'Sorted' },
   ];
 }
 

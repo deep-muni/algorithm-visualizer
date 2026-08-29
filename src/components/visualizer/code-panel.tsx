@@ -3,6 +3,7 @@
 import { Box, Flex, Button, Text } from '@chakra-ui/react';
 import type { AlgorithmCode } from '@/types/algorithm';
 import { useCodePanel } from '@/hooks/use-code-panel';
+import { COLOR_TOKENS } from '@/config/colors';
 
 interface CodePanelProps {
   code: AlgorithmCode;
@@ -17,7 +18,7 @@ export function CodePanel({ code }: CodePanelProps) {
       w="full"
       borderRadius="xl"
       border="1px solid"
-      borderColor="var(--color-border)"
+      borderColor={COLOR_TOKENS.border}
       overflow="hidden"
       bg="var(--color-bg)"
     >
@@ -26,9 +27,9 @@ export function CodePanel({ code }: CodePanelProps) {
         justify="space-between"
         px={4}
         py={2.5}
-        bg="var(--color-surface-light)"
+        bg={COLOR_TOKENS.surfaceLight}
         borderBottom="1px solid"
-        borderColor="var(--color-border)"
+        borderColor={COLOR_TOKENS.border}
       >
         <Flex gap={1.5}>
           {languages.map((lang) => {
@@ -38,11 +39,11 @@ export function CodePanel({ code }: CodePanelProps) {
                 key={lang.id}
                 size="xs"
                 variant={isActive ? 'solid' : 'ghost'}
-                bg={isActive ? 'var(--color-indigo)' : 'transparent'}
-                color={isActive ? 'white' : 'var(--color-text-muted)'}
+                bg={isActive ? COLOR_TOKENS.default : 'transparent'}
+                color={isActive ? 'white' : COLOR_TOKENS.textMuted}
                 _hover={{
-                  bg: isActive ? 'var(--color-indigo-dim)' : 'var(--color-surface)',
-                  color: 'var(--color-text)',
+                  bg: isActive ? 'var(--color-indigo-dim)' : COLOR_TOKENS.surface,
+                  color: COLOR_TOKENS.text,
                 }}
                 borderRadius="md"
                 fontFamily="var(--font-mono)"
@@ -58,9 +59,9 @@ export function CodePanel({ code }: CodePanelProps) {
         <Button
           size="xs"
           variant="outline"
-          borderColor="var(--color-border)"
-          color={copied ? '#34d399' : 'var(--color-text)'}
-          _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface)' }}
+          borderColor={COLOR_TOKENS.border}
+          color={copied ? COLOR_TOKENS.success : COLOR_TOKENS.text}
+          _hover={{ borderColor: COLOR_TOKENS.default, bg: COLOR_TOKENS.surface }}
           onClick={handleCopy}
           fontFamily="var(--font-mono)"
         >
@@ -75,7 +76,7 @@ export function CodePanel({ code }: CodePanelProps) {
             pr={4}
             mr={4}
             borderRight="1px solid"
-            borderColor="var(--color-border)"
+            borderColor={COLOR_TOKENS.border}
             textAlign="right"
           >
             {lines.map((_, i) => (
@@ -84,7 +85,7 @@ export function CodePanel({ code }: CodePanelProps) {
                 fontSize="13px"
                 fontFamily="var(--font-mono)"
                 lineHeight="1.7"
-                color="var(--color-text-muted)"
+                color={COLOR_TOKENS.textMuted}
                 opacity={0.5}
               >
                 {i + 1}
@@ -99,7 +100,7 @@ export function CodePanel({ code }: CodePanelProps) {
                 fontFamily: 'var(--font-mono)',
                 fontSize: '13px',
                 lineHeight: '1.7',
-                color: 'var(--color-text)',
+                color: COLOR_TOKENS.text,
               }}
             >
               <code>{currentCode}</code>
