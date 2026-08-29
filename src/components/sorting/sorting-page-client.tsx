@@ -1,24 +1,11 @@
 'use client';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import {
-  Box,
-  Container,
-  Flex,
-  Grid,
-  Text,
-  Heading,
-  Separator,
-  IconButton,
-  Badge,
-} from '@chakra-ui/react';
+import { Box, Container, Flex, Grid, Text, Separator } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
 import { VisualizerBarChart } from './visualizer-bar-chart';
 import { VisualizerControls } from './visualizer-controls';
 import { ArrayConfigBar } from './array-config-bar';
-import { CodePanel, ComplexityCard } from '@/components/shared';
-import { dataStructures, sortingAlgorithms, searchingAlgorithms } from '@/data';
+import { CodePanel, ComplexityCard, PageNavHeader } from '@/components/shared';
 import { getLegendItems } from '@/lib/algorithm-utils';
 import { COLOR_TOKENS } from '@/config/colors';
 import type { AlgorithmInfo } from '@/types/algorithm';
@@ -28,7 +15,6 @@ interface SortingPageClientProps {
 }
 
 export function SortingPageClient({ algorithm }: SortingPageClientProps) {
-  const router = useRouter();
   const {
     steps,
     currentStep,
@@ -50,113 +36,11 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
 
   return (
     <Container maxW="1200px" py={6} px={4}>
-      <Flex justify="space-between" align="center" mb={5} wrap="wrap" gap={3}>
-        <Flex align="center" gap={3}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <IconButton
-              aria-label="Back to all algorithms"
-              variant="outline"
-              size="xs"
-              borderRadius="md"
-              borderColor={COLOR_TOKENS.border}
-              color={COLOR_TOKENS.text}
-              _hover={{ borderColor: COLOR_TOKENS.default, bg: COLOR_TOKENS.surfaceLight }}
-              title="Back to all algorithms"
-            >
-              ←
-            </IconButton>
-          </Link>
-
-          <Heading
-            as="h1"
-            fontSize={{ base: 'xl', md: '2xl' }}
-            fontWeight="bold"
-            color={COLOR_TOKENS.text}
-          >
-            {algorithm.name}
-          </Heading>
-
-          <Badge colorPalette="indigo" variant="subtle" borderRadius="full" px={2} fontSize="2xs">
-            Sorting
-          </Badge>
-        </Flex>
-
-        <Flex align="center" gap={2}>
-          <Text
-            fontSize="xs"
-            color={COLOR_TOKENS.textMuted}
-            fontFamily="var(--font-mono)"
-            display={{ base: 'none', sm: 'block' }}
-          >
-            Switch:
-          </Text>
-          <select
-            value={algorithm.id}
-            onChange={(e) => {
-              const targetId = e.target.value;
-              const isDS = dataStructures.some((d) => d.id === targetId);
-              const isSort = sortingAlgorithms.some((s) => s.id === targetId);
-              if (isDS) router.push(`/data-structures/${targetId}`);
-              else if (isSort) router.push(`/sorting/${targetId}`);
-              else router.push(`/searching/${targetId}`);
-            }}
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              color: 'var(--color-text)',
-              border: '1px solid var(--color-border)',
-              borderRadius: '6px',
-              padding: '5px 10px',
-              fontSize: '12px',
-              fontFamily: 'var(--font-mono)',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <optgroup
-              label="Sorting Algorithms"
-              style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-indigo)' }}
-            >
-              {sortingAlgorithms.map((a) => (
-                <option
-                  key={a.id}
-                  value={a.id}
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
-                >
-                  {a.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup
-              label="Searching Algorithms"
-              style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-violet)' }}
-            >
-              {searchingAlgorithms.map((a) => (
-                <option
-                  key={a.id}
-                  value={a.id}
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
-                >
-                  {a.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup
-              label="Data Structures"
-              style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-sorted)' }}
-            >
-              {dataStructures.map((d) => (
-                <option
-                  key={d.id}
-                  value={d.id}
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
-                >
-                  {d.name}
-                </option>
-              ))}
-            </optgroup>
-          </select>
-        </Flex>
-      </Flex>
+      <PageNavHeader
+        title={algorithm.name}
+        category={algorithm.category}
+        currentId={algorithm.id}
+      />
 
       <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} />
 

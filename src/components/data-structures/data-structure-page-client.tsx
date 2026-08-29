@@ -1,14 +1,11 @@
 'use client';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Container, Heading, Text, Badge, Grid, Box, Flex, IconButton } from '@chakra-ui/react';
+import { Container, Text, Grid, Box } from '@chakra-ui/react';
 import type { DataStructureInfo } from '@/types/algorithm';
-import { CodePanel } from '@/components/shared';
+import { CodePanel, PageNavHeader } from '@/components/shared';
 import { StackVisualizer } from './stack-visualizer';
 import { QueueVisualizer } from './queue-visualizer';
 import { LinkedListVisualizer } from './linked-list-visualizer';
-import { dataStructures, sortingAlgorithms, searchingAlgorithms } from '@/data';
 import { COLOR_TOKENS } from '@/config/colors';
 
 interface DataStructurePageClientProps {
@@ -38,117 +35,13 @@ function DSComplexityBadge({ label, value }: { label: string; value: string }) {
 }
 
 export function DataStructurePageClient({ dataStructure }: DataStructurePageClientProps) {
-  const router = useRouter();
-
   return (
     <Container maxW="1200px" py={6} px={4}>
-      <Flex justify="space-between" align="center" mb={5} wrap="wrap" gap={3}>
-        <Flex align="center" gap={3}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <IconButton
-              aria-label="Back to all"
-              variant="outline"
-              size="xs"
-              borderRadius="md"
-              borderColor={COLOR_TOKENS.border}
-              color={COLOR_TOKENS.text}
-              _hover={{ borderColor: COLOR_TOKENS.default, bg: COLOR_TOKENS.surfaceLight }}
-              title="Back to all"
-            >
-              ←
-            </IconButton>
-          </Link>
-
-          <Heading
-            as="h1"
-            fontSize={{ base: 'xl', md: '2xl' }}
-            fontWeight="bold"
-            color={COLOR_TOKENS.text}
-          >
-            {dataStructure.name}
-          </Heading>
-
-          <Badge colorPalette="teal" variant="subtle" borderRadius="full" px={2} fontSize="2xs">
-            Data Structure
-          </Badge>
-        </Flex>
-
-        <Flex align="center" gap={2}>
-          <Text
-            fontSize="xs"
-            color={COLOR_TOKENS.textMuted}
-            fontFamily="var(--font-mono)"
-            display={{ base: 'none', sm: 'block' }}
-          >
-            Switch:
-          </Text>
-          <select
-            value={dataStructure.id}
-            onChange={(e) => {
-              const targetId = e.target.value;
-              const isDS = dataStructures.some((d) => d.id === targetId);
-              const isSort = sortingAlgorithms.some((s) => s.id === targetId);
-              if (isDS) router.push(`/data-structures/${targetId}`);
-              else if (isSort) router.push(`/sorting/${targetId}`);
-              else router.push(`/searching/${targetId}`);
-            }}
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              color: 'var(--color-text)',
-              border: '1px solid var(--color-border)',
-              borderRadius: '6px',
-              padding: '5px 10px',
-              fontSize: '12px',
-              fontFamily: 'var(--font-mono)',
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <optgroup
-              label="Data Structures"
-              style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-sorted)' }}
-            >
-              {dataStructures.map((d) => (
-                <option
-                  key={d.id}
-                  value={d.id}
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
-                >
-                  {d.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup
-              label="Sorting Algorithms"
-              style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-indigo)' }}
-            >
-              {sortingAlgorithms.map((a) => (
-                <option
-                  key={a.id}
-                  value={a.id}
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
-                >
-                  {a.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup
-              label="Searching Algorithms"
-              style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-violet)' }}
-            >
-              {searchingAlgorithms.map((a) => (
-                <option
-                  key={a.id}
-                  value={a.id}
-                  style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
-                >
-                  {a.name}
-                </option>
-              ))}
-            </optgroup>
-          </select>
-        </Flex>
-      </Flex>
+      <PageNavHeader
+        title={dataStructure.name}
+        category={dataStructure.category}
+        currentId={dataStructure.id}
+      />
 
       <Box
         bg={COLOR_TOKENS.surface}
