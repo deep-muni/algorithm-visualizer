@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Container, Flex, Grid, Text, Separator } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import { Box, Container, Flex, Grid, Text, Separator, Button, Badge } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
 import { VisualizerBarChart } from './visualizer-bar-chart';
 import { VisualizerControls } from './visualizer-controls';
@@ -37,6 +38,30 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
     toggleSound,
   } = useVisualizer(algorithm.id);
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT'
+      ) {
+        return;
+      }
+      if (e.code === 'KeyZ') {
+        e.preventDefault();
+        setIsFullscreen((prev) => !prev);
+      } else if (e.code === 'Escape' && isFullscreen) {
+        e.preventDefault();
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
   const isRunning = playbackState === 'playing';
   const legendItems = getLegendItems(algorithm.category);
 
@@ -52,13 +77,68 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
 
       <Box
         bg={COLOR_TOKENS.surface}
-        borderRadius="2xl"
-        border="1px solid"
+        borderRadius={isFullscreen ? '0' : '2xl'}
+        border={isFullscreen ? 'none' : '1px solid'}
         borderColor={COLOR_TOKENS.border}
         p={{ base: 4, md: 6 }}
         mb={6}
-        boxShadow="0 8px 32px rgba(0, 0, 0, 0.25)"
+        boxShadow={isFullscreen ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.25)'}
+        style={
+          isFullscreen
+            ? {
+                position: 'fixed',
+                inset: 0,
+                zIndex: 9999,
+                background: 'var(--color-bg)',
+                padding: '24px 32px',
+                margin: 0,
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }
+            : undefined
+        }
       >
+        {isFullscreen && (
+          <Flex
+            justify="space-between"
+            align="center"
+            mb={4}
+            pb={3}
+            borderBottom="1px solid var(--color-border)"
+          >
+            <Flex align="center" gap={3}>
+              <Badge colorPalette="indigo" size="md" variant="subtle">
+                FOCUS MODE (100% CANVAS)
+              </Badge>
+              <Text
+                fontSize="md"
+                fontWeight="bold"
+                fontFamily="var(--font-mono)"
+                color="var(--color-text)"
+              >
+                {algorithm.name}
+              </Text>
+            </Flex>
+            <Button
+              size="xs"
+              variant="outline"
+              borderColor="var(--color-border)"
+              color="var(--color-text)"
+              _hover={{
+                borderColor: COLOR_TOKENS.danger,
+                color: COLOR_TOKENS.danger,
+                bg: 'rgba(248, 113, 113, 0.1)',
+              }}
+              onClick={() => setIsFullscreen(false)}
+              fontFamily="var(--font-mono)"
+            >
+              ✕ Exit Focus (Key: Z or Esc)
+            </Button>
+          </Flex>
+        )}
+
         {currentStepData && <VisualizerBarChart step={currentStepData} />}
 
         <Flex
@@ -92,6 +172,7 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
           comparisonCount={comparisonCount}
           swapCount={swapCount}
           isMuted={isMuted}
+          isFullscreen={isFullscreen}
           onPlay={play}
           onPause={pause}
           onStepBack={stepBackward}
@@ -101,6 +182,7 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
           onSpeedChange={setSpeed}
           onRegenerate={regenerate}
           onToggleSound={toggleSound}
+          onToggleFullscreen={() => setIsFullscreen((prev) => !prev)}
         />
       </Box>
 

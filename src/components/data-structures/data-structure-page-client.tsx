@@ -1,6 +1,7 @@
 'use client';
 
-import { Container, Grid, Box, Flex, Text, Separator } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import { Container, Grid, Box, Flex, Text, Separator, Button, Badge } from '@chakra-ui/react';
 import type { DataStructureInfo } from '@/types/algorithm';
 import { CodePanel, ComplexityCard, PageNavHeader } from '@/components/shared';
 import { StackVisualizer } from './stack-visualizer';
@@ -14,6 +15,30 @@ interface DataStructurePageClientProps {
 }
 
 export function DataStructurePageClient({ dataStructure }: DataStructurePageClientProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT'
+      ) {
+        return;
+      }
+      if (e.code === 'KeyZ') {
+        e.preventDefault();
+        setIsFullscreen((prev) => !prev);
+      } else if (e.code === 'Escape' && isFullscreen) {
+        e.preventDefault();
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
   const legendItems = getLegendItems(dataStructure.category);
 
   return (
@@ -26,13 +51,79 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
 
       <Box
         bg={COLOR_TOKENS.surface}
-        borderRadius="2xl"
-        border="1px solid"
+        borderRadius={isFullscreen ? '0' : '2xl'}
+        border={isFullscreen ? 'none' : '1px solid'}
         borderColor={COLOR_TOKENS.border}
         p={{ base: 4, md: 6 }}
         mb={6}
-        boxShadow="0 8px 32px rgba(0, 0, 0, 0.25)"
+        boxShadow={isFullscreen ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.25)'}
+        style={
+          isFullscreen
+            ? {
+                position: 'fixed',
+                inset: 0,
+                zIndex: 9999,
+                background: 'var(--color-bg)',
+                padding: '24px 32px',
+                margin: 0,
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }
+            : undefined
+        }
       >
+        <Flex
+          justify="space-between"
+          align="center"
+          mb={4}
+          pb={3}
+          borderBottom="1px solid var(--color-border)"
+        >
+          <Flex align="center" gap={3}>
+            {isFullscreen ? (
+              <Badge colorPalette="indigo" size="md" variant="subtle">
+                FOCUS MODE (100% CANVAS)
+              </Badge>
+            ) : (
+              <Text
+                fontSize="xs"
+                fontWeight="bold"
+                fontFamily="var(--font-mono)"
+                color={COLOR_TOKENS.textMuted}
+                textTransform="uppercase"
+                letterSpacing="0.05em"
+              >
+                Interactive Canvas
+              </Text>
+            )}
+            <Text
+              fontSize="md"
+              fontWeight="bold"
+              fontFamily="var(--font-mono)"
+              color="var(--color-text)"
+            >
+              {dataStructure.name}
+            </Text>
+          </Flex>
+          <Button
+            size="xs"
+            variant="outline"
+            borderColor="var(--color-border)"
+            color="var(--color-text)"
+            _hover={{
+              borderColor: isFullscreen ? COLOR_TOKENS.danger : COLOR_TOKENS.default,
+              color: isFullscreen ? COLOR_TOKENS.danger : COLOR_TOKENS.default,
+              bg: isFullscreen ? 'rgba(248, 113, 113, 0.1)' : 'var(--color-surface-light)',
+            }}
+            onClick={() => setIsFullscreen((prev) => !prev)}
+            fontFamily="var(--font-mono)"
+          >
+            {isFullscreen ? '✕ Exit Focus (Key: Z or Esc)' : '⛶ Focus Mode (Key: Z)'}
+          </Button>
+        </Flex>
+
         {dataStructure.id === 'stack' && <StackVisualizer />}
         {dataStructure.id === 'queue' && <QueueVisualizer />}
         {dataStructure.id === 'singly-linked-list' && <LinkedListVisualizer isDoubly={false} />}

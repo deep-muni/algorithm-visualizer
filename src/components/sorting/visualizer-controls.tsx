@@ -11,6 +11,7 @@ interface VisualizerControlsProps {
   comparisonCount?: number;
   swapCount?: number;
   isMuted?: boolean;
+  isFullscreen?: boolean;
   onPlay: () => void;
   onPause: () => void;
   onStepBack: () => void;
@@ -20,6 +21,7 @@ interface VisualizerControlsProps {
   onSpeedChange: (speed: number) => void;
   onRegenerate: () => void;
   onToggleSound?: () => void;
+  onToggleFullscreen?: () => void;
 }
 
 const speedOptions = [
@@ -37,6 +39,7 @@ export function VisualizerControls({
   comparisonCount = 0,
   swapCount = 0,
   isMuted = true,
+  isFullscreen = false,
   onPlay,
   onPause,
   onStepBack,
@@ -46,6 +49,7 @@ export function VisualizerControls({
   onSpeedChange,
   onRegenerate,
   onToggleSound,
+  onToggleFullscreen,
 }: VisualizerControlsProps) {
   const isPlaying = playbackState === 'playing';
   const isDone = playbackState === 'done';
@@ -56,7 +60,6 @@ export function VisualizerControls({
 
   return (
     <Box w="full" pt={1}>
-      {/* Interactive Timeline Scrubber */}
       <Box mb={4} px={1}>
         <Flex justify="space-between" align="center" mb={1.5}>
           <Flex align="center" gap={2}>
@@ -109,7 +112,6 @@ export function VisualizerControls({
         />
       </Box>
 
-      {/* Main Controls Row */}
       <Flex
         direction={{ base: 'column', md: 'row' }}
         justify="space-between"
@@ -117,7 +119,6 @@ export function VisualizerControls({
         gap={4}
         w="full"
       >
-        {/* Telemetry Live Counters */}
         <Flex align="center" gap={2} wrap="wrap">
           <Box
             bg={COLOR_TOKENS.surfaceLight}
@@ -162,7 +163,6 @@ export function VisualizerControls({
           </Box>
         </Flex>
 
-        {/* Playback Button Controls */}
         <Flex align="center" gap={2}>
           <IconButton
             aria-label="New random array"
@@ -170,7 +170,7 @@ export function VisualizerControls({
             size="sm"
             borderRadius="full"
             color={COLOR_TOKENS.textMuted}
-            _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surfaceLight }}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
             onClick={onRegenerate}
             title="New random array"
           >
@@ -183,7 +183,7 @@ export function VisualizerControls({
             size="sm"
             borderRadius="full"
             color={COLOR_TOKENS.textMuted}
-            _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surfaceLight }}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
             onClick={onReset}
             disabled={currentStep === 0 && playbackState === 'idle'}
             title="Reset to beginning (Key: R)"
@@ -197,7 +197,7 @@ export function VisualizerControls({
             size="sm"
             borderRadius="full"
             color={COLOR_TOKENS.textMuted}
-            _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surfaceLight }}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
             onClick={onStepBack}
             disabled={!canGoBack}
             title="Step backward (Key: ←)"
@@ -211,7 +211,12 @@ export function VisualizerControls({
             borderRadius="full"
             bg={COLOR_TOKENS.default}
             color="white"
-            _hover={{ filter: 'brightness(1.15)', transform: 'scale(1.05)' }}
+            _hover={{
+              filter: 'brightness(1.15)',
+              transform: 'scale(1.05)',
+              bg: COLOR_TOKENS.default,
+              color: 'white',
+            }}
             transition="all 0.15s ease"
             boxShadow="0 0 16px rgba(129, 140, 248, 0.45)"
             onClick={isPlaying ? onPause : onPlay}
@@ -227,7 +232,7 @@ export function VisualizerControls({
             size="sm"
             borderRadius="full"
             color={COLOR_TOKENS.textMuted}
-            _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surfaceLight }}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
             onClick={onStepForward}
             disabled={!canGoForward}
             title="Step forward (Key: →)"
@@ -242,16 +247,34 @@ export function VisualizerControls({
               size="sm"
               borderRadius="full"
               color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-              _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surfaceLight }}
+              _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
               onClick={onToggleSound}
               title={isMuted ? 'Enable sound synthesis (Key: M)' : 'Mute sound synthesis (Key: M)'}
             >
               {isMuted ? '🔇' : '🔊'}
             </IconButton>
           )}
+
+          {onToggleFullscreen && (
+            <IconButton
+              aria-label={isFullscreen ? 'Exit Focus Mode' : 'Enter Focus Mode'}
+              variant="ghost"
+              size="sm"
+              borderRadius="full"
+              color={isFullscreen ? COLOR_TOKENS.default : COLOR_TOKENS.textMuted}
+              _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
+              onClick={onToggleFullscreen}
+              title={
+                isFullscreen
+                  ? 'Exit Fullscreen Focus (Key: Z or Esc)'
+                  : 'Fullscreen Focus Canvas (Key: Z)'
+              }
+            >
+              {isFullscreen ? '✕' : '⛶'}
+            </IconButton>
+          )}
         </Flex>
 
-        {/* Speed Controls */}
         <Flex align="center" gap={1}>
           <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)" mr={1}>
             Speed:
@@ -266,8 +289,8 @@ export function VisualizerControls({
                 bg={isActive ? COLOR_TOKENS.default : 'transparent'}
                 color={isActive ? 'white' : COLOR_TOKENS.textMuted}
                 _hover={{
-                  color: COLOR_TOKENS.text,
-                  bg: isActive ? COLOR_TOKENS.default : COLOR_TOKENS.surfaceLight,
+                  color: isActive ? 'white' : COLOR_TOKENS.text,
+                  bg: isActive ? COLOR_TOKENS.default : 'var(--color-surface)',
                 }}
                 borderRadius="md"
                 fontFamily="var(--font-mono)"
@@ -280,7 +303,6 @@ export function VisualizerControls({
         </Flex>
       </Flex>
 
-      {/* Keyboard Shortcut Hints */}
       <Flex justify="center" align="center" gap={2} mt={3} opacity={0.6}>
         <Text fontSize="2xs" fontFamily="var(--font-mono)" color={COLOR_TOKENS.textMuted}>
           Shortcuts:{' '}
@@ -293,7 +315,7 @@ export function VisualizerControls({
           >
             Space
           </kbd>{' '}
-          Play/Pause •{' '}
+          Play •{' '}
           <kbd
             style={{
               padding: '1px 4px',
@@ -323,7 +345,17 @@ export function VisualizerControls({
           >
             M
           </kbd>{' '}
-          Sound
+          Sound •{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            Z
+          </kbd>{' '}
+          Focus
         </Text>
       </Flex>
     </Box>
