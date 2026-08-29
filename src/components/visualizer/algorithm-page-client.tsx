@@ -1,11 +1,14 @@
 'use client';
 
-import { Box, Container, Flex, Grid, Text, Heading, Separator } from '@chakra-ui/react';
+import Link from 'next/link';
+import { Box, Container, Flex, Grid, Text, Heading, Separator, Button } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
 import { VisualizerBarChart } from '@/components/visualizer/visualizer-bar-chart';
 import { VisualizerControls } from '@/components/visualizer/visualizer-controls';
+import { ArrayConfigBar } from '@/components/visualizer/array-config-bar';
 import { CodePanel } from '@/components/visualizer/code-panel';
 import { ComplexityCard } from '@/components/visualizer/complexity-card';
+import { algorithms } from '@/data';
 import type { AlgorithmInfo } from '@/types/algorithm';
 
 interface AlgorithmPageClientProps {
@@ -25,11 +28,49 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
     stepForward,
     stepBackward,
     reset,
+    setCustomArray,
     regenerate,
   } = useVisualizer(algorithm.id);
 
+  const isRunning = playbackState === 'playing';
+
   return (
     <Container maxW="1200px" py={8} px={4}>
+      <Flex justify="space-between" align="center" mb={4} wrap="wrap" gap={2}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Button
+            size="xs"
+            variant="ghost"
+            color="whiteAlpha.800"
+            _hover={{ color: 'white', bg: 'whiteAlpha.200' }}
+            fontFamily="var(--font-mono)"
+          >
+            ← Back to Algorithms
+          </Button>
+        </Link>
+
+        <Flex gap={1} wrap="wrap">
+          {algorithms.map((algo) => {
+            const isActive = algo.id === algorithm.id;
+            return (
+              <Link key={algo.id} href={`/algorithm/${algo.id}`} style={{ textDecoration: 'none' }}>
+                <Button
+                  size="xs"
+                  variant={isActive ? 'solid' : 'ghost'}
+                  bg={isActive ? 'indigo.600' : 'transparent'}
+                  color={isActive ? 'white' : 'whiteAlpha.700'}
+                  _hover={{ bg: isActive ? 'indigo.500' : 'whiteAlpha.200', color: 'white' }}
+                  borderRadius="md"
+                  fontFamily="var(--font-mono)"
+                >
+                  {algo.name}
+                </Button>
+              </Link>
+            );
+          })}
+        </Flex>
+      </Flex>
+
       <Box mb={6}>
         <Heading
           as="h1"
@@ -45,6 +86,8 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
         </Text>
       </Box>
 
+      <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} />
+
       <Grid templateColumns={{ base: '1fr', lg: '1fr 340px' }} gap={6}>
         <Box>
           <Box
@@ -59,16 +102,18 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
 
             <Flex
               mt={4}
-              px={2}
+              px={3}
               py={3}
-              bg="whiteAlpha.200"
+              bg="whiteAlpha.100"
               borderRadius="lg"
+              border="1px solid"
+              borderColor="whiteAlpha.200"
               align="center"
               minH="44px"
             >
               <Text
                 fontSize="sm"
-                color="whiteAlpha.800"
+                color="whiteAlpha.900"
                 fontFamily="var(--font-mono)"
               >
                 {currentStepData?.description ?? ''}
@@ -141,10 +186,10 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             </Text>
             <Flex direction="column" gap={2}>
               {[
-                { color: '#4f46e5', label: 'Unsorted' },
-                { color: '#f59e0b', label: 'Comparing' },
-                { color: '#ef4444', label: 'Swapping' },
-                { color: '#10b981', label: 'Sorted' },
+                { color: '#818cf8', label: 'Unsorted' },
+                { color: '#fbbf24', label: 'Comparing' },
+                { color: '#f87171', label: 'Swapping' },
+                { color: '#34d399', label: 'Sorted' },
               ].map(({ color, label }) => (
                 <Flex key={label} align="center" gap={3}>
                   <Box w="14px" h="14px" borderRadius="sm" bg={color} flexShrink={0} />
