@@ -9,6 +9,16 @@ import { COLOR_TOKENS } from '@/config/colors';
 type FilterCategory = 'all' | 'data-structures' | 'sorting' | 'searching';
 type ComplexityFilter = 'all' | 'O(1)' | 'O(log n)' | 'O(n log n)' | 'O(n^2)';
 
+function getComplexityColor(comp: string) {
+  if (comp === 'O(1)' || (comp.includes('log n') && !comp.includes('n log n'))) {
+    return COLOR_TOKENS.success;
+  }
+  if (comp.includes('n log n') || comp === 'O(n)') {
+    return COLOR_TOKENS.warning;
+  }
+  return COLOR_TOKENS.danger;
+}
+
 export function HomeCatalog() {
   const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('all');
   const [selectedComplexity, setSelectedComplexity] = useState<ComplexityFilter>('all');
@@ -50,8 +60,8 @@ export function HomeCatalog() {
         algo.shortDescription.toLowerCase().includes(query);
       const compMatch =
         selectedComplexity === 'all' ||
-        matchesComplexity(algo.complexity.average, selectedComplexity) ||
-        matchesComplexity(algo.complexity.worst, selectedComplexity);
+        matchesComplexity(algo.complexity.worst, selectedComplexity) ||
+        matchesComplexity(algo.complexity.average, selectedComplexity);
       return catMatch && textMatch && compMatch;
     });
   }, [selectedCategory, query, selectedComplexity]);
@@ -65,8 +75,8 @@ export function HomeCatalog() {
         algo.shortDescription.toLowerCase().includes(query);
       const compMatch =
         selectedComplexity === 'all' ||
-        matchesComplexity(algo.complexity.average, selectedComplexity) ||
-        matchesComplexity(algo.complexity.worst, selectedComplexity);
+        matchesComplexity(algo.complexity.worst, selectedComplexity) ||
+        matchesComplexity(algo.complexity.average, selectedComplexity);
       return catMatch && textMatch && compMatch;
     });
   }, [selectedCategory, query, selectedComplexity]);
@@ -321,7 +331,7 @@ export function HomeCatalog() {
             color={COLOR_TOKENS.textMuted}
             mb={2.5}
           >
-            Big-O Complexity Filter
+            Big-O (Worst Case) Filter
           </Text>
 
           <Flex gap={1.5} wrap="wrap">
@@ -483,12 +493,20 @@ export function HomeCatalog() {
                   href={`/data-structures/${ds.id}`}
                   metrics={[
                     {
-                      label: 'Insert',
+                      label: 'Worst Insert',
                       value: ds.complexity.insertion,
-                      color: COLOR_TOKENS.success,
+                      color: getComplexityColor(ds.complexity.insertion),
                     },
-                    { label: 'Delete', value: ds.complexity.deletion, color: COLOR_TOKENS.success },
-                    { label: 'Space', value: ds.complexity.space, color: COLOR_TOKENS.default },
+                    {
+                      label: 'Worst Search',
+                      value: ds.complexity.search,
+                      color: getComplexityColor(ds.complexity.search),
+                    },
+                    {
+                      label: 'Space',
+                      value: ds.complexity.space,
+                      color: COLOR_TOKENS.default,
+                    },
                   ]}
                 />
               ))}
@@ -519,17 +537,21 @@ export function HomeCatalog() {
                   description={algo.shortDescription}
                   href={`/sorting/${algo.id}`}
                   metrics={[
-                    { label: 'Avg', value: algo.complexity.average, color: COLOR_TOKENS.warning },
-                    { label: 'Space', value: algo.complexity.space, color: COLOR_TOKENS.default },
-                    ...(algo.stable !== undefined
-                      ? [
-                          {
-                            label: 'Stability',
-                            value: algo.stable ? 'Stable' : 'Unstable',
-                            color: algo.stable ? COLOR_TOKENS.success : COLOR_TOKENS.danger,
-                          },
-                        ]
-                      : []),
+                    {
+                      label: 'Worst',
+                      value: algo.complexity.worst,
+                      color: getComplexityColor(algo.complexity.worst),
+                    },
+                    {
+                      label: 'Avg',
+                      value: algo.complexity.average,
+                      color: getComplexityColor(algo.complexity.average),
+                    },
+                    {
+                      label: 'Space',
+                      value: algo.complexity.space,
+                      color: COLOR_TOKENS.default,
+                    },
                   ]}
                 />
               ))}
@@ -560,17 +582,21 @@ export function HomeCatalog() {
                   description={algo.shortDescription}
                   href={`/searching/${algo.id}`}
                   metrics={[
-                    { label: 'Avg', value: algo.complexity.average, color: COLOR_TOKENS.warning },
-                    { label: 'Space', value: algo.complexity.space, color: COLOR_TOKENS.default },
-                    ...(algo.stable !== undefined
-                      ? [
-                          {
-                            label: 'Stability',
-                            value: algo.stable ? 'Stable' : 'Unstable',
-                            color: algo.stable ? COLOR_TOKENS.success : COLOR_TOKENS.danger,
-                          },
-                        ]
-                      : []),
+                    {
+                      label: 'Worst',
+                      value: algo.complexity.worst,
+                      color: getComplexityColor(algo.complexity.worst),
+                    },
+                    {
+                      label: 'Avg',
+                      value: algo.complexity.average,
+                      color: getComplexityColor(algo.complexity.average),
+                    },
+                    {
+                      label: 'Space',
+                      value: algo.complexity.space,
+                      color: COLOR_TOKENS.default,
+                    },
                   ]}
                 />
               ))}
