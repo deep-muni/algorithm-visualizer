@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Flex, Heading, Badge, IconButton, Button } from '@chakra-ui/react';
+import { Flex, Heading, Badge, IconButton } from '@chakra-ui/react';
 import { AlgorithmSwitcher } from './algorithm-switcher';
 import { COLOR_TOKENS } from '@/config/colors';
 import type { AlgorithmCategory } from '@/types/algorithm';
@@ -10,6 +10,8 @@ interface PageNavHeaderProps {
   title: string;
   category: AlgorithmCategory;
   currentId: string;
+  isMuted?: boolean;
+  onToggleSound?: () => void;
   onShare?: () => void;
   isCopied?: boolean;
   isFullscreen?: boolean;
@@ -20,6 +22,8 @@ export function PageNavHeader({
   title,
   category,
   currentId,
+  isMuted,
+  onToggleSound,
   onShare,
   isCopied,
   isFullscreen,
@@ -44,6 +48,8 @@ export function PageNavHeader({
             color={COLOR_TOKENS.text}
             _hover={{ borderColor: COLOR_TOKENS.default, bg: COLOR_TOKENS.surfaceLight }}
             title="Back to all algorithms"
+            h="28px"
+            w="28px"
           >
             ←
           </IconButton>
@@ -72,10 +78,35 @@ export function PageNavHeader({
       </Flex>
 
       <Flex align="center" gap={2} wrap="wrap">
-        {onShare && (
-          <Button
-            size="xs"
+        {onToggleSound && typeof isMuted === 'boolean' && (
+          <IconButton
+            aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
             variant="outline"
+            size="xs"
+            borderRadius="md"
+            borderColor={COLOR_TOKENS.border}
+            color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
+            bg="transparent"
+            _hover={{
+              borderColor: COLOR_TOKENS.default,
+              color: COLOR_TOKENS.text,
+              bg: COLOR_TOKENS.surfaceLight,
+            }}
+            onClick={onToggleSound}
+            title={isMuted ? 'Unmute sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
+            h="28px"
+            w="28px"
+          >
+            {isMuted ? '🔇' : '🔊'}
+          </IconButton>
+        )}
+
+        {onShare && (
+          <IconButton
+            aria-label="Share URL"
+            variant="outline"
+            size="xs"
+            borderRadius="md"
             borderColor={isCopied ? '#34d399' : COLOR_TOKENS.border}
             color={isCopied ? '#34d399' : COLOR_TOKENS.text}
             bg={isCopied ? 'rgba(52, 211, 153, 0.1)' : 'transparent'}
@@ -84,19 +115,21 @@ export function PageNavHeader({
               bg: isCopied ? 'rgba(52, 211, 153, 0.15)' : COLOR_TOKENS.surfaceLight,
             }}
             onClick={onShare}
-            fontFamily="var(--font-mono)"
+            title={isCopied ? '✓ URL copied to clipboard!' : 'Share URL (Key: S)'}
             h="28px"
-            px={3}
-            borderRadius="md"
+            w="28px"
+            fontSize="xs"
           >
-            {isCopied ? '✓ Copied!' : '🔗 Share URL'}
-          </Button>
+            {isCopied ? '✓' : '🔗'}
+          </IconButton>
         )}
 
         {onToggleFullscreen && (
-          <Button
-            size="xs"
+          <IconButton
+            aria-label={isFullscreen ? 'Exit Focus Mode' : 'Focus Mode'}
             variant="outline"
+            size="xs"
+            borderRadius="md"
             borderColor={isFullscreen ? COLOR_TOKENS.danger : COLOR_TOKENS.border}
             color={isFullscreen ? COLOR_TOKENS.danger : COLOR_TOKENS.text}
             bg={isFullscreen ? 'rgba(248, 113, 113, 0.1)' : 'transparent'}
@@ -106,13 +139,17 @@ export function PageNavHeader({
               bg: isFullscreen ? 'rgba(248, 113, 113, 0.15)' : COLOR_TOKENS.surfaceLight,
             }}
             onClick={onToggleFullscreen}
-            fontFamily="var(--font-mono)"
+            title={
+              isFullscreen
+                ? 'Exit Fullscreen Focus (Key: Z or Esc)'
+                : 'Fullscreen Focus Mode (Key: Z)'
+            }
             h="28px"
-            px={3}
-            borderRadius="md"
+            w="28px"
+            fontSize="xs"
           >
-            {isFullscreen ? '✕ Exit' : '⛶ Focus (Z)'}
-          </Button>
+            {isFullscreen ? '✕' : '⛶'}
+          </IconButton>
         )}
 
         <AlgorithmSwitcher currentId={currentId} />

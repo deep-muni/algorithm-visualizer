@@ -83,6 +83,8 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
         title={algorithm.name}
         category={algorithm.category}
         currentId={algorithm.id}
+        isMuted={isMuted}
+        onToggleSound={toggleSound}
         onShare={handleShare}
         isCopied={copied}
         isFullscreen={isFullscreen}
