@@ -13,8 +13,8 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
     nodes,
     operationLog,
     error,
-    inputValue,
-    isMuted,
+    insertValue,
+    insertAtValue,
     deleteValue,
     searchValue,
     insertIndex,
@@ -22,16 +22,19 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
     unlinkingIndex,
     foundIndex,
     insertingAtIndex,
+    animatingStatus,
     isAnimating,
-    setInputValue,
+    isMuted,
+    setInsertValue,
+    setInsertAtValue,
     setDeleteValue,
     setSearchValue,
     setInsertIndex,
     reverseList,
     clear,
     toggleSound,
-    handleInsertHeadSubmit,
-    handleInsertTailSubmit,
+    handleInsertHead,
+    handleInsertTail,
     handleInsertAtSubmit,
     handleDeleteSubmit,
     handleFindSubmit,
@@ -50,20 +53,21 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
         border="1px solid"
         borderColor={COLOR_TOKENS.border}
       >
-        {/* Row 1: Insertions */}
+        {/* Row 1: Insert Head, Insert Tail & Insert At Index */}
         <Flex
-          direction={{ base: 'column', md: 'row' }}
+          direction={{ base: 'column', lg: 'row' }}
           gap={3}
           justify="space-between"
-          align="center"
+          align={{ base: 'stretch', lg: 'center' }}
         >
+          {/* Head & Tail Insert */}
           <Flex align="center" gap={2} wrap="wrap">
             <Input
               size="xs"
               placeholder="Val"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              w="60px"
+              value={insertValue}
+              onChange={(e) => setInsertValue(e.target.value)}
+              w="55px"
               bg="var(--color-bg)"
               color={COLOR_TOKENS.text}
               borderColor={COLOR_TOKENS.border}
@@ -75,7 +79,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
               bg={COLOR_TOKENS.default}
               color="white"
               _hover={{ filter: 'brightness(1.15)' }}
-              onClick={handleInsertHeadSubmit}
+              onClick={() => handleInsertHead()}
               fontFamily="var(--font-mono)"
               disabled={isAnimating}
             >
@@ -86,8 +90,8 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
               variant="outline"
               borderColor={COLOR_TOKENS.border}
               color={COLOR_TOKENS.text}
-              _hover={{ borderColor: COLOR_TOKENS.default }}
-              onClick={handleInsertTailSubmit}
+              _hover={{ borderColor: COLOR_TOKENS.default, bg: 'var(--color-surface)' }}
+              onClick={() => handleInsertTail()}
               fontFamily="var(--font-mono)"
               disabled={isAnimating}
             >
@@ -95,7 +99,23 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
             </Button>
           </Flex>
 
-          <Flex as="form" onSubmit={handleInsertAtSubmit} align="center" gap={2} wrap="wrap">
+          {/* Insert at Index Form */}
+          <Flex as="form" onSubmit={handleInsertAtSubmit} align="center" gap={1.5} wrap="wrap">
+            <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+              Val:
+            </Text>
+            <Input
+              size="xs"
+              placeholder="Val"
+              value={insertAtValue}
+              onChange={(e) => setInsertAtValue(e.target.value)}
+              w="50px"
+              bg="var(--color-bg)"
+              color={COLOR_TOKENS.text}
+              borderColor={COLOR_TOKENS.border}
+              fontFamily="var(--font-mono)"
+              disabled={isAnimating}
+            />
             <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
               @ idx:
             </Text>
@@ -104,7 +124,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
               placeholder="Idx"
               value={insertIndex}
               onChange={(e) => setInsertIndex(e.target.value)}
-              w="45px"
+              w="40px"
               bg="var(--color-bg)"
               color={COLOR_TOKENS.text}
               borderColor={COLOR_TOKENS.border}
@@ -115,9 +135,9 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
               type="submit"
               size="xs"
               variant="outline"
-              borderColor={COLOR_TOKENS.border}
+              borderColor={COLOR_TOKENS.default}
               color={COLOR_TOKENS.default}
-              _hover={{ borderColor: COLOR_TOKENS.default, bg: 'rgba(129, 140, 248, 0.1)' }}
+              _hover={{ bg: 'rgba(129, 140, 248, 0.15)' }}
               fontFamily="var(--font-mono)"
               disabled={isAnimating}
             >
@@ -128,23 +148,23 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
 
         {/* Row 2: Search, Delete & Global Controls */}
         <Flex
-          direction={{ base: 'column', md: 'row' }}
+          direction={{ base: 'column', lg: 'row' }}
           gap={3}
           justify="space-between"
-          align="center"
+          align={{ base: 'stretch', lg: 'center' }}
           pt={2}
           borderTop="1px dashed"
           borderColor={COLOR_TOKENS.border}
         >
-          <Flex align="center" gap={2} wrap="wrap">
+          <Flex align="center" gap={3} wrap="wrap">
             {/* Find */}
-            <Flex as="form" onSubmit={handleFindSubmit} align="center" gap={2}>
+            <Flex as="form" onSubmit={handleFindSubmit} align="center" gap={1.5}>
               <Input
                 size="xs"
                 placeholder="Find"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                w="60px"
+                w="55px"
                 bg="var(--color-bg)"
                 color={COLOR_TOKENS.text}
                 borderColor={COLOR_TOKENS.border}
@@ -155,24 +175,24 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 type="submit"
                 size="xs"
                 variant="outline"
-                borderColor={COLOR_TOKENS.border}
+                borderColor={COLOR_TOKENS.compare}
                 color={COLOR_TOKENS.compare}
-                _hover={{ borderColor: COLOR_TOKENS.compare, bg: 'rgba(251, 191, 36, 0.1)' }}
+                _hover={{ bg: 'rgba(251, 191, 36, 0.15)' }}
                 fontFamily="var(--font-mono)"
                 disabled={isAnimating || nodes.length === 0}
               >
-                Find / Traverse (F)
+                Find (F)
               </Button>
             </Flex>
 
             {/* Delete */}
-            <Flex as="form" onSubmit={handleDeleteSubmit} align="center" gap={2}>
+            <Flex as="form" onSubmit={handleDeleteSubmit} align="center" gap={1.5}>
               <Input
                 size="xs"
                 placeholder="Del"
                 value={deleteValue}
                 onChange={(e) => setDeleteValue(e.target.value)}
-                w="60px"
+                w="55px"
                 bg="var(--color-bg)"
                 color={COLOR_TOKENS.text}
                 borderColor={COLOR_TOKENS.border}
@@ -183,9 +203,9 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 type="submit"
                 size="xs"
                 variant="outline"
-                borderColor={COLOR_TOKENS.border}
+                borderColor={COLOR_TOKENS.danger}
                 color={COLOR_TOKENS.danger}
-                _hover={{ borderColor: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.1)' }}
+                _hover={{ bg: 'rgba(248, 113, 113, 0.15)' }}
                 disabled={isAnimating || nodes.length === 0}
                 fontFamily="var(--font-mono)"
               >
@@ -194,7 +214,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
             </Flex>
           </Flex>
 
-          <Flex align="center" gap={2}>
+          <Flex align="center" gap={2} wrap="wrap">
             {!isDoubly && (
               <Button
                 size="xs"
@@ -254,7 +274,25 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
         border="1px solid"
         borderColor={COLOR_TOKENS.border}
         overflowX="auto"
+        position="relative"
       >
+        {animatingStatus && (
+          <Box position="absolute" top={3} right={4}>
+            <Badge
+              colorPalette={
+                unlinkingIndex !== null ? 'red' : foundIndex !== null ? 'green' : 'yellow'
+              }
+              variant="subtle"
+              size="xs"
+              borderRadius="full"
+              px={2.5}
+              py={0.5}
+            >
+              ⚡ {animatingStatus}
+            </Badge>
+          </Box>
+        )}
+
         <Flex align="center" gap={3} minW="max-content" py={6}>
           <Box mr={1} textAlign="center">
             <Badge colorPalette="teal" size="xs" variant="solid" px={2} borderRadius="full">
@@ -290,7 +328,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                         size="xs"
                         borderRadius="full"
                         px={2}
-                        animation="pulse 1s infinite"
                       >
                         👉 current
                       </Badge>
