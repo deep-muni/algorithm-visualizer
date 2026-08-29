@@ -1,12 +1,7 @@
 export type AlgorithmCategory = 'sorting' | 'searching';
 
 export type SortingAlgorithmId =
-  | 'bubble-sort'
-  | 'selection-sort'
-  | 'insertion-sort'
-  | 'merge-sort'
-  | 'quick-sort'
-  | 'heap-sort';
+  'bubble-sort' | 'selection-sort' | 'insertion-sort' | 'merge-sort' | 'quick-sort' | 'heap-sort';
 
 export type SearchingAlgorithmId = 'linear-search' | 'binary-search';
 

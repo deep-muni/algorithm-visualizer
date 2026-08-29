@@ -1,15 +1,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 4rem;
+    scroll-padding-top: 2rem;
   }
 
   body {
-    background-color: #0a0a0f;
-    color: rgba(255, 255, 255, 0.87);
+    background-color: var(--color-bg);
+    color: var(--color-text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   ::selection {
@@ -22,16 +23,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #0a0a0f;
+    background: var(--color-bg);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--color-border-accent);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--color-indigo);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -46,8 +47,8 @@
   }
 }
 
-/* CSS custom properties for theme tokens */
-:root {
+:root,
+[data-theme="dark"] {
   --color-bg: #0d0d14;
   --color-surface: #16162a;
   --color-surface-light: #1f1f35;
@@ -57,7 +58,24 @@
   --color-indigo-dim: #6366f1;
   --color-indigo-light: #a5b4fc;
   --color-violet: #a78bfa;
-  --color-text-muted: rgba(255, 255, 255, 0.6);
+  --color-text-muted: rgba(255, 255, 255, 0.65);
+  --color-text: rgba(255, 255, 255, 0.92);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+[data-theme="light"] {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-light: #f1f5f9;
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-border-accent: rgba(99, 102, 241, 0.45);
+  --color-indigo: #4f46e5;
+  --color-indigo-dim: #4338ca;
+  --color-indigo-light: #6366f1;
+  --color-violet: #7c3aed;
+  --color-text-muted: rgba(0, 0, 0, 0.65);
+  --color-text: #0f172a;
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
 }

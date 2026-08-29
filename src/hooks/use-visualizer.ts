@@ -25,7 +25,9 @@ interface UseVisualizerReturn {
 
 export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
   const [array, setArray] = useState<number[]>(DEFAULT_ARRAY);
-  const [steps, setSteps] = useState<VisualizationStep[]>(() => generateSteps(algorithmId, DEFAULT_ARRAY));
+  const [steps, setSteps] = useState<VisualizationStep[]>(() =>
+    generateSteps(algorithmId, DEFAULT_ARRAY)
+  );
   const [currentStep, setCurrentStep] = useState(0);
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle');
   const [speed, setSpeed] = useState(500);
