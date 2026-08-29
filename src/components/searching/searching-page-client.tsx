@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Box, Container, Flex, Grid, Text, Separator } from '@chakra-ui/react';
+import { Box, Container, Flex, Grid, Text, Separator, Badge, Button } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
 import { VisualizerBarChart } from '@/components/sorting/visualizer-bar-chart';
 import { VisualizerControls } from '@/components/sorting/visualizer-controls';
 import { ArrayConfigBar } from '@/components/sorting/array-config-bar';
-import { CodePanel, ComplexityCard, PageNavHeader, VisualizerHeaderBar } from '@/components/shared';
+import { CodePanel, ComplexityCard, PageNavHeader } from '@/components/shared';
 import { getLegendItems } from '@/lib/algorithm-utils';
 import { COLOR_TOKENS } from '@/config/colors';
 import type { AlgorithmInfo } from '@/types/algorithm';
@@ -83,6 +83,10 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
         title={algorithm.name}
         category={algorithm.category}
         currentId={algorithm.id}
+        onShare={handleShare}
+        isCopied={copied}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={() => setIsFullscreen((prev) => !prev)}
       />
 
       <Box
@@ -110,21 +114,44 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
             : undefined
         }
       >
-        <VisualizerHeaderBar
-          badgeLabel={algorithm.category.toUpperCase()}
-          badgePalette="indigo"
-          title={algorithm.name}
-          telemetry={[
-            { label: 'Elements', value: array.length },
-            { label: 'Time Complexity', value: algorithm.complexity.average, isBadge: true },
-          ]}
-          isMuted={isMuted}
-          onToggleSound={toggleSound}
-          onShare={handleShare}
-          isCopied={copied}
-          isFullscreen={isFullscreen}
-          onToggleFullscreen={() => setIsFullscreen((prev) => !prev)}
-        />
+        {isFullscreen && (
+          <Flex
+            justify="space-between"
+            align="center"
+            mb={4}
+            pb={3}
+            borderBottom="1px solid var(--color-border)"
+          >
+            <Flex align="center" gap={3}>
+              <Badge colorPalette="indigo" size="md" variant="subtle">
+                FOCUS MODE (100% CANVAS)
+              </Badge>
+              <Text
+                fontSize="md"
+                fontWeight="bold"
+                fontFamily="var(--font-mono)"
+                color="var(--color-text)"
+              >
+                {algorithm.name}
+              </Text>
+            </Flex>
+            <Button
+              size="xs"
+              variant="outline"
+              borderColor="var(--color-border)"
+              color="var(--color-text)"
+              _hover={{
+                borderColor: COLOR_TOKENS.danger,
+                color: COLOR_TOKENS.danger,
+                bg: 'rgba(248, 113, 113, 0.1)',
+              }}
+              onClick={() => setIsFullscreen(false)}
+              fontFamily="var(--font-mono)"
+            >
+              ✕ Exit Focus (Key: Z or Esc)
+            </Button>
+          </Flex>
+        )}
 
         <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} currentArray={array} />
 

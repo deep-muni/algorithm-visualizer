@@ -47,6 +47,8 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
         title={dataStructure.name}
         category={dataStructure.category}
         currentId={dataStructure.id}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={() => setIsFullscreen((prev) => !prev)}
       />
 
       <Box
@@ -74,55 +76,44 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
             : undefined
         }
       >
-        <Flex
-          justify="space-between"
-          align="center"
-          mb={4}
-          pb={3}
-          borderBottom="1px solid var(--color-border)"
-        >
-          <Flex align="center" gap={3}>
-            {isFullscreen ? (
-              <Badge colorPalette="indigo" size="md" variant="subtle">
+        {isFullscreen && (
+          <Flex
+            justify="space-between"
+            align="center"
+            mb={4}
+            pb={3}
+            borderBottom="1px solid var(--color-border)"
+          >
+            <Flex align="center" gap={3}>
+              <Badge colorPalette="teal" size="md" variant="subtle">
                 FOCUS MODE (100% CANVAS)
               </Badge>
-            ) : (
               <Text
-                fontSize="xs"
+                fontSize="md"
                 fontWeight="bold"
                 fontFamily="var(--font-mono)"
-                color={COLOR_TOKENS.textMuted}
-                textTransform="uppercase"
-                letterSpacing="0.05em"
+                color="var(--color-text)"
               >
-                Interactive Canvas
+                {dataStructure.name}
               </Text>
-            )}
-            <Text
-              fontSize="md"
-              fontWeight="bold"
-              fontFamily="var(--font-mono)"
+            </Flex>
+            <Button
+              size="xs"
+              variant="outline"
+              borderColor="var(--color-border)"
               color="var(--color-text)"
+              _hover={{
+                borderColor: COLOR_TOKENS.danger,
+                color: COLOR_TOKENS.danger,
+                bg: 'rgba(248, 113, 113, 0.1)',
+              }}
+              onClick={() => setIsFullscreen(false)}
+              fontFamily="var(--font-mono)"
             >
-              {dataStructure.name}
-            </Text>
+              ✕ Exit Focus (Key: Z or Esc)
+            </Button>
           </Flex>
-          <Button
-            size="xs"
-            variant="outline"
-            borderColor="var(--color-border)"
-            color="var(--color-text)"
-            _hover={{
-              borderColor: isFullscreen ? COLOR_TOKENS.danger : COLOR_TOKENS.default,
-              color: isFullscreen ? COLOR_TOKENS.danger : COLOR_TOKENS.default,
-              bg: isFullscreen ? 'rgba(248, 113, 113, 0.1)' : 'var(--color-surface-light)',
-            }}
-            onClick={() => setIsFullscreen((prev) => !prev)}
-            fontFamily="var(--font-mono)"
-          >
-            {isFullscreen ? '✕ Exit Focus (Key: Z or Esc)' : '⛶ Focus Mode (Key: Z)'}
-          </Button>
-        </Flex>
+        )}
 
         {dataStructure.id === 'stack' && <StackVisualizer />}
         {dataStructure.id === 'queue' && <QueueVisualizer />}
