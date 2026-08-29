@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Flex, Text, Button, Code } from '@chakra-ui/react';
+import { Box, Flex, Button, Code } from '@chakra-ui/react';
 import type { AlgorithmCode, CodeLanguage } from '@/types/algorithm';
 
 interface CodePanelProps {

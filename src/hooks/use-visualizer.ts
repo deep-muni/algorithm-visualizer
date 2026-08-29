@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import type { AlgorithmId, VisualizationStep } from '@/types/algorithm';
-import { generateSteps, DEFAULT_ARRAY } from '@/lib/visualizers';
+import { generateSteps, generateRandomArray, DEFAULT_ARRAY } from '@/lib/visualizers';
 
 type PlaybackState = 'idle' | 'playing' | 'paused' | 'done';
 
@@ -91,7 +91,6 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
   );
 
   const regenerate = useCallback(() => {
-    const { generateRandomArray } = require('@/lib/visualizers');
     const newArr = generateRandomArray();
     setCustomArray(newArr);
   }, [setCustomArray]);
