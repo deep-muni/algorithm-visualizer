@@ -39,10 +39,10 @@ export function VisualizerControls({
   return (
     <Box w="full">
       <Flex justify="space-between" align="center" mb={3}>
-        <Text fontSize="xs" color="whiteAlpha.500" fontFamily="var(--font-mono)">
+        <Text fontSize="xs" color="whiteAlpha.900" fontFamily="var(--font-mono)">
           Step {currentStep + 1} / {totalSteps}
         </Text>
-        <Text fontSize="xs" color="whiteAlpha.500">
+        <Text fontSize="xs" color="whiteAlpha.900">
           Speed: {speedLabel}
         </Text>
       </Flex>
@@ -56,7 +56,7 @@ export function VisualizerControls({
           onValueChange={(e) => onSpeedChange(1000 - e.value[0])}
           flex={1}
         >
-          <Slider.Track bg="whiteAlpha.100" h="4px">
+          <Slider.Track bg="whiteAlpha.200" h="4px">
             <Slider.Range bg="indigo.500" />
           </Slider.Track>
           <Slider.Thumb index={0} boxSize={3} bg="indigo.400" />
@@ -68,8 +68,8 @@ export function VisualizerControls({
           aria-label="Regenerate array"
           variant="ghost"
           size="sm"
-          color="whiteAlpha.600"
-          _hover={{ color: 'white', bg: 'whiteAlpha.100' }}
+          color="whiteAlpha.800"
+          _hover={{ color: 'white', bg: 'whiteAlpha.200' }}
           onClick={onRegenerate}
           title="New random array"
         >
@@ -80,8 +80,8 @@ export function VisualizerControls({
           aria-label="Reset"
           variant="ghost"
           size="sm"
-          color="whiteAlpha.600"
-          _hover={{ color: 'white', bg: 'whiteAlpha.100' }}
+          color="whiteAlpha.800"
+          _hover={{ color: 'white', bg: 'whiteAlpha.200' }}
           onClick={onReset}
           disabled={currentStep === 0 && playbackState === 'idle'}
         >
@@ -92,8 +92,8 @@ export function VisualizerControls({
           aria-label="Step backward"
           variant="ghost"
           size="sm"
-          color="whiteAlpha.600"
-          _hover={{ color: 'white', bg: 'whiteAlpha.100' }}
+          color="whiteAlpha.800"
+          _hover={{ color: 'white', bg: 'whiteAlpha.200' }}
           onClick={onStepBack}
           disabled={!canGoBack}
         >
@@ -117,8 +117,8 @@ export function VisualizerControls({
           aria-label="Step forward"
           variant="ghost"
           size="sm"
-          color="whiteAlpha.600"
-          _hover={{ color: 'white', bg: 'whiteAlpha.100' }}
+          color="whiteAlpha.800"
+          _hover={{ color: 'white', bg: 'whiteAlpha.200' }}
           onClick={onStepForward}
           disabled={!canGoForward}
         >
@@ -129,8 +129,8 @@ export function VisualizerControls({
           aria-label="Skip to end"
           variant="ghost"
           size="sm"
-          color="whiteAlpha.600"
-          _hover={{ color: 'white', bg: 'whiteAlpha.100' }}
+          color="whiteAlpha.800"
+          _hover={{ color: 'white', bg: 'whiteAlpha.200' }}
           onClick={() => {
             for (let i = currentStep; i < totalSteps - 1; i++) onStepForward();
           }}

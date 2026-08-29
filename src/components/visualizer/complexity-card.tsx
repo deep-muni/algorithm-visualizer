@@ -13,13 +13,13 @@ function ComplexityBadge({ label, value }: { label: string; value: string }) {
 
   return (
     <Box
-      bg="whiteAlpha.50"
+      bg="whiteAlpha.200"
       borderRadius="lg"
       p={3}
       border="1px solid"
-      borderColor="whiteAlpha.100"
+      borderColor="whiteAlpha.300"
     >
-      <Text fontSize="xs" color="whiteAlpha.500" mb={1}>
+      <Text fontSize="xs" color="whiteAlpha.900" mb={1}>
         {label}
       </Text>
       <Text
@@ -37,7 +37,7 @@ function ComplexityBadge({ label, value }: { label: string; value: string }) {
 export function ComplexityCard({ complexity, stable, inPlace }: ComplexityCardProps) {
   return (
     <Box>
-      <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.700" mb={3}>
+      <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.900" mb={3}>
         Complexity
       </Text>
 

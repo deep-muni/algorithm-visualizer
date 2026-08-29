@@ -30,10 +30,10 @@ export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
       position="relative"
       style={
         {
-          '--color-bar-default': '#4f46e5',
-          '--color-compare': '#f59e0b',
-          '--color-swap': '#ef4444',
-          '--color-sorted': '#10b981',
+          '--color-bar-default': '#818cf8',
+          '--color-compare': '#fbbf24',
+          '--color-swap': '#f87171',
+          '--color-sorted': '#34d399',
         } as React.CSSProperties
       }
     >

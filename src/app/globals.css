@@ -48,15 +48,16 @@
 
 /* CSS custom properties for theme tokens */
 :root {
-  --color-bg: #0a0a0f;
-  --color-surface: #13131a;
-  --color-surface-light: #1a1a24;
-  --color-border: rgba(255, 255, 255, 0.06);
-  --color-border-accent: rgba(99, 102, 241, 0.25);
-  --color-indigo: #6366f1;
-  --color-indigo-light: #818cf8;
-  --color-violet: #8b5cf6;
-  --color-text-muted: rgba(255, 255, 255, 0.5);
+  --color-bg: #0d0d14;
+  --color-surface: #16162a;
+  --color-surface-light: #1f1f35;
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-border-accent: rgba(129, 140, 248, 0.45);
+  --color-indigo: #818cf8;
+  --color-indigo-dim: #6366f1;
+  --color-indigo-light: #a5b4fc;
+  --color-violet: #a78bfa;
+  --color-text-muted: rgba(255, 255, 255, 0.6);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
 }

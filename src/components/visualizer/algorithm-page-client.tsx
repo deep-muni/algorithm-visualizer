@@ -40,7 +40,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
         >
           {algorithm.name}
         </Heading>
-        <Text color="whiteAlpha.600" fontSize="md" maxW="700px">
+        <Text color="whiteAlpha.800" fontSize="md" maxW="700px">
           {algorithm.description}
         </Text>
       </Box>
@@ -51,7 +51,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             bg="var(--color-surface)"
             borderRadius="2xl"
             border="1px solid"
-            borderColor="whiteAlpha.100"
+            borderColor="whiteAlpha.300"
             p={5}
             mb={4}
           >
@@ -61,7 +61,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               mt={4}
               px={2}
               py={3}
-              bg="whiteAlpha.50"
+              bg="whiteAlpha.200"
               borderRadius="lg"
               align="center"
               minH="44px"
@@ -80,7 +80,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             bg="var(--color-surface)"
             borderRadius="2xl"
             border="1px solid"
-            borderColor="whiteAlpha.100"
+            borderColor="whiteAlpha.300"
             p={5}
           >
             <VisualizerControls
@@ -103,10 +103,10 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             bg="var(--color-surface)"
             borderRadius="2xl"
             border="1px solid"
-            borderColor="whiteAlpha.100"
+            borderColor="whiteAlpha.300"
             p={5}
           >
-            <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.700" mb={3}>
+            <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.900" mb={3}>
               Implementation
             </Text>
             <CodePanel code={algorithm.code} />
@@ -118,7 +118,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             bg="var(--color-surface)"
             borderRadius="2xl"
             border="1px solid"
-            borderColor="whiteAlpha.100"
+            borderColor="whiteAlpha.300"
             p={5}
             mb={4}
           >
@@ -133,10 +133,10 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             bg="var(--color-surface)"
             borderRadius="2xl"
             border="1px solid"
-            borderColor="whiteAlpha.100"
+            borderColor="whiteAlpha.300"
             p={5}
           >
-            <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.700" mb={3}>
+            <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.900" mb={3}>
               Color Legend
             </Text>
             <Flex direction="column" gap={2}>
@@ -148,16 +148,16 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               ].map(({ color, label }) => (
                 <Flex key={label} align="center" gap={3}>
                   <Box w="14px" h="14px" borderRadius="sm" bg={color} flexShrink={0} />
-                  <Text fontSize="sm" color="whiteAlpha.700">
+                  <Text fontSize="sm" color="whiteAlpha.900">
                     {label}
                   </Text>
                 </Flex>
               ))}
             </Flex>
 
-            <Separator my={4} borderColor="whiteAlpha.100" />
+            <Separator my={4} borderColor="whiteAlpha.300" />
 
-            <Text fontSize="xs" color="whiteAlpha.400" lineHeight="tall">
+            <Text fontSize="xs" color="whiteAlpha.800" lineHeight="tall">
               Use the controls to step through the algorithm one frame at a time, or press play to watch it run automatically.
             </Text>
           </Box>

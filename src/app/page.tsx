@@ -10,7 +10,7 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
         bg="var(--color-surface)"
         borderRadius="2xl"
         border="1px solid"
-        borderColor="whiteAlpha.100"
+        borderColor="whiteAlpha.300"
         p={5}
         h="full"
         cursor="pointer"
@@ -37,21 +37,21 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
           </Badge>
         </Flex>
 
-        <Text fontSize="sm" color="whiteAlpha.600" mb={4} lineHeight="tall">
+        <Text fontSize="sm" color="whiteAlpha.800" mb={4} lineHeight="tall">
           {algo.shortDescription}
         </Text>
 
         <Flex gap={2} flexWrap="wrap">
-          <Box bg="whiteAlpha.50" borderRadius="md" px={2} py={1}>
-            <Text fontSize="xs" color="whiteAlpha.500">
+          <Box bg="whiteAlpha.200" borderRadius="md" px={2} py={1}>
+            <Text fontSize="xs" color="whiteAlpha.900">
               Avg
             </Text>
             <Text fontSize="xs" fontFamily="var(--font-mono)" color="orange.300" fontWeight="medium">
               {algo.complexity.average}
             </Text>
           </Box>
-          <Box bg="whiteAlpha.50" borderRadius="md" px={2} py={1}>
-            <Text fontSize="xs" color="whiteAlpha.500">
+          <Box bg="whiteAlpha.200" borderRadius="md" px={2} py={1}>
+            <Text fontSize="xs" color="whiteAlpha.900">
               Space
             </Text>
             <Text fontSize="xs" fontFamily="var(--font-mono)" color="blue.300" fontWeight="medium">
@@ -59,7 +59,7 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
             </Text>
           </Box>
           {algo.stable !== undefined && (
-            <Box bg="whiteAlpha.50" borderRadius="md" px={2} py={1}>
+            <Box bg="whiteAlpha.200" borderRadius="md" px={2} py={1}>
               <Text
                 fontSize="xs"
                 fontFamily="var(--font-mono)"
@@ -94,7 +94,7 @@ export default function HomePage() {
         </Heading>
         <Text
           fontSize={{ base: 'md', md: 'lg' }}
-          color="whiteAlpha.600"
+          color="whiteAlpha.800"
           maxW="560px"
           mx="auto"
           lineHeight="tall"

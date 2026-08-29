@@ -28,7 +28,7 @@ export function CodePanel({ code }: CodePanelProps) {
     <Box
       borderRadius="xl"
       border="1px solid"
-      borderColor="whiteAlpha.100"
+      borderColor="whiteAlpha.300"
       overflow="hidden"
       bg="#0d0d14"
     >
@@ -37,9 +37,9 @@ export function CodePanel({ code }: CodePanelProps) {
         justify="space-between"
         px={4}
         py={2}
-        bg="whiteAlpha.50"
+        bg="whiteAlpha.200"
         borderBottom="1px solid"
-        borderColor="whiteAlpha.100"
+        borderColor="whiteAlpha.300"
       >
         <Flex gap={1}>
           {languages.map((lang) => (
@@ -48,8 +48,8 @@ export function CodePanel({ code }: CodePanelProps) {
               size="xs"
               variant={activeLanguage === lang.id ? 'solid' : 'ghost'}
               bg={activeLanguage === lang.id ? 'indigo.600' : 'transparent'}
-              color={activeLanguage === lang.id ? 'white' : 'whiteAlpha.600'}
-              _hover={{ bg: activeLanguage === lang.id ? 'indigo.500' : 'whiteAlpha.100', color: 'white' }}
+              color={activeLanguage === lang.id ? 'white' : 'whiteAlpha.800'}
+              _hover={{ bg: activeLanguage === lang.id ? 'indigo.500' : 'whiteAlpha.200', color: 'white' }}
               borderRadius="md"
               onClick={() => setActiveLanguage(lang.id)}
             >
@@ -61,7 +61,7 @@ export function CodePanel({ code }: CodePanelProps) {
         <Button
           size="xs"
           variant="ghost"
-          color={copied ? 'green.400' : 'whiteAlpha.500'}
+          color={copied ? 'green.400' : 'whiteAlpha.700'}
           _hover={{ color: 'white' }}
           onClick={handleCopy}
           fontFamily="var(--font-mono)"
