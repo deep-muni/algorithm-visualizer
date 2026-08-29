@@ -13,7 +13,7 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import type { DataStructureInfo } from '@/types/algorithm';
-import { CodePanel } from '@/components/visualizer/code-panel';
+import { CodePanel } from '@/components/shared';
 import { StackVisualizer } from './stack-visualizer';
 import { QueueVisualizer } from './queue-visualizer';
 import { LinkedListVisualizer } from './linked-list-visualizer';

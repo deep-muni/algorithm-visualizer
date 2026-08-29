@@ -14,22 +14,20 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
-import { VisualizerBarChart } from '@/components/visualizer/visualizer-bar-chart';
-import { VisualizerControls } from '@/components/visualizer/visualizer-controls';
-import { ArrayConfigBar } from '@/components/visualizer/array-config-bar';
-import { CodePanel } from '@/components/visualizer/code-panel';
-import { ComplexityCard } from '@/components/visualizer/complexity-card';
-import { algorithms } from '@/data';
-import { getLegendItems, groupAlgorithms } from '@/lib/algorithm-utils';
-import type { AlgorithmInfo, AlgorithmId } from '@/types/algorithm';
+import { VisualizerBarChart } from './visualizer-bar-chart';
+import { VisualizerControls } from './visualizer-controls';
+import { ArrayConfigBar } from './array-config-bar';
+import { CodePanel, ComplexityCard } from '@/components/shared';
+import { sortingAlgorithms, searchingAlgorithms } from '@/data';
+import { getLegendItems } from '@/lib/algorithm-utils';
+import { COLOR_TOKENS } from '@/config/colors';
+import type { AlgorithmInfo } from '@/types/algorithm';
 
-interface AlgorithmPageClientProps {
+interface SortingPageClientProps {
   algorithm: AlgorithmInfo;
 }
 
-const { sorting: sortingAlgos, searching: searchingAlgos } = groupAlgorithms(algorithms);
-
-export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
+export function SortingPageClient({ algorithm }: SortingPageClientProps) {
   const router = useRouter();
   const {
     steps,
@@ -60,9 +58,9 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               variant="outline"
               size="xs"
               borderRadius="md"
-              borderColor="var(--color-border)"
-              color="var(--color-text)"
-              _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
+              borderColor={COLOR_TOKENS.border}
+              color={COLOR_TOKENS.text}
+              _hover={{ borderColor: COLOR_TOKENS.default, bg: COLOR_TOKENS.surfaceLight }}
               title="Back to all algorithms"
             >
               ←
@@ -73,26 +71,20 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             as="h1"
             fontSize={{ base: 'xl', md: '2xl' }}
             fontWeight="bold"
-            color="var(--color-text)"
+            color={COLOR_TOKENS.text}
           >
             {algorithm.name}
           </Heading>
 
-          <Badge
-            colorPalette={algorithm.category === 'sorting' ? 'indigo' : 'purple'}
-            variant="subtle"
-            borderRadius="full"
-            px={2}
-            fontSize="2xs"
-          >
-            {algorithm.category}
+          <Badge colorPalette="indigo" variant="subtle" borderRadius="full" px={2} fontSize="2xs">
+            Sorting
           </Badge>
         </Flex>
 
         <Flex align="center" gap={2}>
           <Text
             fontSize="xs"
-            color="var(--color-text-muted)"
+            color={COLOR_TOKENS.textMuted}
             fontFamily="var(--font-mono)"
             display={{ base: 'none', sm: 'block' }}
           >
@@ -100,7 +92,11 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
           </Text>
           <select
             value={algorithm.id}
-            onChange={(e) => router.push(`/algorithm/${e.target.value as AlgorithmId}`)}
+            onChange={(e) => {
+              const targetId = e.target.value;
+              const isTargetSorting = sortingAlgorithms.some((a) => a.id === targetId);
+              router.push(`/${isTargetSorting ? 'sorting' : 'searching'}/${targetId}`);
+            }}
             style={{
               backgroundColor: 'var(--color-surface)',
               color: 'var(--color-text)',
@@ -117,7 +113,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               label="Sorting Algorithms"
               style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-indigo)' }}
             >
-              {sortingAlgos.map((a) => (
+              {sortingAlgorithms.map((a) => (
                 <option
                   key={a.id}
                   value={a.id}
@@ -131,7 +127,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               label="Searching Algorithms"
               style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-violet)' }}
             >
-              {searchingAlgos.map((a) => (
+              {searchingAlgorithms.map((a) => (
                 <option
                   key={a.id}
                   value={a.id}
@@ -148,10 +144,10 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
       <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} />
 
       <Box
-        bg="var(--color-surface)"
+        bg={COLOR_TOKENS.surface}
         borderRadius="2xl"
         border="1px solid"
-        borderColor="var(--color-border)"
+        borderColor={COLOR_TOKENS.border}
         p={{ base: 4, md: 6 }}
         mb={6}
         boxShadow="0 8px 32px rgba(0, 0, 0, 0.25)"
@@ -162,24 +158,24 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
           mt={4}
           px={4}
           py={3}
-          bg="var(--color-surface-light)"
+          bg={COLOR_TOKENS.surfaceLight}
           borderRadius="xl"
           border="1px solid"
-          borderColor="var(--color-border)"
+          borderColor={COLOR_TOKENS.border}
           align="center"
           minH="48px"
         >
           <Text
             fontSize="sm"
             fontWeight="medium"
-            color="var(--color-text)"
+            color={COLOR_TOKENS.text}
             fontFamily="var(--font-mono)"
           >
             {currentStepData?.description ?? ''}
           </Text>
         </Flex>
 
-        <Separator my={4} borderColor="var(--color-border)" />
+        <Separator my={4} borderColor={COLOR_TOKENS.border} />
 
         <VisualizerControls
           playbackState={playbackState}
@@ -198,16 +194,16 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
 
       <Grid templateColumns={{ base: '1fr', lg: '1.2fr 0.8fr' }} gap={6} mb={8} alignItems="start">
         <Box
-          bg="var(--color-surface)"
+          bg={COLOR_TOKENS.surface}
           borderRadius="2xl"
           border="1px solid"
-          borderColor="var(--color-border)"
+          borderColor={COLOR_TOKENS.border}
           p={5}
         >
           <Text
             fontSize="xs"
             fontWeight="semibold"
-            color="var(--color-text-muted)"
+            color={COLOR_TOKENS.textMuted}
             fontFamily="var(--font-mono)"
             textTransform="uppercase"
             letterSpacing="0.05em"
@@ -220,10 +216,10 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
 
         <Box display="flex" flexDirection="column" gap={6}>
           <Box
-            bg="var(--color-surface)"
+            bg={COLOR_TOKENS.surface}
             borderRadius="2xl"
             border="1px solid"
-            borderColor="var(--color-border)"
+            borderColor={COLOR_TOKENS.border}
             p={5}
           >
             <ComplexityCard
@@ -234,16 +230,16 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
           </Box>
 
           <Box
-            bg="var(--color-surface)"
+            bg={COLOR_TOKENS.surface}
             borderRadius="2xl"
             border="1px solid"
-            borderColor="var(--color-border)"
+            borderColor={COLOR_TOKENS.border}
             p={5}
           >
             <Text
               fontSize="xs"
               fontWeight="semibold"
-              color="var(--color-text-muted)"
+              color={COLOR_TOKENS.textMuted}
               fontFamily="var(--font-mono)"
               textTransform="uppercase"
               letterSpacing="0.05em"
@@ -255,16 +251,16 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               {legendItems.map(({ color, label }) => (
                 <Flex key={label} align="center" gap={3}>
                   <Box w="14px" h="14px" borderRadius="sm" bg={color} flexShrink={0} />
-                  <Text fontSize="sm" color="var(--color-text)">
+                  <Text fontSize="sm" color={COLOR_TOKENS.text}>
                     {label}
                   </Text>
                 </Flex>
               ))}
             </Flex>
 
-            <Separator my={4} borderColor="var(--color-border)" />
+            <Separator my={4} borderColor={COLOR_TOKENS.border} />
 
-            <Text fontSize="xs" color="var(--color-text-muted)" lineHeight="tall">
+            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} lineHeight="tall">
               {algorithm.description}
             </Text>
           </Box>

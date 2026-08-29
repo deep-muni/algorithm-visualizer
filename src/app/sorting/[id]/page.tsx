@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { sortingAlgorithms, algorithmMap } from '@/data';
-import { AlgorithmPageClient } from '@/components/visualizer';
+import { SortingPageClient } from '@/components/sorting';
 import type { AlgorithmId } from '@/types/algorithm';
 
 export const dynamic = 'force-static';
@@ -38,5 +38,5 @@ export default async function SortingPage({ params }: Props) {
     notFound();
   }
 
-  return <AlgorithmPageClient algorithm={algorithm} />;
+  return <SortingPageClient algorithm={algorithm} />;
 }

@@ -1,221 +1,7 @@
-import Link from 'next/link';
 import { Container, Heading, Text, SimpleGrid, Box, Flex, Badge } from '@chakra-ui/react';
 import { sortingAlgorithms, searchingAlgorithms, dataStructures } from '@/data';
+import { CatalogCard } from '@/components/shared';
 import { COLOR_TOKENS } from '@/config/colors';
-import type { AlgorithmInfo, DataStructureInfo } from '@/types/algorithm';
-
-function DataStructureCard({ ds }: { ds: DataStructureInfo }) {
-  return (
-    <Link href={`/data-structures/${ds.id}`} style={{ textDecoration: 'none' }}>
-      <Box
-        bg={COLOR_TOKENS.surface}
-        borderRadius="2xl"
-        border="1px solid"
-        borderColor={COLOR_TOKENS.border}
-        p={5}
-        h="full"
-        cursor="pointer"
-        transition="border-color 0.2s, transform 0.2s, box-shadow 0.2s"
-        _hover={{
-          borderColor: COLOR_TOKENS.default,
-          transform: 'translateY(-3px)',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
-        }}
-      >
-        <Flex justify="space-between" align="flex-start" mb={3}>
-          <Heading as="h3" fontSize="lg" color={COLOR_TOKENS.text} fontWeight="bold">
-            {ds.name}
-          </Heading>
-          <Badge
-            colorPalette="teal"
-            variant="subtle"
-            borderRadius="full"
-            px={2}
-            fontSize="xs"
-            flexShrink={0}
-            ml={2}
-          >
-            Data Structure
-          </Badge>
-        </Flex>
-
-        <Text fontSize="sm" color={COLOR_TOKENS.textMuted} mb={4} lineHeight="tall">
-          {ds.shortDescription}
-        </Text>
-
-        <Flex gap={2} flexWrap="wrap">
-          <Box
-            bg={COLOR_TOKENS.surfaceLight}
-            border="1px solid"
-            borderColor={COLOR_TOKENS.border}
-            borderRadius="md"
-            px={2}
-            py={1}
-          >
-            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-              Insert
-            </Text>
-            <Text
-              fontSize="xs"
-              fontFamily="var(--font-mono)"
-              color={COLOR_TOKENS.success}
-              fontWeight="bold"
-            >
-              {ds.complexity.insertion}
-            </Text>
-          </Box>
-          <Box
-            bg={COLOR_TOKENS.surfaceLight}
-            border="1px solid"
-            borderColor={COLOR_TOKENS.border}
-            borderRadius="md"
-            px={2}
-            py={1}
-          >
-            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-              Delete
-            </Text>
-            <Text
-              fontSize="xs"
-              fontFamily="var(--font-mono)"
-              color={COLOR_TOKENS.success}
-              fontWeight="bold"
-            >
-              {ds.complexity.deletion}
-            </Text>
-          </Box>
-          <Box
-            bg={COLOR_TOKENS.surfaceLight}
-            border="1px solid"
-            borderColor={COLOR_TOKENS.border}
-            borderRadius="md"
-            px={2}
-            py={1}
-          >
-            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-              Space
-            </Text>
-            <Text
-              fontSize="xs"
-              fontFamily="var(--font-mono)"
-              color={COLOR_TOKENS.default}
-              fontWeight="bold"
-            >
-              {ds.complexity.space}
-            </Text>
-          </Box>
-        </Flex>
-      </Box>
-    </Link>
-  );
-}
-
-function AlgorithmCard({ algo, hrefPrefix }: { algo: AlgorithmInfo; hrefPrefix: string }) {
-  const isSorting = algo.category === 'sorting';
-
-  return (
-    <Link href={`/${hrefPrefix}/${algo.id}`} style={{ textDecoration: 'none' }}>
-      <Box
-        bg={COLOR_TOKENS.surface}
-        borderRadius="2xl"
-        border="1px solid"
-        borderColor={COLOR_TOKENS.border}
-        p={5}
-        h="full"
-        cursor="pointer"
-        transition="border-color 0.2s, transform 0.2s, box-shadow 0.2s"
-        _hover={{
-          borderColor: COLOR_TOKENS.default,
-          transform: 'translateY(-3px)',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
-        }}
-      >
-        <Flex justify="space-between" align="flex-start" mb={3}>
-          <Heading as="h3" fontSize="lg" color={COLOR_TOKENS.text} fontWeight="bold">
-            {algo.name}
-          </Heading>
-          <Badge
-            colorPalette={isSorting ? 'indigo' : 'purple'}
-            variant="subtle"
-            borderRadius="full"
-            px={2}
-            fontSize="xs"
-            flexShrink={0}
-            ml={2}
-          >
-            {algo.category}
-          </Badge>
-        </Flex>
-
-        <Text fontSize="sm" color={COLOR_TOKENS.textMuted} mb={4} lineHeight="tall">
-          {algo.shortDescription}
-        </Text>
-
-        <Flex gap={2} flexWrap="wrap">
-          <Box
-            bg={COLOR_TOKENS.surfaceLight}
-            border="1px solid"
-            borderColor={COLOR_TOKENS.border}
-            borderRadius="md"
-            px={2}
-            py={1}
-          >
-            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-              Avg
-            </Text>
-            <Text
-              fontSize="xs"
-              fontFamily="var(--font-mono)"
-              color={COLOR_TOKENS.warning}
-              fontWeight="bold"
-            >
-              {algo.complexity.average}
-            </Text>
-          </Box>
-          <Box
-            bg={COLOR_TOKENS.surfaceLight}
-            border="1px solid"
-            borderColor={COLOR_TOKENS.border}
-            borderRadius="md"
-            px={2}
-            py={1}
-          >
-            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-              Space
-            </Text>
-            <Text
-              fontSize="xs"
-              fontFamily="var(--font-mono)"
-              color={COLOR_TOKENS.default}
-              fontWeight="bold"
-            >
-              {algo.complexity.space}
-            </Text>
-          </Box>
-          {algo.stable !== undefined && (
-            <Box
-              bg={COLOR_TOKENS.surfaceLight}
-              border="1px solid"
-              borderColor={COLOR_TOKENS.border}
-              borderRadius="md"
-              px={2}
-              py={1}
-            >
-              <Text
-                fontSize="xs"
-                fontFamily="var(--font-mono)"
-                color={algo.stable ? COLOR_TOKENS.success : COLOR_TOKENS.danger}
-                fontWeight="bold"
-              >
-                {algo.stable ? 'Stable' : 'Unstable'}
-              </Text>
-            </Box>
-          )}
-        </Flex>
-      </Box>
-    </Link>
-  );
-}
 
 export default function HomePage() {
   return (
@@ -254,9 +40,21 @@ export default function HomePage() {
           </Badge>
         </Flex>
 
-        <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap={5}>
           {dataStructures.map((ds) => (
-            <DataStructureCard key={ds.id} ds={ds} />
+            <CatalogCard
+              key={ds.id}
+              title={ds.name}
+              categoryLabel="Data Structure"
+              categoryColorPalette="teal"
+              description={ds.shortDescription}
+              href={`/data-structures/${ds.id}`}
+              metrics={[
+                { label: 'Insert', value: ds.complexity.insertion, color: COLOR_TOKENS.success },
+                { label: 'Delete', value: ds.complexity.deletion, color: COLOR_TOKENS.success },
+                { label: 'Space', value: ds.complexity.space, color: COLOR_TOKENS.default },
+              ]}
+            />
           ))}
         </SimpleGrid>
       </Box>
@@ -271,9 +69,29 @@ export default function HomePage() {
           </Badge>
         </Flex>
 
-        <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap={5}>
           {sortingAlgorithms.map((algo) => (
-            <AlgorithmCard key={algo.id} algo={algo} hrefPrefix="sorting" />
+            <CatalogCard
+              key={algo.id}
+              title={algo.name}
+              categoryLabel="Sorting"
+              categoryColorPalette="indigo"
+              description={algo.shortDescription}
+              href={`/sorting/${algo.id}`}
+              metrics={[
+                { label: 'Avg', value: algo.complexity.average, color: COLOR_TOKENS.warning },
+                { label: 'Space', value: algo.complexity.space, color: COLOR_TOKENS.default },
+                ...(algo.stable !== undefined
+                  ? [
+                      {
+                        label: 'Stability',
+                        value: algo.stable ? 'Stable' : 'Unstable',
+                        color: algo.stable ? COLOR_TOKENS.success : COLOR_TOKENS.danger,
+                      },
+                    ]
+                  : []),
+              ]}
+            />
           ))}
         </SimpleGrid>
       </Box>
@@ -288,9 +106,29 @@ export default function HomePage() {
           </Badge>
         </Flex>
 
-        <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap={4}>
+        <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap={5}>
           {searchingAlgorithms.map((algo) => (
-            <AlgorithmCard key={algo.id} algo={algo} hrefPrefix="searching" />
+            <CatalogCard
+              key={algo.id}
+              title={algo.name}
+              categoryLabel="Searching"
+              categoryColorPalette="purple"
+              description={algo.shortDescription}
+              href={`/searching/${algo.id}`}
+              metrics={[
+                { label: 'Avg', value: algo.complexity.average, color: COLOR_TOKENS.warning },
+                { label: 'Space', value: algo.complexity.space, color: COLOR_TOKENS.default },
+                ...(algo.stable !== undefined
+                  ? [
+                      {
+                        label: 'Stability',
+                        value: algo.stable ? 'Stable' : 'Unstable',
+                        color: algo.stable ? COLOR_TOKENS.success : COLOR_TOKENS.danger,
+                      },
+                    ]
+                  : []),
+              ]}
+            />
           ))}
         </SimpleGrid>
       </Box>

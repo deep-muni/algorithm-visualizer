@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { ChakraProvider } from '@/lib/chakra-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
-import { TopActions } from '@/components/top-actions';
+import { TopActions } from '@/components/shared';
 import { siteConfig } from '@/config/site';
 import './globals.css';
 
