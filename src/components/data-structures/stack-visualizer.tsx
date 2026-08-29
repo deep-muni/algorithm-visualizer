@@ -22,6 +22,16 @@ export function StackVisualizer() {
   } = useStackVisualizer();
 
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    if (typeof window === 'undefined') return;
+    const dataStr = items.join(',');
+    const url = `${window.location.origin}${window.location.pathname}?items=${dataStr}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const getSimulatedAddress = (idx: number) => {
     const base = 0x7fff40;
@@ -99,6 +109,22 @@ export function StackVisualizer() {
             fontFamily="var(--font-mono)"
           >
             Peek (Key: K)
+          </Button>
+
+          <Button
+            size="xs"
+            variant="outline"
+            borderColor={copied ? '#34d399' : COLOR_TOKENS.border}
+            color={copied ? '#34d399' : COLOR_TOKENS.text}
+            bg={copied ? 'rgba(52, 211, 153, 0.1)' : 'transparent'}
+            _hover={{
+              borderColor: copied ? '#34d399' : COLOR_TOKENS.default,
+              bg: copied ? 'rgba(52, 211, 153, 0.15)' : 'var(--color-surface)',
+            }}
+            onClick={handleShare}
+            fontFamily="var(--font-mono)"
+          >
+            {copied ? '✓ Copied URL!' : '🔗 Share Stack'}
           </Button>
 
           <Button

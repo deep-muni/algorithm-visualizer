@@ -63,6 +63,16 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
   } = useLinkedListVisualizer(isDoubly);
 
   const [hoveredNodeIdx, setHoveredNodeIdx] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    if (typeof window === 'undefined') return;
+    const dataStr = nodes.map((n) => n.value).join(',');
+    const url = `${window.location.origin}${window.location.pathname}?nodes=${dataStr}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const tabs: { id: VisualizerTab; label: string; icon: string }[] = [
     { id: 'insert', label: 'Insert', icon: '➕' },
@@ -597,17 +607,35 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
               )}
             </Flex>
 
-            <Button
-              size="xs"
-              variant="ghost"
-              color={COLOR_TOKENS.danger}
-              _hover={{ color: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.15)' }}
-              onClick={clear}
-              disabled={isAnimating || nodes.length === 0}
-              fontFamily="var(--font-mono)"
-            >
-              🗑️ Clear All (C)
-            </Button>
+            <Flex align="center" gap={2}>
+              <Button
+                size="xs"
+                variant="outline"
+                borderColor={copied ? '#34d399' : COLOR_TOKENS.border}
+                color={copied ? '#34d399' : COLOR_TOKENS.text}
+                bg={copied ? 'rgba(52, 211, 153, 0.1)' : 'transparent'}
+                _hover={{
+                  borderColor: copied ? '#34d399' : COLOR_TOKENS.default,
+                  bg: copied ? 'rgba(52, 211, 153, 0.15)' : 'var(--color-surface)',
+                }}
+                onClick={handleShare}
+                fontFamily="var(--font-mono)"
+              >
+                {copied ? '✓ Copied URL!' : '🔗 Share List'}
+              </Button>
+
+              <Button
+                size="xs"
+                variant="ghost"
+                color={COLOR_TOKENS.danger}
+                _hover={{ color: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.15)' }}
+                onClick={clear}
+                disabled={isAnimating || nodes.length === 0}
+                fontFamily="var(--font-mono)"
+              >
+                🗑️ Clear All (C)
+              </Button>
+            </Flex>
           </Flex>
         )}
       </Flex>

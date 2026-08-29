@@ -27,8 +27,24 @@ const SPEED_DELAYS: Record<VisualizerSpeed, number> = {
   2: 140,
 };
 
+function getInitialNodes(): LinkedListNodeModel[] {
+  if (typeof window === 'undefined') return initialSampleNodes;
+  const params = new URLSearchParams(window.location.search);
+  const nodesParam = params.get('nodes') || params.get('data');
+  if (nodesParam) {
+    const parsed = nodesParam
+      .split(/[, ]+/)
+      .map(Number)
+      .filter((n) => !isNaN(n) && n > 0 && n <= 999);
+    if (parsed.length > 0 && parsed.length <= 7) {
+      return parsed.map((val, i) => ({ id: `node-${Date.now()}-${i}`, value: val }));
+    }
+  }
+  return initialSampleNodes;
+}
+
 export function useLinkedListVisualizer(isDoubly = false) {
-  const [nodes, setNodes] = useState<LinkedListNodeModel[]>(initialSampleNodes);
+  const [nodes, setNodes] = useState<LinkedListNodeModel[]>(getInitialNodes);
   const [operationLog, setOperationLog] = useState<string>(
     `${isDoubly ? 'Doubly' : 'Singly'} Linked List ready. Select an operation tab below.`
   );

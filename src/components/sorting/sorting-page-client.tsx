@@ -16,6 +16,7 @@ interface SortingPageClientProps {
 
 export function SortingPageClient({ algorithm }: SortingPageClientProps) {
   const {
+    array,
     steps,
     currentStep,
     currentStepData,
@@ -47,7 +48,7 @@ export function SortingPageClient({ algorithm }: SortingPageClientProps) {
         currentId={algorithm.id}
       />
 
-      <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} />
+      <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} currentArray={array} />
 
       <Box
         bg={COLOR_TOKENS.surface}

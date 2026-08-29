@@ -4,8 +4,24 @@ import { useState, useCallback, useEffect } from 'react';
 import { executeStackPush, executeStackPop, executeStackPeek } from '@/lib/data-structures';
 import { soundEngine } from '@/lib/audio-synthesizer';
 
+function getInitialItems(fallback: number[]): number[] {
+  if (typeof window === 'undefined') return fallback;
+  const params = new URLSearchParams(window.location.search);
+  const itemsParam = params.get('items') || params.get('data');
+  if (itemsParam) {
+    const parsed = itemsParam
+      .split(/[, ]+/)
+      .map(Number)
+      .filter((n) => !isNaN(n) && n > 0 && n <= 999);
+    if (parsed.length > 0 && parsed.length <= 6) {
+      return parsed;
+    }
+  }
+  return fallback;
+}
+
 export function useStackVisualizer(initialItems: number[] = [15, 42, 88]) {
-  const [items, setItems] = useState<number[]>(initialItems);
+  const [items, setItems] = useState<number[]>(() => getInitialItems(initialItems));
   const [operationLog, setOperationLog] = useState<string>(
     'Stack initialized with initial elements'
   );

@@ -29,14 +29,37 @@ interface UseVisualizerReturn {
   toggleSound: () => void;
 }
 
+function getInitialArray(): number[] {
+  if (typeof window === 'undefined') return DEFAULT_ARRAY;
+  const params = new URLSearchParams(window.location.search);
+  const dataParam = params.get('data');
+  if (dataParam) {
+    const parsed = dataParam
+      .split(/[, ]+/)
+      .map(Number)
+      .filter((n) => !isNaN(n) && n > 0 && n <= 999);
+    if (parsed.length >= 3) return parsed;
+  }
+  return DEFAULT_ARRAY;
+}
+
+function getInitialSpeed(): number {
+  if (typeof window === 'undefined') return 450;
+  const params = new URLSearchParams(window.location.search);
+  const speedParam = params.get('speed');
+  if (speedParam) {
+    const sp = Number(speedParam);
+    if (!isNaN(sp) && sp >= 50 && sp <= 2000) return sp;
+  }
+  return 450;
+}
+
 export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
-  const [array, setArray] = useState<number[]>(DEFAULT_ARRAY);
-  const [steps, setSteps] = useState<VisualizationStep[]>(() =>
-    generateSteps(algorithmId, DEFAULT_ARRAY)
-  );
+  const [array, setArray] = useState<number[]>(getInitialArray);
+  const [steps, setSteps] = useState<VisualizationStep[]>(() => generateSteps(algorithmId, array));
   const [currentStep, setCurrentStep] = useState(0);
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle');
-  const [speed, setSpeedState] = useState(450);
+  const [speed, setSpeedState] = useState<number>(getInitialSpeed);
   const [isMuted, setIsMuted] = useState(() => soundEngine.isMuted());
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);

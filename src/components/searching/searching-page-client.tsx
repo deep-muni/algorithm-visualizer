@@ -16,6 +16,7 @@ interface SearchingPageClientProps {
 
 export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
   const {
+    array,
     steps,
     currentStep,
     currentStepData,
@@ -47,7 +48,7 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
         currentId={algorithm.id}
       />
 
-      <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} />
+      <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} currentArray={array} />
 
       <Box
         bg={COLOR_TOKENS.surface}

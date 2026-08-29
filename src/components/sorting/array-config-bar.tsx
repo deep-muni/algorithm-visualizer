@@ -1,16 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import { Box, Flex, Button, Input, Text } from '@chakra-ui/react';
 import { useArrayConfig } from '@/hooks/use-array-config';
 
 interface ArrayConfigBarProps {
   onArrayChange: (arr: number[]) => void;
   disabled?: boolean;
+  currentArray?: number[];
 }
 
 const sizeOptions = [8, 12, 16, 20];
 
-export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps) {
+export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayConfigBarProps) {
   const {
     customInput,
     inputError,
@@ -20,6 +22,19 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
     handleInputChange,
     handleApplyCustom,
   } = useArrayConfig(onArrayChange);
+
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    if (typeof window === 'undefined') return;
+    const dataStr = currentArray && currentArray.length > 0 ? currentArray.join(',') : '';
+    const url = dataStr
+      ? `${window.location.origin}${window.location.pathname}?data=${dataStr}`
+      : window.location.href;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <Box
@@ -146,6 +161,22 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
               Apply
             </Button>
           </Flex>
+
+          <Button
+            size="xs"
+            variant="outline"
+            borderColor={copied ? '#34d399' : 'var(--color-border)'}
+            color={copied ? '#34d399' : 'var(--color-text)'}
+            bg={copied ? 'rgba(52, 211, 153, 0.1)' : 'transparent'}
+            _hover={{
+              borderColor: copied ? '#34d399' : 'var(--color-indigo)',
+              bg: copied ? 'rgba(52, 211, 153, 0.15)' : 'var(--color-surface-light)',
+            }}
+            onClick={handleShare}
+            fontFamily="var(--font-mono)"
+          >
+            {copied ? '✓ Copied URL!' : '🔗 Share URL'}
+          </Button>
         </Flex>
       </Flex>
 
