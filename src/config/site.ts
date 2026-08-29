@@ -4,7 +4,7 @@ export const siteConfig = {
   description:
     'Interactive visualizations for classic computer science algorithms (sorting, searching, and more). Step through animations frame-by-frame, analyze complexities, and copy reference implementations in TypeScript, Java, and Python.',
   url: 'https://algorithm-visualizer.vercel.app',
-  github: 'https://github.com/deep-muni/sort-and-search-visualizer',
+  github: 'https://github.com/deep-muni/algorithm-visualizer',
   keywords: [
     'algorithm visualizer',
     'sorting algorithms',
