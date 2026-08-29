@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Flex, Button, Input, Text, Badge, IconButton } from '@chakra-ui/react';
+import { Box, Flex, Button, Input, Text, Badge } from '@chakra-ui/react';
 import { useQueueVisualizer } from '@/hooks/use-queue-visualizer';
+import { VisualizerHeaderBar } from '@/components/shared';
 import { COLOR_TOKENS } from '@/config/colors';
 
 export function QueueVisualizer() {
@@ -40,6 +41,23 @@ export function QueueVisualizer() {
 
   return (
     <Box>
+      <VisualizerHeaderBar
+        badgeLabel="QUEUE (FIFO)"
+        badgePalette="purple"
+        telemetry={[
+          {
+            label: 'Capacity',
+            value: `${items.length} / 6`,
+            color: items.length >= 6 ? COLOR_TOKENS.danger : COLOR_TOKENS.default,
+          },
+          { label: 'Time Complexity', value: 'O(1)', isBadge: true },
+        ]}
+        isMuted={isMuted}
+        onToggleSound={toggleSound}
+        onShare={handleShare}
+        isCopied={copied}
+      />
+
       <Flex
         direction={{ base: 'column', md: 'row' }}
         gap={3}
@@ -71,8 +89,9 @@ export function QueueVisualizer() {
             color="white"
             _hover={{ filter: 'brightness(1.15)', bg: COLOR_TOKENS.default, color: 'white' }}
             fontFamily="var(--font-mono)"
+            disabled={items.length >= 6}
           >
-            Enqueue (Key: E)
+            + Enqueue (Key: E)
           </Button>
         </Flex>
 
@@ -81,7 +100,7 @@ export function QueueVisualizer() {
             size="xs"
             variant="outline"
             borderColor={COLOR_TOKENS.border}
-            color={COLOR_TOKENS.text}
+            color={COLOR_TOKENS.danger}
             _hover={{
               borderColor: COLOR_TOKENS.danger,
               color: COLOR_TOKENS.danger,
@@ -91,14 +110,14 @@ export function QueueVisualizer() {
             disabled={items.length === 0}
             fontFamily="var(--font-mono)"
           >
-            Dequeue (Key: D)
+            - Dequeue (Key: D)
           </Button>
 
           <Button
             size="xs"
             variant="outline"
             borderColor={COLOR_TOKENS.border}
-            color={COLOR_TOKENS.text}
+            color={COLOR_TOKENS.compare}
             _hover={{
               borderColor: COLOR_TOKENS.compare,
               color: COLOR_TOKENS.compare,
@@ -108,48 +127,20 @@ export function QueueVisualizer() {
             disabled={items.length === 0}
             fontFamily="var(--font-mono)"
           >
-            Front (Key: F)
-          </Button>
-
-          <Button
-            size="xs"
-            variant="outline"
-            borderColor={copied ? '#34d399' : COLOR_TOKENS.border}
-            color={copied ? '#34d399' : COLOR_TOKENS.text}
-            bg={copied ? 'rgba(52, 211, 153, 0.1)' : 'transparent'}
-            _hover={{
-              borderColor: copied ? '#34d399' : COLOR_TOKENS.default,
-              bg: copied ? 'rgba(52, 211, 153, 0.15)' : 'var(--color-surface)',
-            }}
-            onClick={handleShare}
-            fontFamily="var(--font-mono)"
-          >
-            {copied ? '✓ Copied URL!' : '🔗 Share Queue'}
+            👁️ Front (Key: F)
           </Button>
 
           <Button
             size="xs"
             variant="ghost"
             color={COLOR_TOKENS.textMuted}
-            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
+            _hover={{ color: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.1)' }}
             onClick={clear}
+            disabled={items.length === 0}
             fontFamily="var(--font-mono)"
           >
-            Clear (Key: C)
+            🗑️ Clear (Key: C)
           </Button>
-
-          <IconButton
-            aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-            variant="ghost"
-            size="xs"
-            borderRadius="full"
-            color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
-            onClick={toggleSound}
-            title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
-          >
-            {isMuted ? '🔇' : '🔊'}
-          </IconButton>
         </Flex>
       </Flex>
 
@@ -414,7 +405,17 @@ export function QueueVisualizer() {
           >
             M
           </kbd>{' '}
-          Sound
+          Sound •{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            Z
+          </kbd>{' '}
+          Focus
         </Text>
       </Flex>
     </Box>

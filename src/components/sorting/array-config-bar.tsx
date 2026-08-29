@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Box, Flex, Button, Input, Text } from '@chakra-ui/react';
 import { useArrayConfig } from '@/hooks/use-array-config';
 
@@ -12,7 +11,7 @@ interface ArrayConfigBarProps {
 
 const sizeOptions = [8, 12, 16, 20];
 
-export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayConfigBarProps) {
+export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps) {
   const {
     customInput,
     inputError,
@@ -23,22 +22,9 @@ export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayC
     handleApplyCustom,
   } = useArrayConfig(onArrayChange);
 
-  const [copied, setCopied] = useState(false);
-
-  const handleShare = () => {
-    if (typeof window === 'undefined') return;
-    const dataStr = currentArray && currentArray.length > 0 ? currentArray.join(',') : '';
-    const url = dataStr
-      ? `${window.location.origin}${window.location.pathname}?data=${dataStr}`
-      : window.location.href;
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <Box
-      bg="var(--color-surface)"
+      bg="var(--color-surface-light)"
       borderRadius="xl"
       border="1px solid"
       borderColor="var(--color-border)"
@@ -66,11 +52,11 @@ export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayC
             variant="outline"
             borderColor="var(--color-border)"
             color="var(--color-text)"
-            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
+            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface)' }}
             onClick={() => handlePreset('random')}
             disabled={disabled}
           >
-            Random
+            🎲 Random
           </Button>
 
           <Button
@@ -78,11 +64,11 @@ export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayC
             variant="outline"
             borderColor="var(--color-border)"
             color="var(--color-text)"
-            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
+            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface)' }}
             onClick={() => handlePreset('reversed')}
             disabled={disabled}
           >
-            Reversed
+            📉 Reversed
           </Button>
 
           <Button
@@ -90,11 +76,11 @@ export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayC
             variant="outline"
             borderColor="var(--color-border)"
             color="var(--color-text)"
-            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
+            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface)' }}
             onClick={() => handlePreset('nearly-sorted')}
             disabled={disabled}
           >
-            Nearly Sorted
+            📊 Nearly Sorted
           </Button>
 
           <Button
@@ -102,11 +88,11 @@ export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayC
             variant="outline"
             borderColor="var(--color-border)"
             color="var(--color-text)"
-            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
+            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface)' }}
             onClick={() => handlePreset('few-unique')}
             disabled={disabled}
           >
-            Duplicates
+            👥 Duplicates
           </Button>
         </Flex>
 
@@ -123,7 +109,7 @@ export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayC
                 bg={arraySize === sz ? 'var(--color-indigo)' : 'transparent'}
                 color={arraySize === sz ? 'white' : 'var(--color-text-muted)'}
                 _hover={{
-                  bg: arraySize === sz ? 'var(--color-indigo)' : 'var(--color-surface-light)',
+                  bg: arraySize === sz ? 'var(--color-indigo)' : 'var(--color-surface)',
                   color: 'var(--color-text)',
                 }}
                 onClick={() => handleSizeChange(sz)}
@@ -143,7 +129,7 @@ export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayC
               onChange={(e) => handleInputChange(e.target.value)}
               disabled={disabled}
               borderColor={inputError ? 'red.400' : 'var(--color-border)'}
-              bg="var(--color-surface-light)"
+              bg="var(--color-bg)"
               color="var(--color-text)"
               _focus={{ borderColor: 'var(--color-indigo)' }}
               fontFamily="var(--font-mono)"
@@ -161,22 +147,6 @@ export function ArrayConfigBar({ onArrayChange, disabled, currentArray }: ArrayC
               Apply
             </Button>
           </Flex>
-
-          <Button
-            size="xs"
-            variant="outline"
-            borderColor={copied ? '#34d399' : 'var(--color-border)'}
-            color={copied ? '#34d399' : 'var(--color-text)'}
-            bg={copied ? 'rgba(52, 211, 153, 0.1)' : 'transparent'}
-            _hover={{
-              borderColor: copied ? '#34d399' : 'var(--color-indigo)',
-              bg: copied ? 'rgba(52, 211, 153, 0.15)' : 'var(--color-surface-light)',
-            }}
-            onClick={handleShare}
-            fontFamily="var(--font-mono)"
-          >
-            {copied ? '✓ Copied URL!' : '🔗 Share URL'}
-          </Button>
         </Flex>
       </Flex>
 

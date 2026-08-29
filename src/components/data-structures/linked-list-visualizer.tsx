@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Flex, Button, Input, Text, Badge, IconButton } from '@chakra-ui/react';
+import { Box, Flex, Button, Input, Text, Badge } from '@chakra-ui/react';
 import {
   useLinkedListVisualizer,
   type VisualizerTab,
   type VisualizerSpeed,
 } from '@/hooks/use-linked-list-visualizer';
+import { VisualizerHeaderBar } from '@/components/shared';
 import { COLOR_TOKENS } from '@/config/colors';
 
 interface LinkedListVisualizerProps {
@@ -88,6 +89,32 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
 
   return (
     <Box>
+      <VisualizerHeaderBar
+        badgeLabel={isDoubly ? 'DOUBLY LINKED LIST' : 'SINGLY LINKED LIST'}
+        badgePalette="indigo"
+        telemetry={[
+          {
+            label: 'Size',
+            value: `${nodes.length} / 7`,
+            color: nodes.length >= 7 ? COLOR_TOKENS.danger : COLOR_TOKENS.default,
+          },
+          { label: 'Time Complexity', value: currentComplexity, isBadge: true },
+        ]}
+        speedConfig={{
+          current: speed,
+          options: [
+            { label: '0.5x', value: 0.5 },
+            { label: '1x', value: 1 },
+            { label: '2x', value: 2 },
+          ],
+          onChange: (v) => setSpeed(v as VisualizerSpeed),
+        }}
+        isMuted={isMuted}
+        onToggleSound={toggleSound}
+        onShare={handleShare}
+        isCopied={copied}
+      />
+
       <Flex
         direction="column"
         gap={3}
@@ -99,135 +126,39 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
         borderColor={COLOR_TOKENS.border}
       >
         <Flex
-          direction={{ base: 'column', md: 'row' }}
-          gap={3}
-          justify="space-between"
           align="center"
-          pb={2.5}
-          borderBottom="1px solid"
+          gap={1}
+          bg="var(--color-bg)"
+          p={1}
+          borderRadius="lg"
+          border="1px solid"
           borderColor={COLOR_TOKENS.border}
+          wrap="wrap"
         >
-          <Flex
-            align="center"
-            gap={1}
-            bg="var(--color-bg)"
-            p={1}
-            borderRadius="lg"
-            border="1px solid"
-            borderColor={COLOR_TOKENS.border}
-            wrap="wrap"
-          >
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <Button
-                  key={tab.id}
-                  size="xs"
-                  variant={isActive ? 'solid' : 'ghost'}
-                  bg={isActive ? COLOR_TOKENS.default : 'transparent'}
-                  color={isActive ? 'white' : COLOR_TOKENS.textMuted}
-                  _hover={{
-                    color: isActive ? 'white' : COLOR_TOKENS.text,
-                    bg: isActive ? COLOR_TOKENS.default : 'var(--color-surface)',
-                  }}
-                  onClick={() => setActiveTab(tab.id)}
-                  fontFamily="var(--font-mono)"
-                  fontSize="xs"
-                  px={3}
-                  borderRadius="md"
-                >
-                  <span style={{ marginRight: '5px' }}>{tab.icon}</span>
-                  {tab.label}
-                </Button>
-              );
-            })}
-          </Flex>
-
-          <Flex align="center" gap={2} wrap="wrap">
-            <Flex
-              align="center"
-              gap={1.5}
-              px={2.5}
-              py={1}
-              bg="var(--color-bg)"
-              borderRadius="md"
-              border="1px solid"
-              borderColor={COLOR_TOKENS.border}
-            >
-              <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-                Size:
-              </Text>
-              <Text
-                fontSize="xs"
-                fontWeight="bold"
-                color={nodes.length >= 7 ? COLOR_TOKENS.danger : COLOR_TOKENS.default}
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <Button
+                key={tab.id}
+                size="xs"
+                variant={isActive ? 'solid' : 'ghost'}
+                bg={isActive ? COLOR_TOKENS.default : 'transparent'}
+                color={isActive ? 'white' : COLOR_TOKENS.textMuted}
+                _hover={{
+                  color: isActive ? 'white' : COLOR_TOKENS.text,
+                  bg: isActive ? COLOR_TOKENS.default : 'var(--color-surface)',
+                }}
+                onClick={() => setActiveTab(tab.id)}
                 fontFamily="var(--font-mono)"
+                fontSize="xs"
+                px={3}
+                borderRadius="md"
               >
-                {nodes.length} / 7
-              </Text>
-            </Flex>
-
-            <Flex
-              align="center"
-              gap={1.5}
-              px={2.5}
-              py={1}
-              bg="var(--color-bg)"
-              borderRadius="md"
-              border="1px solid"
-              borderColor={COLOR_TOKENS.border}
-            >
-              <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-                Time:
-              </Text>
-              <Badge colorPalette="indigo" size="xs" variant="subtle" fontFamily="var(--font-mono)">
-                {currentComplexity}
-              </Badge>
-            </Flex>
-
-            <Flex
-              align="center"
-              bg="var(--color-bg)"
-              p={0.5}
-              borderRadius="md"
-              border="1px solid"
-              borderColor={COLOR_TOKENS.border}
-            >
-              {([0.5, 1, 2] as VisualizerSpeed[]).map((s) => (
-                <Button
-                  key={s}
-                  size="2xs"
-                  variant={speed === s ? 'solid' : 'ghost'}
-                  bg={speed === s ? COLOR_TOKENS.default : 'transparent'}
-                  color={speed === s ? 'white' : COLOR_TOKENS.textMuted}
-                  _hover={{
-                    color: speed === s ? 'white' : COLOR_TOKENS.text,
-                    bg: speed === s ? COLOR_TOKENS.default : 'var(--color-surface)',
-                  }}
-                  onClick={() => setSpeed(s)}
-                  fontFamily="var(--font-mono)"
-                  px={2}
-                  h="22px"
-                  borderRadius="sm"
-                >
-                  {s}x
-                </Button>
-              ))}
-            </Flex>
-
-            <IconButton
-              aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-              variant="ghost"
-              size="xs"
-              borderRadius="full"
-              color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-              _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
-              onClick={toggleSound}
-              title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
-            >
-              {isMuted ? '🔇' : '🔊'}
-            </IconButton>
-          </Flex>
+                <span style={{ marginRight: '5px' }}>{tab.icon}</span>
+                {tab.label}
+              </Button>
+            );
+          })}
         </Flex>
 
         {activeTab === 'insert' && (
