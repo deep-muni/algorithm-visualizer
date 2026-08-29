@@ -1,7 +1,6 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
-import { Flex, IconButton, Box } from '@chakra-ui/react';
 import { useTheme } from '@/providers/theme-provider';
 import { siteConfig } from '@/config/site';
 
@@ -76,69 +75,63 @@ export function TopActions() {
   const { theme, toggleTheme } = useTheme();
   const mounted = useIsMounted();
 
-  if (!mounted) {
-    return (
-      <Box
-        position="fixed"
-        top={4}
-        right={4}
-        zIndex={100}
-        bg="var(--color-surface)"
-        borderRadius="full"
-        border="1px solid"
-        borderColor="var(--color-border)"
-        p="3px"
-        w="76px"
-        h="38px"
-      />
-    );
-  }
-
   return (
-    <Box
-      position="fixed"
-      top={4}
-      right={4}
-      zIndex={100}
-      bg="var(--color-surface)"
-      borderRadius="full"
-      border="1px solid"
-      borderColor="var(--color-border)"
-      p="3px"
-      boxShadow="0 4px 16px var(--color-shadow)"
+    <div
+      style={{
+        position: 'fixed',
+        top: '16px',
+        right: '16px',
+        zIndex: 100,
+        backgroundColor: 'var(--color-surface)',
+        borderRadius: '9999px',
+        border: '1px solid var(--color-border)',
+        padding: '3px',
+        boxShadow: '0 4px 16px var(--color-shadow)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+      }}
     >
-      <Flex align="center" gap={1}>
-        <IconButton
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          variant="ghost"
-          size="sm"
-          borderRadius="full"
-          color="var(--color-text-muted)"
-          _hover={{ color: 'var(--color-text)', bg: 'var(--color-surface-light)' }}
-          onClick={toggleTheme}
-        >
-          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-        </IconButton>
+      <button
+        type="button"
+        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        onClick={toggleTheme}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '6px',
+          borderRadius: '9999px',
+          color: 'var(--color-text-muted)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'all 0.15s ease',
+        }}
+      >
+        {mounted && theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+      </button>
 
-        <IconButton
-          asChild
-          aria-label="GitHub Repository"
-          variant="ghost"
-          size="sm"
-          borderRadius="full"
-          color="var(--color-text-muted)"
-          _hover={{ color: 'var(--color-text)', bg: 'var(--color-surface-light)' }}
-        >
-          <a
-            href={siteConfig.github}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub Repository"
-          >
-            <GithubIcon />
-          </a>
-        </IconButton>
-      </Flex>
-    </Box>
+      <a
+        href={siteConfig.github}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="GitHub Repository"
+        style={{
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '6px',
+          borderRadius: '9999px',
+          color: 'var(--color-text-muted)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'all 0.15s ease',
+        }}
+      >
+        <GithubIcon />
+      </a>
+    </div>
   );
 }
