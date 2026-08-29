@@ -69,7 +69,7 @@ export function CodePanel({ code }: CodePanelProps) {
         </Button>
       </Flex>
 
-      <Box maxH="380px" overflowY="auto" overflowX="auto" p={4}>
+      <Box overflowX="auto" p={4}>
         <Flex minW="max-content">
           <Box
             userSelect="none"
