@@ -130,7 +130,6 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
     setCustomArray(newArr);
   }, [array.length, setCustomArray]);
 
-  // Keyboard shortcut listeners and cleanup on unmount
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;

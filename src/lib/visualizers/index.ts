@@ -8,6 +8,17 @@ import { generateHeapSortSteps } from './heap-sort';
 import { generateLinearSearchSteps } from './linear-search';
 import { generateBinarySearchSteps } from './binary-search';
 
+export {
+  generateBubbleSortSteps,
+  generateSelectionSortSteps,
+  generateInsertionSortSteps,
+  generateMergeSortSteps,
+  generateQuickSortSteps,
+  generateHeapSortSteps,
+  generateLinearSearchSteps,
+  generateBinarySearchSteps,
+};
+
 type StepGenerator = (input: number[]) => VisualizationStep[];
 
 const generators: Partial<Record<AlgorithmId, StepGenerator>> = {

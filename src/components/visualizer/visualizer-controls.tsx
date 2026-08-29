@@ -50,7 +50,6 @@ export function VisualizerControls({
       w="full"
       py={2}
     >
-      {/* Step counter */}
       <Flex align="center" gap={2}>
         <Text fontSize="xs" fontFamily="var(--font-mono)" color="var(--color-text-muted)">
           Step:
@@ -65,7 +64,6 @@ export function VisualizerControls({
         </Text>
       </Flex>
 
-      {/* Main Transport Controls with Keyboard Shortcut Hints */}
       <Flex align="center" gap={2}>
         <IconButton
           aria-label="New random array"
@@ -155,7 +153,6 @@ export function VisualizerControls({
         </IconButton>
       </Flex>
 
-      {/* Speed Selector Buttons */}
       <Flex align="center" gap={1}>
         <Text fontSize="xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)" mr={1}>
           Speed:

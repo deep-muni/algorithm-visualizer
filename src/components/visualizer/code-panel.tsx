@@ -1,31 +1,16 @@
 'use client';
 
-import { useState } from 'react';
 import { Box, Flex, Button, Text } from '@chakra-ui/react';
-import type { AlgorithmCode, CodeLanguage } from '@/types/algorithm';
+import type { AlgorithmCode } from '@/types/algorithm';
+import { useCodePanel } from '@/hooks/use-code-panel';
 
 interface CodePanelProps {
   code: AlgorithmCode;
 }
 
-const languages: { id: CodeLanguage; label: string }[] = [
-  { id: 'typescript', label: 'TypeScript' },
-  { id: 'java', label: 'Java' },
-  { id: 'python', label: 'Python' },
-];
-
 export function CodePanel({ code }: CodePanelProps) {
-  const [activeLanguage, setActiveLanguage] = useState<CodeLanguage>('typescript');
-  const [copied, setCopied] = useState(false);
-
-  const currentCode = code[activeLanguage];
-  const lines = currentCode.split('\n');
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(currentCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const { activeLanguage, setActiveLanguage, copied, handleCopy, currentCode, lines, languages } =
+    useCodePanel(code);
 
   return (
     <Box
@@ -36,7 +21,6 @@ export function CodePanel({ code }: CodePanelProps) {
       overflow="hidden"
       bg="var(--color-bg)"
     >
-      {/* Code Header Bar */}
       <Flex
         align="center"
         justify="space-between"
@@ -84,10 +68,8 @@ export function CodePanel({ code }: CodePanelProps) {
         </Button>
       </Flex>
 
-      {/* Code Body with max-height and custom scrolling */}
       <Box maxH="380px" overflowY="auto" overflowX="auto" p={4}>
         <Flex minW="max-content">
-          {/* Line Numbers Gutter */}
           <Box
             userSelect="none"
             pr={4}
@@ -110,7 +92,6 @@ export function CodePanel({ code }: CodePanelProps) {
             ))}
           </Box>
 
-          {/* Code text */}
           <Box flex={1}>
             <pre
               style={{

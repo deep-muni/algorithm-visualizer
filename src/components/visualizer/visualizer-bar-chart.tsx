@@ -2,21 +2,10 @@
 
 import { Box, Flex, Text } from '@chakra-ui/react';
 import type { VisualizationStep } from '@/types/algorithm';
+import { getBarColor, calculateBarHeightPct } from '@/lib/chart-utils';
 
 interface VisualizerBarChartProps {
   step: VisualizationStep;
-}
-
-function getBarColor(
-  index: number,
-  comparing: number[],
-  swapping: number[],
-  sorted: number[]
-): string {
-  if (sorted.includes(index)) return '#34d399';
-  if (swapping.includes(index)) return '#f87171';
-  if (comparing.includes(index)) return '#fbbf24';
-  return 'var(--color-indigo)';
 }
 
 export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
@@ -32,10 +21,9 @@ export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
       flexDirection="column"
       justifyContent="flex-end"
     >
-      {/* Bars container */}
       <Flex h="290px" align="flex-end" justify="center" gap="5px" px={2} pb={2}>
         {array.map((value, index) => {
-          const heightPct = Math.max((value / max) * 100, 6);
+          const heightPct = calculateBarHeightPct(value, max);
           const color = getBarColor(index, comparing, swapping, sorted);
           const isActive = comparing.includes(index) || swapping.includes(index);
           const isSorted = sorted.includes(index);
@@ -50,7 +38,6 @@ export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
               h="full"
               maxW="52px"
             >
-              {/* Value on top of bar */}
               <Text
                 fontSize={{ base: '10px', md: '12px' }}
                 fontWeight={isActive ? 'bold' : '600'}
@@ -66,7 +53,6 @@ export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
                 {value}
               </Text>
 
-              {/* Bar */}
               <Box
                 w="full"
                 borderTopRadius="md"
@@ -86,7 +72,6 @@ export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
         })}
       </Flex>
 
-      {/* Index numbers row at bottom */}
       <Flex
         h="26px"
         align="center"

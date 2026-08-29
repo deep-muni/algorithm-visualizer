@@ -20,11 +20,14 @@ import { ArrayConfigBar } from '@/components/visualizer/array-config-bar';
 import { CodePanel } from '@/components/visualizer/code-panel';
 import { ComplexityCard } from '@/components/visualizer/complexity-card';
 import { algorithms } from '@/data';
+import { getLegendItems, groupAlgorithms } from '@/lib/algorithm-utils';
 import type { AlgorithmInfo, AlgorithmId } from '@/types/algorithm';
 
 interface AlgorithmPageClientProps {
   algorithm: AlgorithmInfo;
 }
+
+const { sorting: sortingAlgos, searching: searchingAlgos } = groupAlgorithms(algorithms);
 
 export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
   const router = useRouter();
@@ -45,27 +48,10 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
   } = useVisualizer(algorithm.id);
 
   const isRunning = playbackState === 'playing';
-  const isSearch = algorithm.category === 'searching';
-
-  const legendItems = isSearch
-    ? [
-        { color: 'var(--color-indigo)', label: 'Array Element' },
-        { color: '#fbbf24', label: 'Comparing / Inspecting' },
-        { color: '#34d399', label: 'Target Found' },
-      ]
-    : [
-        { color: 'var(--color-indigo)', label: 'Unsorted' },
-        { color: '#fbbf24', label: 'Comparing' },
-        { color: '#f87171', label: 'Swapping' },
-        { color: '#34d399', label: 'Sorted' },
-      ];
-
-  const sortingAlgos = algorithms.filter((a) => a.category === 'sorting');
-  const searchingAlgos = algorithms.filter((a) => a.category === 'searching');
+  const legendItems = getLegendItems(algorithm.category);
 
   return (
     <Container maxW="1200px" py={6} px={4}>
-      {/* Top Header Bar */}
       <Flex justify="space-between" align="center" mb={5} wrap="wrap" gap={3}>
         <Flex align="center" gap={3}>
           <Link href="/" style={{ textDecoration: 'none' }}>
@@ -103,7 +89,6 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
           </Badge>
         </Flex>
 
-        {/* Algorithm Switcher */}
         <Flex align="center" gap={2}>
           <Text
             fontSize="xs"
@@ -160,12 +145,8 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
         </Flex>
       </Flex>
 
-      {/* Array Configuration Toolbar */}
       <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} />
 
-      {/* ========================================================================= */}
-      {/* 1. HERO VISUALIZER STAGE (Unified Centerpiece Canvas) */}
-      {/* ========================================================================= */}
       <Box
         bg="var(--color-surface)"
         borderRadius="2xl"
@@ -175,10 +156,8 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
         mb={6}
         boxShadow="0 8px 32px rgba(0, 0, 0, 0.25)"
       >
-        {/* Main Bar Chart Arena */}
         {currentStepData && <VisualizerBarChart step={currentStepData} />}
 
-        {/* Live Step Explanation Narrative */}
         <Flex
           mt={4}
           px={4}
@@ -202,7 +181,6 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
 
         <Separator my={4} borderColor="var(--color-border)" />
 
-        {/* Docked Visualizer Controls */}
         <VisualizerControls
           playbackState={playbackState}
           currentStep={currentStep}
@@ -218,11 +196,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
         />
       </Box>
 
-      {/* ========================================================================= */}
-      {/* 2. SUPPORTING DETAILS & CODE (Clean 2-Column Grid) */}
-      {/* ========================================================================= */}
       <Grid templateColumns={{ base: '1fr', lg: '1.2fr 0.8fr' }} gap={6} mb={8} alignItems="start">
-        {/* Left: Code Implementation Panel */}
         <Box
           bg="var(--color-surface)"
           borderRadius="2xl"
@@ -244,9 +218,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
           <CodePanel code={algorithm.code} />
         </Box>
 
-        {/* Right: Complexity Breakdown + Color Legend */}
         <Box display="flex" flexDirection="column" gap={6}>
-          {/* Complexity Card */}
           <Box
             bg="var(--color-surface)"
             borderRadius="2xl"
@@ -261,7 +233,6 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             />
           </Box>
 
-          {/* Color Legend & Overview Card */}
           <Box
             bg="var(--color-surface)"
             borderRadius="2xl"

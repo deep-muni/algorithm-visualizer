@@ -1,14 +1,7 @@
 import Link from 'next/link';
-import {
-  Container,
-  Heading,
-  Text,
-  SimpleGrid,
-  Box,
-  Flex,
-  Badge,
-} from '@chakra-ui/react';
+import { Container, Heading, Text, SimpleGrid, Box, Flex, Badge } from '@chakra-ui/react';
 import { algorithms } from '@/data';
+import { groupAlgorithms } from '@/lib/algorithm-utils';
 import type { AlgorithmInfo } from '@/types/algorithm';
 
 function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
@@ -113,13 +106,11 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
   );
 }
 
-export default function HomePage() {
-  const sortingAlgos = algorithms.filter((a) => a.category === 'sorting');
-  const searchingAlgos = algorithms.filter((a) => a.category === 'searching');
+const { sorting: sortingAlgos, searching: searchingAlgos } = groupAlgorithms(algorithms);
 
+export default function HomePage() {
   return (
     <Container maxW="1200px" py={12} px={4}>
-      {/* Hero Header */}
       <Box textAlign="center" mb={14}>
         <Heading
           as="h1"
@@ -144,7 +135,6 @@ export default function HomePage() {
         </Text>
       </Box>
 
-      {/* Sorting Section */}
       <Box mb={12}>
         <Flex align="center" gap={3} mb={6}>
           <Heading as="h2" fontSize="xl" color="var(--color-text)" fontWeight="bold">
@@ -162,7 +152,6 @@ export default function HomePage() {
         </SimpleGrid>
       </Box>
 
-      {/* Searching Section */}
       <Box mb={12}>
         <Flex align="center" gap={3} mb={6}>
           <Heading as="h2" fontSize="xl" color="var(--color-text)" fontWeight="bold">

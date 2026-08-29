@@ -1,72 +1,25 @@
 'use client';
 
-import { useState } from 'react';
 import { Box, Flex, Button, Input, Text } from '@chakra-ui/react';
-import {
-  generateRandomArray,
-  generateReversedArray,
-  generateNearlySortedArray,
-  generateFewUniqueArray,
-} from '@/lib/visualizers';
+import { useArrayConfig } from '@/hooks/use-array-config';
 
 interface ArrayConfigBarProps {
   onArrayChange: (arr: number[]) => void;
   disabled?: boolean;
 }
 
+const sizeOptions = [8, 12, 16, 20];
+
 export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps) {
-  const [customInput, setCustomInput] = useState('');
-  const [inputError, setInputError] = useState<string | null>(null);
-  const [arraySize, setArraySize] = useState<number>(12);
-
-  const handlePreset = (
-    type: 'random' | 'reversed' | 'nearly-sorted' | 'few-unique',
-    size = arraySize
-  ) => {
-    let arr: number[] = [];
-    if (type === 'random') arr = generateRandomArray(size);
-    else if (type === 'reversed') arr = generateReversedArray(size);
-    else if (type === 'nearly-sorted') arr = generateNearlySortedArray(size);
-    else if (type === 'few-unique') arr = generateFewUniqueArray(size);
-
-    setInputError(null);
-    onArrayChange(arr);
-  };
-
-  const handleSizeChange = (newSize: number) => {
-    setArraySize(newSize);
-    handlePreset('random', newSize);
-  };
-
-  const handleApplyCustom = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customInput.trim()) return;
-
-    const parsed = customInput
-      .split(/[, ]+/)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0)
-      .map(Number);
-
-    if (parsed.some((n) => isNaN(n) || n <= 0 || n > 999)) {
-      setInputError('Enter positive numbers between 1 and 999');
-      return;
-    }
-
-    if (parsed.length < 3) {
-      setInputError('Provide at least 3 numbers');
-      return;
-    }
-
-    if (parsed.length > 30) {
-      setInputError('Maximum 30 numbers allowed');
-      return;
-    }
-
-    setInputError(null);
-    setCustomInput('');
-    onArrayChange(parsed);
-  };
+  const {
+    customInput,
+    inputError,
+    arraySize,
+    handlePreset,
+    handleSizeChange,
+    handleInputChange,
+    handleApplyCustom,
+  } = useArrayConfig(onArrayChange);
 
   return (
     <Box
@@ -147,7 +100,7 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
             <Text fontSize="xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
               Size:
             </Text>
-            {[8, 12, 16, 20].map((sz) => (
+            {sizeOptions.map((sz) => (
               <Button
                 key={sz}
                 size="xs"
@@ -172,10 +125,7 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
               size="xs"
               placeholder="e.g. 50, 12, 85, 34"
               value={customInput}
-              onChange={(e) => {
-                setCustomInput(e.target.value);
-                if (inputError) setInputError(null);
-              }}
+              onChange={(e) => handleInputChange(e.target.value)}
               disabled={disabled}
               borderColor={inputError ? 'red.400' : 'var(--color-border)'}
               bg="var(--color-surface-light)"
