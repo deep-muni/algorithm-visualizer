@@ -1,8 +1,17 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import { Flex, IconButton, Box } from '@chakra-ui/react';
 import { useTheme } from '@/providers/theme-provider';
 import { siteConfig } from '@/config/site';
+
+const emptySubscribe = () => () => {};
+const getClientMounted = () => true;
+const getServerMounted = () => false;
+
+function useIsMounted() {
+  return useSyncExternalStore(emptySubscribe, getClientMounted, getServerMounted);
+}
 
 function SunIcon() {
   return (
@@ -65,6 +74,25 @@ function GithubIcon() {
 
 export function TopActions() {
   const { theme, toggleTheme } = useTheme();
+  const mounted = useIsMounted();
+
+  if (!mounted) {
+    return (
+      <Box
+        position="fixed"
+        top={4}
+        right={4}
+        zIndex={100}
+        bg="var(--color-surface)"
+        borderRadius="full"
+        border="1px solid"
+        borderColor="var(--color-border)"
+        p="3px"
+        w="76px"
+        h="38px"
+      />
+    );
+  }
 
   return (
     <Box
