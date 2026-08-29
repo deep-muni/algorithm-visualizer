@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { algorithms } from '@/data';
+import { sortingAlgorithms, searchingAlgorithms, dataStructures } from '@/data';
 import { siteConfig } from '@/config/site';
 
 export const dynamic = 'force-static';
@@ -7,8 +7,22 @@ export const dynamic = 'force-static';
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = siteConfig.url;
 
-  const algorithmRoutes: MetadataRoute.Sitemap = algorithms.map((algo) => ({
-    url: `${baseUrl}/algorithm/${algo.id}`,
+  const sortingRoutes: MetadataRoute.Sitemap = sortingAlgorithms.map((algo) => ({
+    url: `${baseUrl}/sorting/${algo.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
+  const searchingRoutes: MetadataRoute.Sitemap = searchingAlgorithms.map((algo) => ({
+    url: `${baseUrl}/searching/${algo.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
+  const dataStructureRoutes: MetadataRoute.Sitemap = dataStructures.map((ds) => ({
+    url: `${baseUrl}/data-structures/${ds.id}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 0.8,
@@ -21,6 +35,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1.0,
     },
-    ...algorithmRoutes,
+    ...dataStructureRoutes,
+    ...sortingRoutes,
+    ...searchingRoutes,
   ];
 }
