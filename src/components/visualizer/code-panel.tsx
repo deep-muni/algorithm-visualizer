@@ -30,9 +30,6 @@ export function CodePanel({ code }: CodePanelProps) {
   return (
     <Box
       w="full"
-      h="full"
-      display="flex"
-      flexDirection="column"
       borderRadius="xl"
       border="1px solid"
       borderColor="var(--color-border)"
@@ -87,8 +84,8 @@ export function CodePanel({ code }: CodePanelProps) {
         </Button>
       </Flex>
 
-      {/* Code Body taking full height with line numbers and vertical/horizontal scrolling */}
-      <Box flex={1} minH="280px" overflowY="auto" overflowX="auto" p={4}>
+      {/* Code Body with max-height and custom scrolling */}
+      <Box maxH="380px" overflowY="auto" overflowX="auto" p={4}>
         <Flex minW="max-content">
           {/* Line Numbers Gutter */}
           <Box
