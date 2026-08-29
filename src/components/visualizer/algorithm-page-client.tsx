@@ -162,7 +162,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
       <ArrayConfigBar onArrayChange={setCustomArray} disabled={isRunning} />
 
       {/* ========================================================================= */}
-      {/* HERO VISUALIZER STAGE (Unified Centerpiece Canvas) */}
+      {/* 1. HERO VISUALIZER STAGE (Unified Centerpiece Canvas) */}
       {/* ========================================================================= */}
       <Box
         bg="var(--color-surface)"
@@ -217,10 +217,25 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
       </Box>
 
       {/* ========================================================================= */}
-      {/* SUPPORTING DETAILS & CODE SECTION (Neatly organized below the stage) */}
+      {/* 2. COMPLEXITY BREAKDOWN & COLOR LEGEND ROW */}
       {/* ========================================================================= */}
-      <Grid templateColumns={{ base: '1fr', lg: '1.2fr 0.8fr' }} gap={6}>
-        {/* Left: Code Implementation Panel */}
+      <Grid templateColumns={{ base: '1fr', md: '1.2fr 0.8fr' }} gap={6} mb={8}>
+        {/* Complexity Card */}
+        <Box
+          bg="var(--color-surface)"
+          borderRadius="2xl"
+          border="1px solid"
+          borderColor="var(--color-border)"
+          p={5}
+        >
+          <ComplexityCard
+            complexity={algorithm.complexity}
+            stable={algorithm.stable}
+            inPlace={algorithm.inPlace}
+          />
+        </Box>
+
+        {/* Color Legend & Overview Card */}
         <Box
           bg="var(--color-surface)"
           borderRadius="2xl"
@@ -237,66 +252,51 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             letterSpacing="0.05em"
             mb={3}
           >
-            Implementation Code
+            Color Legend
           </Text>
-          <CodePanel code={algorithm.code} />
-        </Box>
+          <Flex direction="column" gap={2}>
+            {legendItems.map(({ color, label }) => (
+              <Flex key={label} align="center" gap={3}>
+                <Box w="14px" h="14px" borderRadius="sm" bg={color} flexShrink={0} />
+                <Text fontSize="sm" color="var(--color-text)">
+                  {label}
+                </Text>
+              </Flex>
+            ))}
+          </Flex>
 
-        {/* Right: Complexity Breakdown + Legend */}
-        <Box display="flex" flexDirection="column" gap={6}>
-          {/* Complexity Card */}
-          <Box
-            bg="var(--color-surface)"
-            borderRadius="2xl"
-            border="1px solid"
-            borderColor="var(--color-border)"
-            p={5}
-          >
-            <ComplexityCard
-              complexity={algorithm.complexity}
-              stable={algorithm.stable}
-              inPlace={algorithm.inPlace}
-            />
-          </Box>
+          <Separator my={4} borderColor="var(--color-border)" />
 
-          {/* Color Legend */}
-          <Box
-            bg="var(--color-surface)"
-            borderRadius="2xl"
-            border="1px solid"
-            borderColor="var(--color-border)"
-            p={5}
-          >
-            <Text
-              fontSize="xs"
-              fontWeight="semibold"
-              color="var(--color-text-muted)"
-              fontFamily="var(--font-mono)"
-              textTransform="uppercase"
-              letterSpacing="0.05em"
-              mb={3}
-            >
-              Color Legend
-            </Text>
-            <Flex direction="column" gap={2}>
-              {legendItems.map(({ color, label }) => (
-                <Flex key={label} align="center" gap={3}>
-                  <Box w="14px" h="14px" borderRadius="sm" bg={color} flexShrink={0} />
-                  <Text fontSize="sm" color="var(--color-text)">
-                    {label}
-                  </Text>
-                </Flex>
-              ))}
-            </Flex>
-
-            <Separator my={4} borderColor="var(--color-border)" />
-
-            <Text fontSize="xs" color="var(--color-text-muted)" lineHeight="tall">
-              {algorithm.description}
-            </Text>
-          </Box>
+          <Text fontSize="xs" color="var(--color-text-muted)" lineHeight="tall">
+            {algorithm.description}
+          </Text>
         </Box>
       </Grid>
+
+      {/* ========================================================================= */}
+      {/* 3. FULL-WIDTH CODE IMPLEMENTATION SECTION */}
+      {/* ========================================================================= */}
+      <Box
+        bg="var(--color-surface)"
+        borderRadius="2xl"
+        border="1px solid"
+        borderColor="var(--color-border)"
+        p={5}
+        mb={8}
+      >
+        <Text
+          fontSize="xs"
+          fontWeight="semibold"
+          color="var(--color-text-muted)"
+          fontFamily="var(--font-mono)"
+          textTransform="uppercase"
+          letterSpacing="0.05em"
+          mb={3}
+        >
+          Implementation Code
+        </Text>
+        <CodePanel code={algorithm.code} />
+      </Box>
     </Container>
   );
 }

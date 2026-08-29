@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Flex, Button, Code } from '@chakra-ui/react';
+import { Box, Flex, Button, Text } from '@chakra-ui/react';
 import type { AlgorithmCode, CodeLanguage } from '@/types/algorithm';
 
 interface CodePanelProps {
@@ -18,30 +18,35 @@ export function CodePanel({ code }: CodePanelProps) {
   const [activeLanguage, setActiveLanguage] = useState<CodeLanguage>('typescript');
   const [copied, setCopied] = useState(false);
 
+  const currentCode = code[activeLanguage];
+  const lines = currentCode.split('\n');
+
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(code[activeLanguage]);
+    await navigator.clipboard.writeText(currentCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <Box
+      w="full"
       borderRadius="xl"
       border="1px solid"
       borderColor="var(--color-border)"
       overflow="hidden"
       bg="var(--color-bg)"
     >
+      {/* Code Header Bar */}
       <Flex
         align="center"
         justify="space-between"
-        px={3}
-        py={2}
+        px={4}
+        py={2.5}
         bg="var(--color-surface-light)"
         borderBottom="1px solid"
         borderColor="var(--color-border)"
       >
-        <Flex gap={1}>
+        <Flex gap={1.5}>
           {languages.map((lang) => {
             const isActive = activeLanguage === lang.id;
             return (
@@ -57,6 +62,7 @@ export function CodePanel({ code }: CodePanelProps) {
                 }}
                 borderRadius="md"
                 fontFamily="var(--font-mono)"
+                fontWeight={isActive ? 'bold' : 'medium'}
                 onClick={() => setActiveLanguage(lang.id)}
               >
                 {lang.label}
@@ -67,28 +73,58 @@ export function CodePanel({ code }: CodePanelProps) {
 
         <Button
           size="xs"
-          variant="ghost"
-          color={copied ? '#34d399' : 'var(--color-text-muted)'}
-          _hover={{ color: 'var(--color-text)' }}
+          variant="outline"
+          borderColor="var(--color-border)"
+          color={copied ? '#34d399' : 'var(--color-text)'}
+          _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface)' }}
           onClick={handleCopy}
           fontFamily="var(--font-mono)"
         >
-          {copied ? '✓ Copied' : 'Copy'}
+          {copied ? '✓ Copied to clipboard' : 'Copy Code'}
         </Button>
       </Flex>
 
-      <Box p={4} overflowX="auto">
-        <Code
-          display="block"
-          whiteSpace="pre"
-          fontFamily="var(--font-mono)"
-          fontSize="13px"
-          color="var(--color-text)"
-          bg="transparent"
-          lineHeight="1.7"
-        >
-          {code[activeLanguage]}
-        </Code>
+      {/* Code Body with line numbers and vertical/horizontal scrolling */}
+      <Box maxH="440px" overflowY="auto" overflowX="auto" p={4}>
+        <Flex minW="max-content">
+          {/* Line Numbers Gutter */}
+          <Box
+            userSelect="none"
+            pr={4}
+            mr={4}
+            borderRight="1px solid"
+            borderColor="var(--color-border)"
+            textAlign="right"
+          >
+            {lines.map((_, i) => (
+              <Text
+                key={i}
+                fontSize="13px"
+                fontFamily="var(--font-mono)"
+                lineHeight="1.7"
+                color="var(--color-text-muted)"
+                opacity={0.5}
+              >
+                {i + 1}
+              </Text>
+            ))}
+          </Box>
+
+          {/* Code text */}
+          <Box flex={1}>
+            <pre
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-mono)',
+                fontSize: '13px',
+                lineHeight: '1.7',
+                color: 'var(--color-text)',
+              }}
+            >
+              <code>{currentCode}</code>
+            </pre>
+          </Box>
+        </Flex>
       </Box>
     </Box>
   );
