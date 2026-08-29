@@ -10,7 +10,11 @@ import {
   executeListInsertTail,
   executeListInsertAt,
   executeListFind,
+  executeListGetAt,
   executeListDelete,
+  executeListDeleteHead,
+  executeListDeleteTail,
+  executeListDeleteAt,
   executeListReverse,
   type LinkedListNodeModel,
 } from '@/lib/data-structures';
@@ -95,25 +99,26 @@ describe('Linked List Data Structure Engine', () => {
   const initialNodes: LinkedListNodeModel[] = [
     { id: '1', value: 10 },
     { id: '2', value: 20 },
+    { id: '3', value: 30 },
   ];
 
   it('inserts node at head', () => {
     const res = executeListInsertHead(initialNodes, 5);
-    expect(res.nextNodes.length).toBe(3);
+    expect(res.nextNodes.length).toBe(4);
     expect(res.nextNodes[0].value).toBe(5);
     expect(res.nextNodes[1].value).toBe(10);
   });
 
   it('inserts node at tail', () => {
-    const res = executeListInsertTail(initialNodes, 30);
-    expect(res.nextNodes.length).toBe(3);
-    expect(res.nextNodes[2].value).toBe(30);
+    const res = executeListInsertTail(initialNodes, 40);
+    expect(res.nextNodes.length).toBe(4);
+    expect(res.nextNodes[3].value).toBe(40);
   });
 
   it('inserts node at middle index', () => {
     const res = executeListInsertAt(initialNodes, 1, 15);
-    expect(res.nextNodes.length).toBe(3);
-    expect(res.nextNodes.map((n) => n.value)).toEqual([10, 15, 20]);
+    expect(res.nextNodes.length).toBe(4);
+    expect(res.nextNodes.map((n) => n.value)).toEqual([10, 15, 20, 30]);
   });
 
   it('finds node by value', () => {
@@ -128,20 +133,44 @@ describe('Linked List Data Structure Engine', () => {
     expect(res.error).toContain('not found');
   });
 
+  it('gets node at specified index', () => {
+    const res = executeListGetAt(initialNodes, 2);
+    expect(res.foundIndex).toBe(2);
+    expect(res.targetedValue).toBe(30);
+  });
+
   it('deletes existing node by value', () => {
-    const res = executeListDelete(initialNodes, 10);
-    expect(res.nextNodes.length).toBe(1);
+    const res = executeListDelete(initialNodes, 20);
+    expect(res.nextNodes.length).toBe(2);
+    expect(res.nextNodes.map((n) => n.value)).toEqual([10, 30]);
+  });
+
+  it('deletes head node', () => {
+    const res = executeListDeleteHead(initialNodes);
+    expect(res.nextNodes.length).toBe(2);
     expect(res.nextNodes[0].value).toBe(20);
+  });
+
+  it('deletes tail node', () => {
+    const res = executeListDeleteTail(initialNodes);
+    expect(res.nextNodes.length).toBe(2);
+    expect(res.nextNodes[1].value).toBe(20);
+  });
+
+  it('deletes node at specific index', () => {
+    const res = executeListDeleteAt(initialNodes, 1);
+    expect(res.nextNodes.length).toBe(2);
+    expect(res.nextNodes.map((n) => n.value)).toEqual([10, 30]);
   });
 
   it('handles deleting nonexistent value', () => {
     const res = executeListDelete(initialNodes, 999);
     expect(res.error).toContain('not found');
-    expect(res.nextNodes.length).toBe(2);
+    expect(res.nextNodes.length).toBe(3);
   });
 
   it('reverses the linked list order', () => {
     const res = executeListReverse(initialNodes);
-    expect(res.nextNodes.map((n) => n.value)).toEqual([20, 10]);
+    expect(res.nextNodes.map((n) => n.value)).toEqual([30, 20, 10]);
   });
 });

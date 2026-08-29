@@ -1,7 +1,11 @@
 'use client';
 
 import { Box, Flex, Button, Input, Text, Badge, IconButton } from '@chakra-ui/react';
-import { useLinkedListVisualizer } from '@/hooks/use-linked-list-visualizer';
+import {
+  useLinkedListVisualizer,
+  type VisualizerTab,
+  type VisualizerSpeed,
+} from '@/hooks/use-linked-list-visualizer';
 import { COLOR_TOKENS } from '@/config/colors';
 
 interface LinkedListVisualizerProps {
@@ -12,11 +16,16 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
   const {
     nodes,
     operationLog,
+    activeTab,
+    speed,
+    currentComplexity,
     error,
     insertValue,
     insertAtValue,
     deleteValue,
+    deleteIndex,
     searchValue,
+    searchIndex,
     insertIndex,
     traversingIndex,
     unlinkingIndex,
@@ -25,11 +34,21 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
     animatingStatus,
     isAnimating,
     isMuted,
+    setActiveTab,
+    setSpeed,
     setInsertValue,
     setInsertAtValue,
     setDeleteValue,
+    setDeleteIndex,
     setSearchValue,
+    setSearchIndex,
     setInsertIndex,
+    insertRandom,
+    deleteHead,
+    deleteTail,
+    peekHead,
+    peekTail,
+    fillRandomSample,
     reverseList,
     clear,
     toggleSound,
@@ -37,12 +56,20 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
     handleInsertTail,
     handleInsertAtSubmit,
     handleDeleteSubmit,
+    handleDeleteAtSubmit,
     handleFindSubmit,
+    handleGetAtSubmit,
   } = useLinkedListVisualizer(isDoubly);
+
+  const tabs: { id: VisualizerTab; label: string; icon: string }[] = [
+    { id: 'insert', label: 'Insert', icon: '➕' },
+    { id: 'search', label: 'Search & Inspect', icon: '🔍' },
+    { id: 'delete', label: 'Delete', icon: '🗑️' },
+    { id: 'utils', label: 'Utilities', icon: '⚡' },
+  ];
 
   return (
     <Box>
-      {/* Top Operations Toolbar */}
       <Flex
         direction="column"
         gap={3}
@@ -53,194 +80,119 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
         border="1px solid"
         borderColor={COLOR_TOKENS.border}
       >
-        {/* Row 1: Insert Head, Insert Tail & Insert At Index */}
         <Flex
-          direction={{ base: 'column', lg: 'row' }}
+          direction={{ base: 'column', md: 'row' }}
           gap={3}
           justify="space-between"
-          align={{ base: 'stretch', lg: 'center' }}
-        >
-          {/* Head & Tail Insert */}
-          <Flex align="center" gap={2} wrap="wrap">
-            <Input
-              size="xs"
-              placeholder="Val"
-              value={insertValue}
-              onChange={(e) => setInsertValue(e.target.value)}
-              w="55px"
-              bg="var(--color-bg)"
-              color={COLOR_TOKENS.text}
-              borderColor={COLOR_TOKENS.border}
-              fontFamily="var(--font-mono)"
-              disabled={isAnimating}
-            />
-            <Button
-              size="xs"
-              bg={COLOR_TOKENS.default}
-              color="white"
-              _hover={{ filter: 'brightness(1.15)' }}
-              onClick={() => handleInsertHead()}
-              fontFamily="var(--font-mono)"
-              disabled={isAnimating}
-            >
-              Insert Head (H)
-            </Button>
-            <Button
-              size="xs"
-              variant="outline"
-              borderColor={COLOR_TOKENS.border}
-              color={COLOR_TOKENS.text}
-              _hover={{ borderColor: COLOR_TOKENS.default, bg: 'var(--color-surface)' }}
-              onClick={() => handleInsertTail()}
-              fontFamily="var(--font-mono)"
-              disabled={isAnimating}
-            >
-              Insert Tail (T)
-            </Button>
-          </Flex>
-
-          {/* Insert at Index Form */}
-          <Flex as="form" onSubmit={handleInsertAtSubmit} align="center" gap={1.5} wrap="wrap">
-            <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-              Val:
-            </Text>
-            <Input
-              size="xs"
-              placeholder="Val"
-              value={insertAtValue}
-              onChange={(e) => setInsertAtValue(e.target.value)}
-              w="50px"
-              bg="var(--color-bg)"
-              color={COLOR_TOKENS.text}
-              borderColor={COLOR_TOKENS.border}
-              fontFamily="var(--font-mono)"
-              disabled={isAnimating}
-            />
-            <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-              @ idx:
-            </Text>
-            <Input
-              size="xs"
-              placeholder="Idx"
-              value={insertIndex}
-              onChange={(e) => setInsertIndex(e.target.value)}
-              w="40px"
-              bg="var(--color-bg)"
-              color={COLOR_TOKENS.text}
-              borderColor={COLOR_TOKENS.border}
-              fontFamily="var(--font-mono)"
-              disabled={isAnimating}
-            />
-            <Button
-              type="submit"
-              size="xs"
-              variant="outline"
-              borderColor={COLOR_TOKENS.default}
-              color={COLOR_TOKENS.default}
-              _hover={{ bg: 'rgba(129, 140, 248, 0.15)' }}
-              fontFamily="var(--font-mono)"
-              disabled={isAnimating}
-            >
-              Insert At Index
-            </Button>
-          </Flex>
-        </Flex>
-
-        {/* Row 2: Search, Delete & Global Controls */}
-        <Flex
-          direction={{ base: 'column', lg: 'row' }}
-          gap={3}
-          justify="space-between"
-          align={{ base: 'stretch', lg: 'center' }}
-          pt={2}
-          borderTop="1px dashed"
+          align="center"
+          pb={2.5}
+          borderBottom="1px solid"
           borderColor={COLOR_TOKENS.border}
         >
-          <Flex align="center" gap={3} wrap="wrap">
-            {/* Find */}
-            <Flex as="form" onSubmit={handleFindSubmit} align="center" gap={1.5}>
-              <Input
-                size="xs"
-                placeholder="Find"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                w="55px"
-                bg="var(--color-bg)"
-                color={COLOR_TOKENS.text}
-                borderColor={COLOR_TOKENS.border}
-                fontFamily="var(--font-mono)"
-                disabled={isAnimating}
-              />
-              <Button
-                type="submit"
-                size="xs"
-                variant="outline"
-                borderColor={COLOR_TOKENS.compare}
-                color={COLOR_TOKENS.compare}
-                _hover={{ bg: 'rgba(251, 191, 36, 0.15)' }}
-                fontFamily="var(--font-mono)"
-                disabled={isAnimating || nodes.length === 0}
-              >
-                Find (F)
-              </Button>
-            </Flex>
-
-            {/* Delete */}
-            <Flex as="form" onSubmit={handleDeleteSubmit} align="center" gap={1.5}>
-              <Input
-                size="xs"
-                placeholder="Del"
-                value={deleteValue}
-                onChange={(e) => setDeleteValue(e.target.value)}
-                w="55px"
-                bg="var(--color-bg)"
-                color={COLOR_TOKENS.text}
-                borderColor={COLOR_TOKENS.border}
-                fontFamily="var(--font-mono)"
-                disabled={isAnimating}
-              />
-              <Button
-                type="submit"
-                size="xs"
-                variant="outline"
-                borderColor={COLOR_TOKENS.danger}
-                color={COLOR_TOKENS.danger}
-                _hover={{ bg: 'rgba(248, 113, 113, 0.15)' }}
-                disabled={isAnimating || nodes.length === 0}
-                fontFamily="var(--font-mono)"
-              >
-                Delete (D)
-              </Button>
-            </Flex>
+          <Flex
+            align="center"
+            gap={1}
+            bg="var(--color-bg)"
+            p={1}
+            borderRadius="lg"
+            border="1px solid"
+            borderColor={COLOR_TOKENS.border}
+            wrap="wrap"
+          >
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <Button
+                  key={tab.id}
+                  size="xs"
+                  variant={isActive ? 'solid' : 'ghost'}
+                  bg={isActive ? COLOR_TOKENS.default : 'transparent'}
+                  color={isActive ? 'white' : COLOR_TOKENS.textMuted}
+                  _hover={{
+                    color: COLOR_TOKENS.text,
+                    bg: isActive ? COLOR_TOKENS.default : COLOR_TOKENS.surfaceLight,
+                  }}
+                  onClick={() => setActiveTab(tab.id)}
+                  fontFamily="var(--font-mono)"
+                  fontSize="xs"
+                  px={3}
+                  borderRadius="md"
+                >
+                  <span style={{ marginRight: '5px' }}>{tab.icon}</span>
+                  {tab.label}
+                </Button>
+              );
+            })}
           </Flex>
 
           <Flex align="center" gap={2} wrap="wrap">
-            {!isDoubly && (
-              <Button
-                size="xs"
-                variant="outline"
-                borderColor={COLOR_TOKENS.border}
-                color={COLOR_TOKENS.compare}
-                _hover={{ borderColor: COLOR_TOKENS.compare }}
-                onClick={reverseList}
-                disabled={isAnimating || nodes.length <= 1}
+            <Flex
+              align="center"
+              gap={1.5}
+              px={2.5}
+              py={1}
+              bg="var(--color-bg)"
+              borderRadius="md"
+              border="1px solid"
+              borderColor={COLOR_TOKENS.border}
+            >
+              <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+                Size:
+              </Text>
+              <Text
+                fontSize="xs"
+                fontWeight="bold"
+                color={nodes.length >= 7 ? COLOR_TOKENS.danger : COLOR_TOKENS.default}
                 fontFamily="var(--font-mono)"
               >
-                Reverse (R)
-              </Button>
-            )}
+                {nodes.length} / 7
+              </Text>
+            </Flex>
 
-            <Button
-              size="xs"
-              variant="ghost"
-              color={COLOR_TOKENS.textMuted}
-              _hover={{ color: COLOR_TOKENS.text }}
-              onClick={clear}
-              disabled={isAnimating}
-              fontFamily="var(--font-mono)"
+            <Flex
+              align="center"
+              gap={1.5}
+              px={2.5}
+              py={1}
+              bg="var(--color-bg)"
+              borderRadius="md"
+              border="1px solid"
+              borderColor={COLOR_TOKENS.border}
             >
-              Clear (C)
-            </Button>
+              <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+                Time:
+              </Text>
+              <Badge colorPalette="indigo" size="xs" variant="subtle" fontFamily="var(--font-mono)">
+                {currentComplexity}
+              </Badge>
+            </Flex>
+
+            <Flex
+              align="center"
+              bg="var(--color-bg)"
+              p={0.5}
+              borderRadius="md"
+              border="1px solid"
+              borderColor={COLOR_TOKENS.border}
+            >
+              {([0.5, 1, 2] as VisualizerSpeed[]).map((s) => (
+                <Button
+                  key={s}
+                  size="2xs"
+                  variant={speed === s ? 'solid' : 'ghost'}
+                  bg={speed === s ? COLOR_TOKENS.default : 'transparent'}
+                  color={speed === s ? 'white' : COLOR_TOKENS.textMuted}
+                  _hover={{ color: COLOR_TOKENS.text }}
+                  onClick={() => setSpeed(s)}
+                  fontFamily="var(--font-mono)"
+                  px={2}
+                  h="22px"
+                  borderRadius="sm"
+                >
+                  {s}x
+                </Button>
+              ))}
+            </Flex>
 
             <IconButton
               aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
@@ -256,6 +208,353 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
             </IconButton>
           </Flex>
         </Flex>
+
+        {activeTab === 'insert' && (
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            gap={4}
+            justify="space-between"
+            align="center"
+            wrap="wrap"
+          >
+            <Flex align="center" gap={2} wrap="wrap">
+              <Input
+                size="xs"
+                placeholder="Val"
+                value={insertValue}
+                onChange={(e) => setInsertValue(e.target.value)}
+                w="60px"
+                bg="var(--color-bg)"
+                color={COLOR_TOKENS.text}
+                borderColor={COLOR_TOKENS.border}
+                fontFamily="var(--font-mono)"
+                disabled={isAnimating}
+              />
+              <Button
+                size="xs"
+                bg={COLOR_TOKENS.default}
+                color="white"
+                _hover={{ filter: 'brightness(1.15)' }}
+                onClick={() => handleInsertHead()}
+                fontFamily="var(--font-mono)"
+                disabled={isAnimating || nodes.length >= 7}
+              >
+                + Head (H)
+              </Button>
+              <Button
+                size="xs"
+                variant="outline"
+                borderColor={COLOR_TOKENS.border}
+                color={COLOR_TOKENS.text}
+                _hover={{ borderColor: COLOR_TOKENS.default, bg: 'var(--color-surface)' }}
+                onClick={() => handleInsertTail()}
+                fontFamily="var(--font-mono)"
+                disabled={isAnimating || nodes.length >= 7}
+              >
+                + Tail (T)
+              </Button>
+              <Button
+                size="xs"
+                variant="outline"
+                borderColor={COLOR_TOKENS.border}
+                color={COLOR_TOKENS.textMuted}
+                _hover={{ color: COLOR_TOKENS.text, borderColor: COLOR_TOKENS.textMuted }}
+                onClick={insertRandom}
+                fontFamily="var(--font-mono)"
+                disabled={isAnimating || nodes.length >= 7}
+              >
+                + Random
+              </Button>
+            </Flex>
+
+            <Flex as="form" onSubmit={handleInsertAtSubmit} align="center" gap={1.5} wrap="wrap">
+              <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+                Val:
+              </Text>
+              <Input
+                size="xs"
+                placeholder="Val"
+                value={insertAtValue}
+                onChange={(e) => setInsertAtValue(e.target.value)}
+                w="50px"
+                bg="var(--color-bg)"
+                color={COLOR_TOKENS.text}
+                borderColor={COLOR_TOKENS.border}
+                fontFamily="var(--font-mono)"
+                disabled={isAnimating}
+              />
+              <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+                @ Idx:
+              </Text>
+              <Input
+                size="xs"
+                placeholder="Idx"
+                value={insertIndex}
+                onChange={(e) => setInsertIndex(e.target.value)}
+                w="40px"
+                bg="var(--color-bg)"
+                color={COLOR_TOKENS.text}
+                borderColor={COLOR_TOKENS.border}
+                fontFamily="var(--font-mono)"
+                disabled={isAnimating}
+              />
+              <Button
+                type="submit"
+                size="xs"
+                variant="outline"
+                borderColor={COLOR_TOKENS.default}
+                color={COLOR_TOKENS.default}
+                _hover={{ bg: 'rgba(129, 140, 248, 0.15)' }}
+                fontFamily="var(--font-mono)"
+                disabled={isAnimating || nodes.length >= 7}
+              >
+                Insert At Index
+              </Button>
+            </Flex>
+          </Flex>
+        )}
+
+        {activeTab === 'search' && (
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            gap={3}
+            justify="space-between"
+            align="center"
+            wrap="wrap"
+          >
+            <Flex align="center" gap={3} wrap="wrap">
+              <Flex as="form" onSubmit={handleFindSubmit} align="center" gap={1.5}>
+                <Input
+                  size="xs"
+                  placeholder="Target"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  w="60px"
+                  bg="var(--color-bg)"
+                  color={COLOR_TOKENS.text}
+                  borderColor={COLOR_TOKENS.border}
+                  fontFamily="var(--font-mono)"
+                  disabled={isAnimating}
+                />
+                <Button
+                  type="submit"
+                  size="xs"
+                  variant="outline"
+                  borderColor={COLOR_TOKENS.compare}
+                  color={COLOR_TOKENS.compare}
+                  _hover={{ bg: 'rgba(251, 191, 36, 0.15)' }}
+                  fontFamily="var(--font-mono)"
+                  disabled={isAnimating || nodes.length === 0}
+                >
+                  Find Val (F)
+                </Button>
+              </Flex>
+
+              <Flex as="form" onSubmit={handleGetAtSubmit} align="center" gap={1.5}>
+                <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+                  Idx:
+                </Text>
+                <Input
+                  size="xs"
+                  placeholder="Idx"
+                  value={searchIndex}
+                  onChange={(e) => setSearchIndex(e.target.value)}
+                  w="40px"
+                  bg="var(--color-bg)"
+                  color={COLOR_TOKENS.text}
+                  borderColor={COLOR_TOKENS.border}
+                  fontFamily="var(--font-mono)"
+                  disabled={isAnimating}
+                />
+                <Button
+                  type="submit"
+                  size="xs"
+                  variant="outline"
+                  borderColor={COLOR_TOKENS.border}
+                  color={COLOR_TOKENS.text}
+                  _hover={{ borderColor: COLOR_TOKENS.default }}
+                  fontFamily="var(--font-mono)"
+                  disabled={isAnimating || nodes.length === 0}
+                >
+                  Get @ Index
+                </Button>
+              </Flex>
+            </Flex>
+
+            <Flex align="center" gap={2}>
+              <Button
+                size="xs"
+                variant="ghost"
+                color={COLOR_TOKENS.textMuted}
+                _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+                onClick={peekHead}
+                disabled={isAnimating || nodes.length === 0}
+                fontFamily="var(--font-mono)"
+              >
+                Peek Head
+              </Button>
+              <Button
+                size="xs"
+                variant="ghost"
+                color={COLOR_TOKENS.textMuted}
+                _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+                onClick={peekTail}
+                disabled={isAnimating || nodes.length === 0}
+                fontFamily="var(--font-mono)"
+              >
+                Peek Tail
+              </Button>
+            </Flex>
+          </Flex>
+        )}
+
+        {activeTab === 'delete' && (
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            gap={3}
+            justify="space-between"
+            align="center"
+            wrap="wrap"
+          >
+            <Flex align="center" gap={3} wrap="wrap">
+              <Flex as="form" onSubmit={handleDeleteSubmit} align="center" gap={1.5}>
+                <Input
+                  size="xs"
+                  placeholder="Val"
+                  value={deleteValue}
+                  onChange={(e) => setDeleteValue(e.target.value)}
+                  w="60px"
+                  bg="var(--color-bg)"
+                  color={COLOR_TOKENS.text}
+                  borderColor={COLOR_TOKENS.border}
+                  fontFamily="var(--font-mono)"
+                  disabled={isAnimating}
+                />
+                <Button
+                  type="submit"
+                  size="xs"
+                  variant="outline"
+                  borderColor={COLOR_TOKENS.danger}
+                  color={COLOR_TOKENS.danger}
+                  _hover={{ bg: 'rgba(248, 113, 113, 0.15)' }}
+                  disabled={isAnimating || nodes.length === 0}
+                  fontFamily="var(--font-mono)"
+                >
+                  Delete Val (D)
+                </Button>
+              </Flex>
+
+              <Flex as="form" onSubmit={handleDeleteAtSubmit} align="center" gap={1.5}>
+                <Text fontSize="2xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
+                  Idx:
+                </Text>
+                <Input
+                  size="xs"
+                  placeholder="Idx"
+                  value={deleteIndex}
+                  onChange={(e) => setDeleteIndex(e.target.value)}
+                  w="40px"
+                  bg="var(--color-bg)"
+                  color={COLOR_TOKENS.text}
+                  borderColor={COLOR_TOKENS.border}
+                  fontFamily="var(--font-mono)"
+                  disabled={isAnimating}
+                />
+                <Button
+                  type="submit"
+                  size="xs"
+                  variant="outline"
+                  borderColor={COLOR_TOKENS.danger}
+                  color={COLOR_TOKENS.danger}
+                  _hover={{ bg: 'rgba(248, 113, 113, 0.15)' }}
+                  disabled={isAnimating || nodes.length === 0}
+                  fontFamily="var(--font-mono)"
+                >
+                  Delete @ Idx
+                </Button>
+              </Flex>
+            </Flex>
+
+            <Flex align="center" gap={2}>
+              <Button
+                size="xs"
+                variant="outline"
+                borderColor={COLOR_TOKENS.border}
+                color={COLOR_TOKENS.danger}
+                _hover={{ borderColor: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.1)' }}
+                onClick={deleteHead}
+                disabled={isAnimating || nodes.length === 0}
+                fontFamily="var(--font-mono)"
+              >
+                Delete Head
+              </Button>
+              <Button
+                size="xs"
+                variant="outline"
+                borderColor={COLOR_TOKENS.border}
+                color={COLOR_TOKENS.danger}
+                _hover={{ borderColor: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.1)' }}
+                onClick={deleteTail}
+                disabled={isAnimating || nodes.length === 0}
+                fontFamily="var(--font-mono)"
+              >
+                Delete Tail
+              </Button>
+            </Flex>
+          </Flex>
+        )}
+
+        {activeTab === 'utils' && (
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            gap={2.5}
+            justify="space-between"
+            align="center"
+            wrap="wrap"
+          >
+            <Flex align="center" gap={2} wrap="wrap">
+              <Button
+                size="xs"
+                variant="outline"
+                borderColor={COLOR_TOKENS.default}
+                color={COLOR_TOKENS.default}
+                _hover={{ bg: 'rgba(129, 140, 248, 0.1)' }}
+                onClick={fillRandomSample}
+                disabled={isAnimating}
+                fontFamily="var(--font-mono)"
+              >
+                🎲 Fill Random (4 Nodes)
+              </Button>
+
+              {!isDoubly && (
+                <Button
+                  size="xs"
+                  variant="outline"
+                  borderColor={COLOR_TOKENS.border}
+                  color={COLOR_TOKENS.compare}
+                  _hover={{ borderColor: COLOR_TOKENS.compare }}
+                  onClick={reverseList}
+                  disabled={isAnimating || nodes.length <= 1}
+                  fontFamily="var(--font-mono)"
+                >
+                  ⇄ Reverse List (R)
+                </Button>
+              )}
+            </Flex>
+
+            <Button
+              size="xs"
+              variant="ghost"
+              color={COLOR_TOKENS.danger}
+              _hover={{ bg: 'rgba(248, 113, 113, 0.1)' }}
+              onClick={clear}
+              disabled={isAnimating || nodes.length === 0}
+              fontFamily="var(--font-mono)"
+            >
+              🗑️ Clear All (C)
+            </Button>
+          </Flex>
+        )}
       </Flex>
 
       {error && (
@@ -264,7 +563,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
         </Text>
       )}
 
-      {/* Linked List Canvas */}
       <Flex
         minH="320px"
         align="center"
@@ -319,7 +617,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
             return (
               <Flex key={node.id} align="center" gap={2}>
                 <Flex direction="column" align="center">
-                  {/* Floating Pointer Indicator Badge */}
                   <Box minH="22px" mb={1}>
                     {isTraversing && (
                       <Badge
@@ -367,7 +664,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                     )}
                   </Box>
 
-                  {/* Node Box */}
                   <Box
                     p={2.5}
                     bg={COLOR_TOKENS.surfaceLight}
@@ -479,7 +775,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                   </Box>
                 </Flex>
 
-                {/* Arrow Connector */}
                 <Box px={1} mt={4}>
                   <Text
                     fontSize="lg"
@@ -525,7 +820,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
         </Flex>
       </Flex>
 
-      {/* Live Operational Step Log */}
       <Flex
         mt={4}
         px={4}
@@ -547,7 +841,6 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
         </Text>
       </Flex>
 
-      {/* Keyboard Shortcut Hints Footer */}
       <Flex justify="center" align="center" gap={2} mt={3} opacity={0.6}>
         <Text fontSize="2xs" fontFamily="var(--font-mono)" color={COLOR_TOKENS.textMuted}>
           Shortcuts:{' '}

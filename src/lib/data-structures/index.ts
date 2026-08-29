@@ -128,6 +128,7 @@ export interface LinkedListOperationResult {
   action: string;
   error?: string;
   foundIndex?: number;
+  targetedValue?: number;
 }
 
 export function executeListInsertHead(
@@ -218,6 +219,28 @@ export function executeListFind(
     nextNodes: nodes,
     action: `Found value ${value} at index [${index}]`,
     foundIndex: index,
+    targetedValue: value,
+  };
+}
+
+export function executeListGetAt(
+  nodes: LinkedListNodeModel[],
+  index: number
+): LinkedListOperationResult {
+  if (index < 0 || index >= nodes.length) {
+    return {
+      nextNodes: nodes,
+      action: `Index [${index}] out of bounds (0 to ${nodes.length - 1})`,
+      error: `Index out of bounds`,
+      foundIndex: -1,
+    };
+  }
+  const val = nodes[index].value;
+  return {
+    nextNodes: nodes,
+    action: `Node at index [${index}] contains value ${val}`,
+    foundIndex: index,
+    targetedValue: val,
   };
 }
 
@@ -237,6 +260,61 @@ export function executeListDelete(
   return {
     nextNodes,
     action: `Deleted first occurrence of node with value ${value}`,
+    targetedValue: value,
+  };
+}
+
+export function executeListDeleteHead(nodes: LinkedListNodeModel[]): LinkedListOperationResult {
+  if (nodes.length === 0) {
+    return {
+      nextNodes: nodes,
+      action: 'List is empty, cannot delete HEAD',
+      error: 'List is empty',
+    };
+  }
+  const removedVal = nodes[0].value;
+  const nextNodes = nodes.slice(1);
+  return {
+    nextNodes,
+    action: `Deleted HEAD node with value ${removedVal}`,
+    targetedValue: removedVal,
+  };
+}
+
+export function executeListDeleteTail(nodes: LinkedListNodeModel[]): LinkedListOperationResult {
+  if (nodes.length === 0) {
+    return {
+      nextNodes: nodes,
+      action: 'List is empty, cannot delete TAIL',
+      error: 'List is empty',
+    };
+  }
+  const removedVal = nodes[nodes.length - 1].value;
+  const nextNodes = nodes.slice(0, nodes.length - 1);
+  return {
+    nextNodes,
+    action: `Deleted TAIL node with value ${removedVal}`,
+    targetedValue: removedVal,
+  };
+}
+
+export function executeListDeleteAt(
+  nodes: LinkedListNodeModel[],
+  index: number
+): LinkedListOperationResult {
+  if (index < 0 || index >= nodes.length) {
+    return {
+      nextNodes: nodes,
+      action: `Index [${index}] out of bounds (0 to ${nodes.length - 1})`,
+      error: 'Index out of bounds',
+    };
+  }
+  const removedVal = nodes[index].value;
+  const nextNodes = nodes.filter((_, i) => i !== index);
+  return {
+    nextNodes,
+    action: `Deleted node at index [${index}] (value: ${removedVal})`,
+    targetedValue: removedVal,
   };
 }
 

@@ -7,6 +7,7 @@ import {
   executeListInsertTail,
   executeListInsertAt,
   executeListDelete,
+  executeListDeleteHead,
   executeListReverse,
 } from '@/lib/data-structures';
 import { soundEngine } from '@/lib/audio-synthesizer';
@@ -17,18 +18,32 @@ const initialSampleNodes: LinkedListNodeModel[] = [
   { id: 'node-3', value: 64 },
 ];
 
+export type VisualizerSpeed = 0.5 | 1 | 2;
+export type VisualizerTab = 'insert' | 'search' | 'delete' | 'utils';
+
+const SPEED_DELAYS: Record<VisualizerSpeed, number> = {
+  0.5: 500,
+  1: 300,
+  2: 140,
+};
+
 export function useLinkedListVisualizer(isDoubly = false) {
   const [nodes, setNodes] = useState<LinkedListNodeModel[]>(initialSampleNodes);
   const [operationLog, setOperationLog] = useState<string>(
-    `${isDoubly ? 'Doubly' : 'Singly'} Linked List ready. Enter a value and select an operation.`
+    `${isDoubly ? 'Doubly' : 'Singly'} Linked List ready. Select an operation tab below.`
   );
+  const [activeTab, setActiveTab] = useState<VisualizerTab>('insert');
+  const [speed, setSpeed] = useState<VisualizerSpeed>(1);
+  const [currentComplexity, setCurrentComplexity] = useState<string>('O(1)');
   const [error, setError] = useState<string | null>(null);
 
   const [insertValue, setInsertValue] = useState<string>('50');
   const [insertAtValue, setInsertAtValue] = useState<string>('35');
   const [insertIndex, setInsertIndex] = useState<string>('1');
   const [deleteValue, setDeleteValue] = useState<string>('28');
+  const [deleteIndex, setDeleteIndex] = useState<string>('1');
   const [searchValue, setSearchValue] = useState<string>('28');
+  const [searchIndex, setSearchIndex] = useState<string>('1');
 
   const [traversingIndex, setTraversingIndex] = useState<number | null>(null);
   const [unlinkingIndex, setUnlinkingIndex] = useState<number | null>(null);
@@ -41,6 +56,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nodesRef = useRef(nodes);
   const isAnimatingRef = useRef(false);
+  const speedRef = useRef(speed);
 
   useEffect(() => {
     nodesRef.current = nodes;
@@ -49,6 +65,10 @@ export function useLinkedListVisualizer(isDoubly = false) {
   useEffect(() => {
     isAnimatingRef.current = isAnimating;
   }, [isAnimating]);
+
+  useEffect(() => {
+    speedRef.current = speed;
+  }, [speed]);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -78,6 +98,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       clearTimer();
       resetVisualPointers();
       setError(null);
+      setCurrentComplexity('O(1)');
       const res = executeListInsertHead(nodesRef.current, value);
       if (res.error) {
         setError(res.error);
@@ -97,6 +118,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       clearTimer();
       resetVisualPointers();
       setError(null);
+      setCurrentComplexity(isDoubly ? 'O(1)' : 'O(n)');
       const res = executeListInsertTail(nodesRef.current, value);
       if (res.error) {
         setError(res.error);
@@ -107,8 +129,14 @@ export function useLinkedListVisualizer(isDoubly = false) {
       }
       setOperationLog(res.action);
     },
-    [clearTimer, resetVisualPointers]
+    [clearTimer, resetVisualPointers, isDoubly]
   );
+
+  const insertRandom = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    const randomVal = Math.floor(Math.random() * 90) + 10;
+    insertTail(randomVal);
+  }, [insertTail]);
 
   const insertAt = useCallback(
     (index: number, value: number) => {
@@ -116,6 +144,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       clearTimer();
       resetVisualPointers();
       setError(null);
+      setCurrentComplexity('O(n)');
 
       const currentList = [...nodesRef.current];
       if (index === 0) {
@@ -131,6 +160,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       setAnimatingStatus('Traversing to index...');
       let step = 0;
       const targetStep = index;
+      const stepDelay = SPEED_DELAYS[speedRef.current];
 
       const runStep = () => {
         if (step < targetStep) {
@@ -140,7 +170,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
             `Traversing [Step ${step + 1}/${targetStep}]: pointer at node [${step}] (val: ${currentList[step]?.value}), moving to insert index [${index}]...`
           );
           step++;
-          timerRef.current = setTimeout(runStep, 350);
+          timerRef.current = setTimeout(runStep, stepDelay);
         } else {
           setTraversingIndex(null);
           setInsertingAtIndex(index);
@@ -149,12 +179,15 @@ export function useLinkedListVisualizer(isDoubly = false) {
           setOperationLog(
             `Rewiring: setting new node (${value}).next = node[${index}] and node[${index - 1}].next = new node...`
           );
-          timerRef.current = setTimeout(() => {
-            const res = executeListInsertAt(nodesRef.current, index, value);
-            setNodes(res.nextNodes);
-            resetVisualPointers();
-            setOperationLog(res.action);
-          }, 500);
+          timerRef.current = setTimeout(
+            () => {
+              const res = executeListInsertAt(nodesRef.current, index, value);
+              setNodes(res.nextNodes);
+              resetVisualPointers();
+              setOperationLog(res.action);
+            },
+            Math.floor(stepDelay * 1.4)
+          );
         }
       };
 
@@ -169,6 +202,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       clearTimer();
       resetVisualPointers();
       setError(null);
+      setCurrentComplexity('O(n)');
 
       const currentList = [...nodesRef.current];
       if (currentList.length === 0) {
@@ -183,6 +217,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
 
       let step = 0;
       const maxTraverse = matchIdx !== -1 ? matchIdx : currentList.length - 1;
+      const stepDelay = SPEED_DELAYS[speedRef.current];
 
       const runStep = () => {
         if (step <= maxTraverse) {
@@ -192,7 +227,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
             `Traversing [Step ${step + 1}/${maxTraverse + 1}]: inspecting node [${step}] with value ${currentList[step]?.value}...`
           );
           step++;
-          timerRef.current = setTimeout(runStep, 350);
+          timerRef.current = setTimeout(runStep, stepDelay);
         } else {
           if (matchIdx !== -1) {
             setTraversingIndex(null);
@@ -208,14 +243,17 @@ export function useLinkedListVisualizer(isDoubly = false) {
               `Target ${value} found at [${matchIdx}]! Unlinking: updating ${prevLabel}.next pointer to skip to ${nextLabel}...`
             );
 
-            timerRef.current = setTimeout(() => {
-              const res = executeListDelete(nodesRef.current, value);
-              setNodes(res.nextNodes);
-              resetVisualPointers();
-              setOperationLog(
-                `Successfully unlinked and deleted node ${value}. Pointer bridge complete.`
-              );
-            }, 600);
+            timerRef.current = setTimeout(
+              () => {
+                const res = executeListDelete(nodesRef.current, value);
+                setNodes(res.nextNodes);
+                resetVisualPointers();
+                setOperationLog(
+                  `Successfully unlinked and deleted node ${value}. Pointer bridge complete.`
+                );
+              },
+              Math.floor(stepDelay * 1.6)
+            );
           } else {
             resetVisualPointers();
             setError(`Value ${value} not found in the list`);
@@ -232,12 +270,69 @@ export function useLinkedListVisualizer(isDoubly = false) {
     [clearTimer, resetVisualPointers]
   );
 
+  const deleteHead = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    clearTimer();
+    resetVisualPointers();
+    setError(null);
+    setCurrentComplexity('O(1)');
+    const res = executeListDeleteHead(nodesRef.current);
+    if (res.error) {
+      setError(res.error);
+      soundEngine.playError();
+    } else {
+      setNodes(res.nextNodes);
+      soundEngine.playDelete();
+    }
+    setOperationLog(res.action);
+  }, [clearTimer, resetVisualPointers]);
+
+  const deleteTail = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    clearTimer();
+    resetVisualPointers();
+    setError(null);
+    setCurrentComplexity(isDoubly ? 'O(1)' : 'O(n)');
+
+    const currentList = [...nodesRef.current];
+    if (currentList.length === 0) {
+      setError('List is empty');
+      soundEngine.playError();
+      return;
+    }
+
+    const lastIdx = currentList.length - 1;
+    const targetVal = currentList[lastIdx].value;
+    deleteNode(targetVal);
+  }, [clearTimer, resetVisualPointers, isDoubly, deleteNode]);
+
+  const deleteAt = useCallback(
+    (index: number) => {
+      if (isAnimatingRef.current) return;
+      clearTimer();
+      resetVisualPointers();
+      setError(null);
+      setCurrentComplexity('O(n)');
+
+      const currentList = [...nodesRef.current];
+      if (index < 0 || index >= currentList.length) {
+        setError(`Index [${index}] out of bounds`);
+        soundEngine.playError();
+        return;
+      }
+      const targetVal = currentList[index].value;
+      deleteNode(targetVal);
+    },
+    [clearTimer, resetVisualPointers, deleteNode]
+  );
+
   const findValue = useCallback(
     (value: number) => {
       if (isAnimatingRef.current) return;
       clearTimer();
       resetVisualPointers();
       setError(null);
+      setCurrentComplexity('O(n)');
 
       const currentList = [...nodesRef.current];
       if (currentList.length === 0) {
@@ -252,6 +347,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
 
       let step = 0;
       const maxTraverse = matchIdx !== -1 ? matchIdx : currentList.length - 1;
+      const stepDelay = SPEED_DELAYS[speedRef.current];
 
       const runStep = () => {
         if (step <= maxTraverse) {
@@ -261,7 +357,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
             `Searching [Step ${step + 1}/${maxTraverse + 1}]: inspecting node [${step}] (value: ${currentList[step]?.value}) for target ${value}...`
           );
           step++;
-          timerRef.current = setTimeout(runStep, 350);
+          timerRef.current = setTimeout(runStep, stepDelay);
         } else {
           setTraversingIndex(null);
           if (matchIdx !== -1) {
@@ -286,11 +382,100 @@ export function useLinkedListVisualizer(isDoubly = false) {
     [clearTimer, resetVisualPointers]
   );
 
+  const getAt = useCallback(
+    (index: number) => {
+      if (isAnimatingRef.current) return;
+      clearTimer();
+      resetVisualPointers();
+      setError(null);
+      setCurrentComplexity('O(n)');
+
+      const currentList = [...nodesRef.current];
+      if (index < 0 || index >= currentList.length) {
+        setError(`Index [${index}] out of bounds (0 to ${currentList.length - 1})`);
+        soundEngine.playError();
+        return;
+      }
+
+      setIsAnimating(true);
+      setAnimatingStatus('Traversing to index...');
+      let step = 0;
+      const targetStep = index;
+      const stepDelay = SPEED_DELAYS[speedRef.current];
+
+      const runStep = () => {
+        if (step <= targetStep) {
+          setTraversingIndex(step);
+          soundEngine.playTone(currentList[step]?.value ?? 50, 100, false);
+          setOperationLog(
+            `Traversing [Step ${step + 1}/${targetStep + 1}]: inspecting node [${step}]...`
+          );
+          step++;
+          timerRef.current = setTimeout(runStep, stepDelay);
+        } else {
+          setTraversingIndex(null);
+          setFoundIndex(index);
+          setAnimatingStatus('Node located!');
+          soundEngine.playPeek();
+          setOperationLog(`✓ Node at index [${index}] contains value ${currentList[index].value}`);
+          setIsAnimating(false);
+        }
+      };
+
+      runStep();
+    },
+    [clearTimer, resetVisualPointers]
+  );
+
+  const peekHead = useCallback(() => {
+    if (nodesRef.current.length === 0) {
+      setError('List is empty');
+      soundEngine.playError();
+      return;
+    }
+    resetVisualPointers();
+    setFoundIndex(0);
+    setCurrentComplexity('O(1)');
+    soundEngine.playPeek();
+    setOperationLog(`HEAD node is [0] with value ${nodesRef.current[0].value}`);
+  }, [resetVisualPointers]);
+
+  const peekTail = useCallback(() => {
+    if (nodesRef.current.length === 0) {
+      setError('List is empty');
+      soundEngine.playError();
+      return;
+    }
+    resetVisualPointers();
+    const lastIdx = nodesRef.current.length - 1;
+    setFoundIndex(lastIdx);
+    setCurrentComplexity(isDoubly ? 'O(1)' : 'O(n)');
+    soundEngine.playPeek();
+    setOperationLog(`TAIL node is [${lastIdx}] with value ${nodesRef.current[lastIdx].value}`);
+  }, [resetVisualPointers, isDoubly]);
+
+  const fillRandomSample = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    clearTimer();
+    resetVisualPointers();
+    setError(null);
+    const samples: LinkedListNodeModel[] = [
+      { id: `node-${Date.now()}-1`, value: Math.floor(Math.random() * 80) + 10 },
+      { id: `node-${Date.now()}-2`, value: Math.floor(Math.random() * 80) + 10 },
+      { id: `node-${Date.now()}-3`, value: Math.floor(Math.random() * 80) + 10 },
+      { id: `node-${Date.now()}-4`, value: Math.floor(Math.random() * 80) + 10 },
+    ];
+    setNodes(samples);
+    soundEngine.playInsert(samples[0].value);
+    setOperationLog('Generated 4 fresh random sample nodes');
+  }, [clearTimer, resetVisualPointers]);
+
   const reverseList = useCallback(() => {
     if (isAnimatingRef.current) return;
     clearTimer();
     resetVisualPointers();
     setError(null);
+    setCurrentComplexity('O(n)');
     const res = executeListReverse(nodesRef.current);
     setNodes(res.nextNodes);
     soundEngine.playReverse();
@@ -368,6 +553,20 @@ export function useLinkedListVisualizer(isDoubly = false) {
     [deleteValue, deleteNode]
   );
 
+  const handleDeleteAtSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const idx = parseInt(deleteIndex.trim(), 10);
+      if (isNaN(idx)) {
+        setError('Enter a valid index to delete');
+        soundEngine.playError();
+        return;
+      }
+      deleteAt(idx);
+    },
+    [deleteIndex, deleteAt]
+  );
+
   const handleFindSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -380,6 +579,20 @@ export function useLinkedListVisualizer(isDoubly = false) {
       findValue(num);
     },
     [searchValue, findValue]
+  );
+
+  const handleGetAtSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const idx = parseInt(searchIndex.trim(), 10);
+      if (isNaN(idx)) {
+        setError('Enter a valid index');
+        soundEngine.playError();
+        return;
+      }
+      getAt(idx);
+    },
+    [searchIndex, getAt]
   );
 
   const keyHandlerRef = useRef({
@@ -461,11 +674,16 @@ export function useLinkedListVisualizer(isDoubly = false) {
   return {
     nodes,
     operationLog,
+    activeTab,
+    speed,
+    currentComplexity,
     error,
     insertValue,
     insertAtValue,
     deleteValue,
+    deleteIndex,
     searchValue,
+    searchIndex,
     insertIndex,
     traversingIndex,
     unlinkingIndex,
@@ -474,16 +692,28 @@ export function useLinkedListVisualizer(isDoubly = false) {
     animatingStatus,
     isAnimating,
     isMuted,
+    setActiveTab,
+    setSpeed,
     setInsertValue,
     setInsertAtValue,
     setDeleteValue,
+    setDeleteIndex,
     setSearchValue,
+    setSearchIndex,
     setInsertIndex,
     insertHead,
     insertTail,
     insertAt,
+    insertRandom,
     deleteNode,
+    deleteHead,
+    deleteTail,
+    deleteAt,
     findValue,
+    getAt,
+    peekHead,
+    peekTail,
+    fillRandomSample,
     reverseList,
     clear,
     toggleSound,
@@ -491,6 +721,8 @@ export function useLinkedListVisualizer(isDoubly = false) {
     handleInsertTail,
     handleInsertAtSubmit,
     handleDeleteSubmit,
+    handleDeleteAtSubmit,
     handleFindSubmit,
+    handleGetAtSubmit,
   };
 }
