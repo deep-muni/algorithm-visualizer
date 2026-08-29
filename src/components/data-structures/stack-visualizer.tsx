@@ -51,7 +51,7 @@ export function StackVisualizer() {
             size="xs"
             bg={COLOR_TOKENS.default}
             color="white"
-            _hover={{ filter: 'brightness(1.15)' }}
+            _hover={{ filter: 'brightness(1.15)', bg: COLOR_TOKENS.default, color: 'white' }}
             fontFamily="var(--font-mono)"
           >
             Push (Key: P)
@@ -64,7 +64,11 @@ export function StackVisualizer() {
             variant="outline"
             borderColor={COLOR_TOKENS.border}
             color={COLOR_TOKENS.text}
-            _hover={{ borderColor: COLOR_TOKENS.danger, color: COLOR_TOKENS.danger }}
+            _hover={{
+              borderColor: COLOR_TOKENS.danger,
+              color: COLOR_TOKENS.danger,
+              bg: 'rgba(248, 113, 113, 0.1)',
+            }}
             onClick={pop}
             disabled={items.length === 0}
             fontFamily="var(--font-mono)"
@@ -77,7 +81,11 @@ export function StackVisualizer() {
             variant="outline"
             borderColor={COLOR_TOKENS.border}
             color={COLOR_TOKENS.text}
-            _hover={{ borderColor: COLOR_TOKENS.compare, color: COLOR_TOKENS.compare }}
+            _hover={{
+              borderColor: COLOR_TOKENS.compare,
+              color: COLOR_TOKENS.compare,
+              bg: 'rgba(251, 191, 36, 0.1)',
+            }}
             onClick={peek}
             disabled={items.length === 0}
             fontFamily="var(--font-mono)"
@@ -89,7 +97,7 @@ export function StackVisualizer() {
             size="xs"
             variant="ghost"
             color={COLOR_TOKENS.textMuted}
-            _hover={{ color: COLOR_TOKENS.text }}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
             onClick={clear}
             fontFamily="var(--font-mono)"
           >
@@ -102,7 +110,7 @@ export function StackVisualizer() {
             size="xs"
             borderRadius="full"
             color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-            _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
             onClick={toggleSound}
             title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
           >
@@ -119,83 +127,94 @@ export function StackVisualizer() {
 
       <Flex
         minH="320px"
+        direction="column-reverse"
         align="center"
-        justify="center"
+        justify="flex-start"
         p={6}
         bg="var(--color-bg)"
         borderRadius="xl"
         border="1px solid"
         borderColor={COLOR_TOKENS.border}
+        gap={2.5}
       >
         <Box
-          w={{ base: '200px', sm: '240px' }}
-          h="280px"
-          border="2px solid"
-          borderTop="none"
-          borderColor={COLOR_TOKENS.border}
-          borderBottomRadius="xl"
-          p={2}
-          display="flex"
-          flexDirection="column-reverse"
-          gap={2}
-          position="relative"
-          bg={COLOR_TOKENS.surfaceLight}
-        >
-          {items.map((val, idx) => {
+          w="180px"
+          h="4px"
+          bg={COLOR_TOKENS.border}
+          borderRadius="full"
+          opacity={0.6}
+          title="Stack Base"
+        />
+
+        {items.length === 0 ? (
+          <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)" py={12}>
+            Stack is empty
+          </Text>
+        ) : (
+          items.map((val, idx) => {
             const isTop = idx === items.length - 1;
             const isPeeked = idx === peekedIndex;
 
             return (
               <Flex
                 key={idx}
-                h="36px"
+                w="180px"
+                h="42px"
                 bg={
                   isPeeked
                     ? COLOR_TOKENS.compare
                     : isTop
                       ? COLOR_TOKENS.default
-                      : COLOR_TOKENS.surface
+                      : COLOR_TOKENS.surfaceLight
                 }
-                color={isTop || isPeeked ? 'white' : COLOR_TOKENS.text}
-                borderRadius="md"
+                color="white"
                 align="center"
                 justify="space-between"
-                px={3}
+                px={4}
+                borderRadius="lg"
                 border="1px solid"
-                borderColor={isTop ? COLOR_TOKENS.default : COLOR_TOKENS.border}
-                boxShadow={isTop ? '0 0 12px rgba(129, 140, 248, 0.4)' : 'none'}
-                fontFamily="var(--font-mono)"
-                fontWeight="bold"
-                fontSize="sm"
-                transition="all 0.2s ease"
+                borderColor={isTop || isPeeked ? 'transparent' : COLOR_TOKENS.border}
+                boxShadow={
+                  isPeeked
+                    ? '0 0 16px rgba(251, 191, 36, 0.5)'
+                    : isTop
+                      ? '0 0 12px rgba(129, 140, 248, 0.4)'
+                      : 'none'
+                }
+                transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                transform={isPeeked ? 'scale(1.04)' : 'scale(1)'}
               >
-                <Text>[{idx}]</Text>
-                <Text>{val}</Text>
-                {isTop ? (
-                  <Badge
-                    colorPalette="purple"
-                    size="xs"
-                    variant="solid"
-                    borderRadius="full"
-                    px={1.5}
+                <Text
+                  fontSize="xs"
+                  fontWeight="bold"
+                  fontFamily="var(--font-mono)"
+                  color={isPeeked || isTop ? 'white' : COLOR_TOKENS.text}
+                >
+                  {val}
+                </Text>
+                <Flex align="center" gap={1.5}>
+                  <Text
+                    fontSize="10px"
+                    fontFamily="var(--font-mono)"
+                    color={isPeeked || isTop ? 'rgba(255,255,255,0.7)' : COLOR_TOKENS.textMuted}
                   >
-                    TOP
-                  </Badge>
-                ) : (
-                  <Box w="24px" />
-                )}
+                    [{idx}]
+                  </Text>
+                  {isTop && (
+                    <Badge colorPalette="teal" size="xs" variant="solid" px={1.5} fontSize="9px">
+                      TOP
+                    </Badge>
+                  )}
+                  {isPeeked && (
+                    <Badge colorPalette="yellow" size="xs" variant="solid" px={1.5} fontSize="9px">
+                      PEEK
+                    </Badge>
+                  )}
+                </Flex>
               </Flex>
             );
-          })}
-
-          {items.length === 0 && (
-            <Flex h="full" align="center" justify="center">
-              <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-                Empty Stack
-              </Text>
-            </Flex>
-          )}
-        </Box>
+          })
+        )}
       </Flex>
 
       <Flex
@@ -239,7 +258,7 @@ export function StackVisualizer() {
               background: 'var(--color-surface-light)',
             }}
           >
-            O / Backspace
+            O
           </kbd>{' '}
           Pop •{' '}
           <kbd

@@ -51,7 +51,7 @@ export function QueueVisualizer() {
             size="xs"
             bg={COLOR_TOKENS.default}
             color="white"
-            _hover={{ filter: 'brightness(1.15)' }}
+            _hover={{ filter: 'brightness(1.15)', bg: COLOR_TOKENS.default, color: 'white' }}
             fontFamily="var(--font-mono)"
           >
             Enqueue (Key: E)
@@ -64,7 +64,11 @@ export function QueueVisualizer() {
             variant="outline"
             borderColor={COLOR_TOKENS.border}
             color={COLOR_TOKENS.text}
-            _hover={{ borderColor: COLOR_TOKENS.danger, color: COLOR_TOKENS.danger }}
+            _hover={{
+              borderColor: COLOR_TOKENS.danger,
+              color: COLOR_TOKENS.danger,
+              bg: 'rgba(248, 113, 113, 0.1)',
+            }}
             onClick={dequeue}
             disabled={items.length === 0}
             fontFamily="var(--font-mono)"
@@ -77,7 +81,11 @@ export function QueueVisualizer() {
             variant="outline"
             borderColor={COLOR_TOKENS.border}
             color={COLOR_TOKENS.text}
-            _hover={{ borderColor: COLOR_TOKENS.compare, color: COLOR_TOKENS.compare }}
+            _hover={{
+              borderColor: COLOR_TOKENS.compare,
+              color: COLOR_TOKENS.compare,
+              bg: 'rgba(251, 191, 36, 0.1)',
+            }}
             onClick={front}
             disabled={items.length === 0}
             fontFamily="var(--font-mono)"
@@ -89,7 +97,7 @@ export function QueueVisualizer() {
             size="xs"
             variant="ghost"
             color={COLOR_TOKENS.textMuted}
-            _hover={{ color: COLOR_TOKENS.text }}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
             onClick={clear}
             fontFamily="var(--font-mono)"
           >
@@ -102,7 +110,7 @@ export function QueueVisualizer() {
             size="xs"
             borderRadius="full"
             color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-            _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+            _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
             onClick={toggleSound}
             title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
           >
@@ -120,7 +128,7 @@ export function QueueVisualizer() {
       <Flex
         minH="320px"
         align="center"
-        justify="center"
+        justify="flex-start"
         p={6}
         bg="var(--color-bg)"
         borderRadius="xl"
@@ -128,93 +136,113 @@ export function QueueVisualizer() {
         borderColor={COLOR_TOKENS.border}
         overflowX="auto"
       >
-        <Flex align="center" gap={2} minW="max-content" py={4}>
-          <Flex direction="column" align="center" mr={2}>
+        <Flex align="center" gap={3} minW="max-content" py={4}>
+          <Box mr={2} textAlign="center">
             <Badge colorPalette="teal" size="xs" variant="solid" px={2} borderRadius="full">
-              OUT (Front)
+              FRONT
             </Badge>
-            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)" mt={1}>
-              ← Dequeue
+            <Text
+              fontSize="10px"
+              color={COLOR_TOKENS.textMuted}
+              fontFamily="var(--font-mono)"
+              mt={1}
+            >
+              dequeue &rarr;
             </Text>
-          </Flex>
+          </Box>
 
-          <Flex
-            p={3}
-            bg={COLOR_TOKENS.surfaceLight}
-            borderRadius="xl"
-            border="2px dashed"
-            borderColor={COLOR_TOKENS.border}
-            gap={3}
-            minH="90px"
-            align="center"
-            minW="240px"
-          >
-            {items.map((val, idx) => {
+          {items.length === 0 ? (
+            <Text
+              fontSize="xs"
+              color={COLOR_TOKENS.textMuted}
+              fontFamily="var(--font-mono)"
+              px={12}
+            >
+              Queue is empty
+            </Text>
+          ) : (
+            items.map((val, idx) => {
               const isFront = idx === 0;
               const isRear = idx === items.length - 1;
-              const isHighlighted = isFront && frontPeeked;
+              const isPeeked = isFront && frontPeeked;
 
               return (
-                <Box key={idx} textAlign="center">
-                  <Flex
-                    w="56px"
-                    h="56px"
-                    bg={
-                      isHighlighted
-                        ? COLOR_TOKENS.compare
-                        : isFront
-                          ? COLOR_TOKENS.default
-                          : COLOR_TOKENS.surface
-                    }
-                    color={isFront || isHighlighted ? 'white' : COLOR_TOKENS.text}
-                    borderRadius="lg"
-                    align="center"
-                    justify="center"
-                    border="1px solid"
-                    borderColor={isFront ? COLOR_TOKENS.default : COLOR_TOKENS.border}
-                    boxShadow={isFront ? '0 0 12px rgba(129, 140, 248, 0.4)' : 'none'}
-                    fontFamily="var(--font-mono)"
+                <Flex
+                  key={idx}
+                  w="68px"
+                  h="68px"
+                  direction="column"
+                  align="center"
+                  justify="center"
+                  bg={
+                    isPeeked
+                      ? COLOR_TOKENS.compare
+                      : isFront
+                        ? COLOR_TOKENS.default
+                        : COLOR_TOKENS.surfaceLight
+                  }
+                  color="white"
+                  borderRadius="xl"
+                  border="1px solid"
+                  borderColor={isFront || isPeeked ? 'transparent' : COLOR_TOKENS.border}
+                  boxShadow={
+                    isPeeked
+                      ? '0 0 16px rgba(251, 191, 36, 0.5)'
+                      : isFront
+                        ? '0 0 12px rgba(129, 140, 248, 0.4)'
+                        : 'none'
+                  }
+                  transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                  transform={isPeeked ? 'scale(1.06)' : 'scale(1)'}
+                >
+                  <Text
+                    fontSize="sm"
                     fontWeight="bold"
-                    fontSize="md"
-                    transition="all 0.2s ease"
+                    fontFamily="var(--font-mono)"
+                    color={isPeeked || isFront ? 'white' : COLOR_TOKENS.text}
                   >
                     {val}
-                  </Flex>
-                  <Text
-                    fontSize="10px"
-                    color={COLOR_TOKENS.textMuted}
-                    fontFamily="var(--font-mono)"
-                    mt={1}
-                  >
-                    {isFront && isRear
-                      ? 'Front/Rear'
-                      : isFront
-                        ? 'Front [0]'
-                        : isRear
-                          ? `Rear [${idx}]`
-                          : `[${idx}]`}
                   </Text>
-                </Box>
+                  <Text
+                    fontSize="9px"
+                    fontFamily="var(--font-mono)"
+                    color={isPeeked || isFront ? 'rgba(255,255,255,0.7)' : COLOR_TOKENS.textMuted}
+                    mt={0.5}
+                  >
+                    [{idx}]
+                  </Text>
+                  {isRear && !isFront && (
+                    <Badge
+                      colorPalette="purple"
+                      size="xs"
+                      variant="solid"
+                      px={1}
+                      fontSize="8px"
+                      mt={1}
+                    >
+                      REAR
+                    </Badge>
+                  )}
+                </Flex>
               );
-            })}
+            })
+          )}
 
-            {items.length === 0 && (
-              <Flex w="full" justify="center">
-                <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)">
-                  Empty Queue
-                </Text>
-              </Flex>
-            )}
-          </Flex>
-
-          <Flex direction="column" align="center" ml={2}>
-            <Badge colorPalette="purple" size="xs" variant="solid" px={2} borderRadius="full">
-              IN (Rear)
-            </Badge>
-            <Text fontSize="xs" color={COLOR_TOKENS.textMuted} fontFamily="var(--font-mono)" mt={1}>
-              Enqueue ←
-            </Text>
-          </Flex>
+          {items.length > 0 && (
+            <Box ml={2} textAlign="center">
+              <Badge colorPalette="purple" size="xs" variant="solid" px={2} borderRadius="full">
+                REAR
+              </Badge>
+              <Text
+                fontSize="10px"
+                color={COLOR_TOKENS.textMuted}
+                fontFamily="var(--font-mono)"
+                mt={1}
+              >
+                &larr; enqueue
+              </Text>
+            </Box>
+          )}
         </Flex>
       </Flex>
 
@@ -259,7 +287,7 @@ export function QueueVisualizer() {
               background: 'var(--color-surface-light)',
             }}
           >
-            D / Backspace
+            D
           </kbd>{' '}
           Dequeue •{' '}
           <kbd

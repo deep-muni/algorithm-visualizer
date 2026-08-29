@@ -109,8 +109,8 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                   bg={isActive ? COLOR_TOKENS.default : 'transparent'}
                   color={isActive ? 'white' : COLOR_TOKENS.textMuted}
                   _hover={{
-                    color: COLOR_TOKENS.text,
-                    bg: isActive ? COLOR_TOKENS.default : COLOR_TOKENS.surfaceLight,
+                    color: isActive ? 'white' : COLOR_TOKENS.text,
+                    bg: isActive ? COLOR_TOKENS.default : 'var(--color-surface)',
                   }}
                   onClick={() => setActiveTab(tab.id)}
                   fontFamily="var(--font-mono)"
@@ -182,7 +182,10 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                   variant={speed === s ? 'solid' : 'ghost'}
                   bg={speed === s ? COLOR_TOKENS.default : 'transparent'}
                   color={speed === s ? 'white' : COLOR_TOKENS.textMuted}
-                  _hover={{ color: COLOR_TOKENS.text }}
+                  _hover={{
+                    color: speed === s ? 'white' : COLOR_TOKENS.text,
+                    bg: speed === s ? COLOR_TOKENS.default : 'var(--color-surface)',
+                  }}
                   onClick={() => setSpeed(s)}
                   fontFamily="var(--font-mono)"
                   px={2}
@@ -200,7 +203,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
               size="xs"
               borderRadius="full"
               color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
-              _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+              _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
               onClick={toggleSound}
               title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
             >
@@ -234,7 +237,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 size="xs"
                 bg={COLOR_TOKENS.default}
                 color="white"
-                _hover={{ filter: 'brightness(1.15)' }}
+                _hover={{ filter: 'brightness(1.15)', bg: COLOR_TOKENS.default, color: 'white' }}
                 onClick={() => handleInsertHead()}
                 fontFamily="var(--font-mono)"
                 disabled={isAnimating || nodes.length >= 7}
@@ -246,7 +249,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 variant="outline"
                 borderColor={COLOR_TOKENS.border}
                 color={COLOR_TOKENS.text}
-                _hover={{ borderColor: COLOR_TOKENS.default, bg: 'var(--color-surface)' }}
+                _hover={{
+                  borderColor: COLOR_TOKENS.default,
+                  color: COLOR_TOKENS.default,
+                  bg: 'rgba(129, 140, 248, 0.1)',
+                }}
                 onClick={() => handleInsertTail()}
                 fontFamily="var(--font-mono)"
                 disabled={isAnimating || nodes.length >= 7}
@@ -257,8 +264,12 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 size="xs"
                 variant="outline"
                 borderColor={COLOR_TOKENS.border}
-                color={COLOR_TOKENS.textMuted}
-                _hover={{ color: COLOR_TOKENS.text, borderColor: COLOR_TOKENS.textMuted }}
+                color={COLOR_TOKENS.text}
+                _hover={{
+                  borderColor: COLOR_TOKENS.default,
+                  color: COLOR_TOKENS.default,
+                  bg: 'rgba(129, 140, 248, 0.1)',
+                }}
                 onClick={insertRandom}
                 fontFamily="var(--font-mono)"
                 disabled={isAnimating || nodes.length >= 7}
@@ -304,7 +315,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 variant="outline"
                 borderColor={COLOR_TOKENS.default}
                 color={COLOR_TOKENS.default}
-                _hover={{ bg: 'rgba(129, 140, 248, 0.15)' }}
+                _hover={{
+                  borderColor: COLOR_TOKENS.default,
+                  color: COLOR_TOKENS.default,
+                  bg: 'rgba(129, 140, 248, 0.15)',
+                }}
                 fontFamily="var(--font-mono)"
                 disabled={isAnimating || nodes.length >= 7}
               >
@@ -342,7 +357,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                   variant="outline"
                   borderColor={COLOR_TOKENS.compare}
                   color={COLOR_TOKENS.compare}
-                  _hover={{ bg: 'rgba(251, 191, 36, 0.15)' }}
+                  _hover={{
+                    borderColor: COLOR_TOKENS.compare,
+                    color: COLOR_TOKENS.compare,
+                    bg: 'rgba(251, 191, 36, 0.15)',
+                  }}
                   fontFamily="var(--font-mono)"
                   disabled={isAnimating || nodes.length === 0}
                 >
@@ -372,7 +391,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                   variant="outline"
                   borderColor={COLOR_TOKENS.border}
                   color={COLOR_TOKENS.text}
-                  _hover={{ borderColor: COLOR_TOKENS.default }}
+                  _hover={{
+                    borderColor: COLOR_TOKENS.default,
+                    color: COLOR_TOKENS.default,
+                    bg: 'rgba(129, 140, 248, 0.1)',
+                  }}
                   fontFamily="var(--font-mono)"
                   disabled={isAnimating || nodes.length === 0}
                 >
@@ -386,7 +409,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 size="xs"
                 variant="ghost"
                 color={COLOR_TOKENS.textMuted}
-                _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+                _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
                 onClick={peekHead}
                 disabled={isAnimating || nodes.length === 0}
                 fontFamily="var(--font-mono)"
@@ -397,7 +420,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 size="xs"
                 variant="ghost"
                 color={COLOR_TOKENS.textMuted}
-                _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+                _hover={{ color: COLOR_TOKENS.text, bg: 'var(--color-surface)' }}
                 onClick={peekTail}
                 disabled={isAnimating || nodes.length === 0}
                 fontFamily="var(--font-mono)"
@@ -436,7 +459,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                   variant="outline"
                   borderColor={COLOR_TOKENS.danger}
                   color={COLOR_TOKENS.danger}
-                  _hover={{ bg: 'rgba(248, 113, 113, 0.15)' }}
+                  _hover={{
+                    borderColor: COLOR_TOKENS.danger,
+                    color: COLOR_TOKENS.danger,
+                    bg: 'rgba(248, 113, 113, 0.15)',
+                  }}
                   disabled={isAnimating || nodes.length === 0}
                   fontFamily="var(--font-mono)"
                 >
@@ -466,7 +493,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                   variant="outline"
                   borderColor={COLOR_TOKENS.danger}
                   color={COLOR_TOKENS.danger}
-                  _hover={{ bg: 'rgba(248, 113, 113, 0.15)' }}
+                  _hover={{
+                    borderColor: COLOR_TOKENS.danger,
+                    color: COLOR_TOKENS.danger,
+                    bg: 'rgba(248, 113, 113, 0.15)',
+                  }}
                   disabled={isAnimating || nodes.length === 0}
                   fontFamily="var(--font-mono)"
                 >
@@ -481,7 +512,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 variant="outline"
                 borderColor={COLOR_TOKENS.border}
                 color={COLOR_TOKENS.danger}
-                _hover={{ borderColor: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.1)' }}
+                _hover={{
+                  borderColor: COLOR_TOKENS.danger,
+                  color: COLOR_TOKENS.danger,
+                  bg: 'rgba(248, 113, 113, 0.1)',
+                }}
                 onClick={deleteHead}
                 disabled={isAnimating || nodes.length === 0}
                 fontFamily="var(--font-mono)"
@@ -493,7 +528,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 variant="outline"
                 borderColor={COLOR_TOKENS.border}
                 color={COLOR_TOKENS.danger}
-                _hover={{ borderColor: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.1)' }}
+                _hover={{
+                  borderColor: COLOR_TOKENS.danger,
+                  color: COLOR_TOKENS.danger,
+                  bg: 'rgba(248, 113, 113, 0.1)',
+                }}
                 onClick={deleteTail}
                 disabled={isAnimating || nodes.length === 0}
                 fontFamily="var(--font-mono)"
@@ -518,7 +557,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                 variant="outline"
                 borderColor={COLOR_TOKENS.default}
                 color={COLOR_TOKENS.default}
-                _hover={{ bg: 'rgba(129, 140, 248, 0.1)' }}
+                _hover={{
+                  borderColor: COLOR_TOKENS.default,
+                  color: COLOR_TOKENS.default,
+                  bg: 'rgba(129, 140, 248, 0.15)',
+                }}
                 onClick={fillRandomSample}
                 disabled={isAnimating}
                 fontFamily="var(--font-mono)"
@@ -532,7 +575,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                   variant="outline"
                   borderColor={COLOR_TOKENS.border}
                   color={COLOR_TOKENS.compare}
-                  _hover={{ borderColor: COLOR_TOKENS.compare }}
+                  _hover={{
+                    borderColor: COLOR_TOKENS.compare,
+                    color: COLOR_TOKENS.compare,
+                    bg: 'rgba(251, 191, 36, 0.15)',
+                  }}
                   onClick={reverseList}
                   disabled={isAnimating || nodes.length <= 1}
                   fontFamily="var(--font-mono)"
@@ -546,7 +593,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
               size="xs"
               variant="ghost"
               color={COLOR_TOKENS.danger}
-              _hover={{ bg: 'rgba(248, 113, 113, 0.1)' }}
+              _hover={{ color: COLOR_TOKENS.danger, bg: 'rgba(248, 113, 113, 0.15)' }}
               onClick={clear}
               disabled={isAnimating || nodes.length === 0}
               fontFamily="var(--font-mono)"
