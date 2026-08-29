@@ -1,40 +1,21 @@
 'use client';
 
-import { Container, Text, Grid, Box } from '@chakra-ui/react';
+import { Container, Grid, Box, Flex, Text, Separator } from '@chakra-ui/react';
 import type { DataStructureInfo } from '@/types/algorithm';
-import { CodePanel, PageNavHeader } from '@/components/shared';
+import { CodePanel, ComplexityCard, PageNavHeader } from '@/components/shared';
 import { StackVisualizer } from './stack-visualizer';
 import { QueueVisualizer } from './queue-visualizer';
 import { LinkedListVisualizer } from './linked-list-visualizer';
+import { getLegendItems } from '@/lib/algorithm-utils';
 import { COLOR_TOKENS } from '@/config/colors';
 
 interface DataStructurePageClientProps {
   dataStructure: DataStructureInfo;
 }
 
-function DSComplexityBadge({ label, value }: { label: string; value: string }) {
-  const isGood = value === 'O(1)';
-  const color = isGood ? COLOR_TOKENS.success : COLOR_TOKENS.warning;
-
-  return (
-    <Box
-      bg={COLOR_TOKENS.surfaceLight}
-      borderRadius="lg"
-      p={3}
-      border="1px solid"
-      borderColor={COLOR_TOKENS.border}
-    >
-      <Text fontSize="xs" color={COLOR_TOKENS.textMuted} mb={1} fontFamily="var(--font-mono)">
-        {label}
-      </Text>
-      <Text fontSize="sm" fontFamily="var(--font-mono)" fontWeight="bold" color={color}>
-        {value}
-      </Text>
-    </Box>
-  );
-}
-
 export function DataStructurePageClient({ dataStructure }: DataStructurePageClientProps) {
+  const legendItems = getLegendItems(dataStructure.category);
+
   return (
     <Container maxW="1200px" py={6} px={4}>
       <PageNavHeader
@@ -88,28 +69,7 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
             borderColor={COLOR_TOKENS.border}
             p={5}
           >
-            <Text
-              fontSize="xs"
-              fontWeight="semibold"
-              color={COLOR_TOKENS.textMuted}
-              fontFamily="var(--font-mono)"
-              textTransform="uppercase"
-              letterSpacing="0.05em"
-              mb={3}
-            >
-              Operation Complexity
-            </Text>
-
-            <Grid templateColumns="repeat(2, 1fr)" gap={2} mb={3}>
-              <DSComplexityBadge label="Access" value={dataStructure.complexity.access} />
-              <DSComplexityBadge label="Search" value={dataStructure.complexity.search} />
-              <DSComplexityBadge label="Insertion" value={dataStructure.complexity.insertion} />
-              <DSComplexityBadge label="Deletion" value={dataStructure.complexity.deletion} />
-            </Grid>
-
-            <Box mt={2}>
-              <DSComplexityBadge label="Space Complexity" value={dataStructure.complexity.space} />
-            </Box>
+            <ComplexityCard complexity={dataStructure.complexity} />
           </Box>
 
           <Box
@@ -128,8 +88,21 @@ export function DataStructurePageClient({ dataStructure }: DataStructurePageClie
               letterSpacing="0.05em"
               mb={3}
             >
-              Overview & Applications
+              Color Legend
             </Text>
+            <Flex direction="column" gap={2}>
+              {legendItems.map(({ color, label }) => (
+                <Flex key={label} align="center" gap={3}>
+                  <Box w="14px" h="14px" borderRadius="sm" bg={color} flexShrink={0} />
+                  <Text fontSize="sm" color={COLOR_TOKENS.text}>
+                    {label}
+                  </Text>
+                </Flex>
+              ))}
+            </Flex>
+
+            <Separator my={4} borderColor={COLOR_TOKENS.border} />
+
             <Text fontSize="xs" color={COLOR_TOKENS.textMuted} lineHeight="tall">
               {dataStructure.description}
             </Text>

@@ -7,6 +7,13 @@ export interface LegendItem {
 }
 
 export function getLegendItems(category: AlgorithmCategory): LegendItem[] {
+  if (category === 'data-structures') {
+    return [
+      { color: COLOR_TOKENS.default, label: 'Primary Node (Top / Front / Head)' },
+      { color: COLOR_TOKENS.compare, label: 'Inspected / Peeked' },
+      { color: COLOR_TOKENS.surfaceLight, label: 'Element / Node' },
+    ];
+  }
   if (category === 'searching') {
     return [
       { color: COLOR_TOKENS.default, label: 'Array Element' },

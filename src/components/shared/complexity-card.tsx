@@ -1,9 +1,9 @@
 import { Box, Grid, Text, Badge } from '@chakra-ui/react';
-import type { ComplexityInfo } from '@/types/algorithm';
+import type { ComplexityInfo, DataStructureComplexity } from '@/types/algorithm';
 import { COLOR_TOKENS } from '@/config/colors';
 
 interface ComplexityCardProps {
-  complexity: ComplexityInfo;
+  complexity: ComplexityInfo | DataStructureComplexity;
   stable?: boolean;
   inPlace?: boolean;
 }
@@ -31,6 +31,8 @@ function ComplexityBadge({ label, value }: { label: string; value: string }) {
 }
 
 export function ComplexityCard({ complexity, stable, inPlace }: ComplexityCardProps) {
+  const isDataStructure = 'access' in complexity;
+
   return (
     <Box>
       <Text
@@ -45,12 +47,26 @@ export function ComplexityCard({ complexity, stable, inPlace }: ComplexityCardPr
         Complexity Analysis
       </Text>
 
-      <Grid templateColumns="repeat(2, 1fr)" gap={2} mb={3}>
-        <ComplexityBadge label="Best Case" value={complexity.best} />
-        <ComplexityBadge label="Average Case" value={complexity.average} />
-        <ComplexityBadge label="Worst Case" value={complexity.worst} />
-        <ComplexityBadge label="Space" value={complexity.space} />
-      </Grid>
+      {isDataStructure ? (
+        <>
+          <Grid templateColumns="repeat(2, 1fr)" gap={2} mb={2}>
+            <ComplexityBadge label="Access" value={complexity.access} />
+            <ComplexityBadge label="Search" value={complexity.search} />
+            <ComplexityBadge label="Insertion" value={complexity.insertion} />
+            <ComplexityBadge label="Deletion" value={complexity.deletion} />
+          </Grid>
+          <Box mb={3}>
+            <ComplexityBadge label="Space Complexity" value={complexity.space} />
+          </Box>
+        </>
+      ) : (
+        <Grid templateColumns="repeat(2, 1fr)" gap={2} mb={3}>
+          <ComplexityBadge label="Best Case" value={complexity.best} />
+          <ComplexityBadge label="Average Case" value={complexity.average} />
+          <ComplexityBadge label="Worst Case" value={complexity.worst} />
+          <ComplexityBadge label="Space" value={complexity.space} />
+        </Grid>
+      )}
 
       <Box display="flex" gap={2} flexWrap="wrap">
         {stable !== undefined && (

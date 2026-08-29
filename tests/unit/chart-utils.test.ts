@@ -55,6 +55,16 @@ describe('Algorithm Utilities', () => {
     ]);
   });
 
+  it('returns appropriate legend items for data structures', () => {
+    const items = getLegendItems('data-structures');
+    expect(items.length).toBe(3);
+    expect(items.map((i) => i.label)).toEqual([
+      'Primary Node (Top / Front / Head)',
+      'Inspected / Peeked',
+      'Element / Node',
+    ]);
+  });
+
   it('groups algorithms into sorting and searching categories', () => {
     const grouped = groupAlgorithms(algorithms);
     expect(grouped.sorting.length).toBe(6);
