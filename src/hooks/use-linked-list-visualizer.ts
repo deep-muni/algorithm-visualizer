@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   type LinkedListNodeModel,
   executeListInsertHead,
@@ -8,6 +8,7 @@ import {
   executeListDelete,
   executeListReverse,
 } from '@/lib/data-structures';
+import { soundEngine } from '@/lib/audio-synthesizer';
 
 const initialSampleNodes: LinkedListNodeModel[] = [
   { id: 'node-1', value: 12 },
@@ -23,13 +24,19 @@ export function useLinkedListVisualizer(isDoubly = false) {
   const [error, setError] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState<string>('55');
   const [deleteValue, setDeleteValue] = useState<string>('28');
+  const [isMuted, setIsMuted] = useState(() => soundEngine.isMuted());
 
   const insertHead = useCallback(
     (value: number) => {
       setError(null);
       const res = executeListInsertHead(nodes, value);
-      if (res.error) setError(res.error);
-      else setNodes(res.nextNodes);
+      if (res.error) {
+        setError(res.error);
+        soundEngine.playError();
+      } else {
+        setNodes(res.nextNodes);
+        soundEngine.playInsert(value);
+      }
       setOperationLog(res.action);
     },
     [nodes]
@@ -39,8 +46,13 @@ export function useLinkedListVisualizer(isDoubly = false) {
     (value: number) => {
       setError(null);
       const res = executeListInsertTail(nodes, value);
-      if (res.error) setError(res.error);
-      else setNodes(res.nextNodes);
+      if (res.error) {
+        setError(res.error);
+        soundEngine.playError();
+      } else {
+        setNodes(res.nextNodes);
+        soundEngine.playInsert(value);
+      }
       setOperationLog(res.action);
     },
     [nodes]
@@ -50,8 +62,13 @@ export function useLinkedListVisualizer(isDoubly = false) {
     (value: number) => {
       setError(null);
       const res = executeListDelete(nodes, value);
-      if (res.error) setError(res.error);
-      else setNodes(res.nextNodes);
+      if (res.error) {
+        setError(res.error);
+        soundEngine.playError();
+      } else {
+        setNodes(res.nextNodes);
+        soundEngine.playDelete();
+      }
       setOperationLog(res.action);
     },
     [nodes]
@@ -61,13 +78,20 @@ export function useLinkedListVisualizer(isDoubly = false) {
     setError(null);
     const res = executeListReverse(nodes);
     setNodes(res.nextNodes);
+    soundEngine.playReverse();
     setOperationLog(res.action);
   }, [nodes]);
 
   const clear = useCallback(() => {
     setNodes([]);
     setError(null);
+    soundEngine.playDelete();
     setOperationLog('Linked list cleared (0 nodes)');
+  }, []);
+
+  const toggleSound = useCallback(() => {
+    const muted = soundEngine.toggleMute();
+    setIsMuted(muted);
   }, []);
 
   const handleInsertHeadSubmit = useCallback(
@@ -76,6 +100,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       const num = parseInt(inputValue.trim(), 10);
       if (isNaN(num) || num < 1 || num > 999) {
         setError('Enter a number between 1 and 999');
+        soundEngine.playError();
         return;
       }
       insertHead(num);
@@ -90,6 +115,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       const num = parseInt(inputValue.trim(), 10);
       if (isNaN(num) || num < 1 || num > 999) {
         setError('Enter a number between 1 and 999');
+        soundEngine.playError();
         return;
       }
       insertTail(num);
@@ -104,6 +130,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       const num = parseInt(deleteValue.trim(), 10);
       if (isNaN(num)) {
         setError('Enter a valid node value to delete');
+        soundEngine.playError();
         return;
       }
       deleteNode(num);
@@ -111,11 +138,49 @@ export function useLinkedListVisualizer(isDoubly = false) {
     [deleteValue, deleteNode]
   );
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT'
+      ) {
+        return;
+      }
+
+      if (e.code === 'KeyH') {
+        e.preventDefault();
+        const randomVal = Math.floor(Math.random() * 90) + 10;
+        insertHead(randomVal);
+      } else if (e.code === 'KeyT') {
+        e.preventDefault();
+        const randomVal = Math.floor(Math.random() * 90) + 10;
+        insertTail(randomVal);
+      } else if (e.code === 'KeyR' && !isDoubly) {
+        e.preventDefault();
+        reverseList();
+      } else if (e.code === 'KeyC') {
+        e.preventDefault();
+        clear();
+      } else if (e.code === 'KeyM') {
+        e.preventDefault();
+        toggleSound();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [insertHead, insertTail, reverseList, isDoubly, clear, toggleSound]);
+
   return {
     nodes,
     operationLog,
     error,
     inputValue,
+    isMuted,
     setInputValue,
     deleteValue,
     setDeleteValue,
@@ -124,6 +189,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
     deleteNode,
     reverseList,
     clear,
+    toggleSound,
     handleInsertHeadSubmit,
     handleInsertTailSubmit,
     handleDeleteSubmit,

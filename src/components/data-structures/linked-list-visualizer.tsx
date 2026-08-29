@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Flex, Button, Input, Text, Badge } from '@chakra-ui/react';
+import { Box, Flex, Button, Input, Text, Badge, IconButton } from '@chakra-ui/react';
 import { useLinkedListVisualizer } from '@/hooks/use-linked-list-visualizer';
 import { COLOR_TOKENS } from '@/config/colors';
 
@@ -14,11 +14,13 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
     operationLog,
     error,
     inputValue,
+    isMuted,
     setInputValue,
     deleteValue,
     setDeleteValue,
     reverseList,
     clear,
+    toggleSound,
     handleInsertHeadSubmit,
     handleInsertTailSubmit,
     handleDeleteSubmit,
@@ -58,7 +60,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
             onClick={handleInsertHeadSubmit}
             fontFamily="var(--font-mono)"
           >
-            Insert Head
+            Insert Head (Key: H)
           </Button>
           <Button
             size="xs"
@@ -69,7 +71,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
             onClick={handleInsertTailSubmit}
             fontFamily="var(--font-mono)"
           >
-            Insert Tail
+            Insert Tail (Key: T)
           </Button>
         </Flex>
 
@@ -109,7 +111,7 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
               disabled={nodes.length <= 1}
               fontFamily="var(--font-mono)"
             >
-              Reverse
+              Reverse (Key: R)
             </Button>
           )}
 
@@ -121,8 +123,21 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
             onClick={clear}
             fontFamily="var(--font-mono)"
           >
-            Clear
+            Clear (Key: C)
           </Button>
+
+          <IconButton
+            aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
+            variant="ghost"
+            size="xs"
+            borderRadius="full"
+            color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
+            _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+            onClick={toggleSound}
+            title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
+          >
+            {isMuted ? '🔇' : '🔊'}
+          </IconButton>
         </Flex>
       </Flex>
 
@@ -279,6 +294,66 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
           fontFamily="var(--font-mono)"
         >
           {operationLog}
+        </Text>
+      </Flex>
+
+      <Flex justify="center" align="center" gap={2} mt={3} opacity={0.6}>
+        <Text fontSize="2xs" fontFamily="var(--font-mono)" color={COLOR_TOKENS.textMuted}>
+          Shortcuts:{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            H
+          </kbd>{' '}
+          Insert Head •{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            T
+          </kbd>{' '}
+          Insert Tail •{' '}
+          {!isDoubly && (
+            <>
+              <kbd
+                style={{
+                  padding: '1px 4px',
+                  borderRadius: '4px',
+                  background: 'var(--color-surface-light)',
+                }}
+              >
+                R
+              </kbd>{' '}
+              Reverse •{' '}
+            </>
+          )}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            C
+          </kbd>{' '}
+          Clear •{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            M
+          </kbd>{' '}
+          Sound
         </Text>
       </Flex>
     </Box>

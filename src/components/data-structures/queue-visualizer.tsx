@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Flex, Button, Input, Text, Badge } from '@chakra-ui/react';
+import { Box, Flex, Button, Input, Text, Badge, IconButton } from '@chakra-ui/react';
 import { useQueueVisualizer } from '@/hooks/use-queue-visualizer';
 import { COLOR_TOKENS } from '@/config/colors';
 
@@ -11,10 +11,12 @@ export function QueueVisualizer() {
     frontPeeked,
     error,
     inputValue,
+    isMuted,
     setInputValue,
     dequeue,
     front,
     clear,
+    toggleSound,
     handleEnqueueSubmit,
   } = useQueueVisualizer();
 
@@ -52,7 +54,7 @@ export function QueueVisualizer() {
             _hover={{ filter: 'brightness(1.15)' }}
             fontFamily="var(--font-mono)"
           >
-            Enqueue
+            Enqueue (Key: E)
           </Button>
         </Flex>
 
@@ -67,7 +69,7 @@ export function QueueVisualizer() {
             disabled={items.length === 0}
             fontFamily="var(--font-mono)"
           >
-            Dequeue
+            Dequeue (Key: D)
           </Button>
 
           <Button
@@ -80,7 +82,7 @@ export function QueueVisualizer() {
             disabled={items.length === 0}
             fontFamily="var(--font-mono)"
           >
-            Front (Peek)
+            Front (Key: F)
           </Button>
 
           <Button
@@ -91,8 +93,21 @@ export function QueueVisualizer() {
             onClick={clear}
             fontFamily="var(--font-mono)"
           >
-            Clear
+            Clear (Key: C)
           </Button>
+
+          <IconButton
+            aria-label={isMuted ? 'Unmute Sound' : 'Mute Sound'}
+            variant="ghost"
+            size="xs"
+            borderRadius="full"
+            color={isMuted ? COLOR_TOKENS.textMuted : COLOR_TOKENS.default}
+            _hover={{ color: COLOR_TOKENS.text, bg: COLOR_TOKENS.surface }}
+            onClick={toggleSound}
+            title={isMuted ? 'Enable sound effects (Key: M)' : 'Mute sound effects (Key: M)'}
+          >
+            {isMuted ? '🔇' : '🔊'}
+          </IconButton>
         </Flex>
       </Flex>
 
@@ -221,6 +236,62 @@ export function QueueVisualizer() {
           fontFamily="var(--font-mono)"
         >
           {operationLog}
+        </Text>
+      </Flex>
+
+      <Flex justify="center" align="center" gap={2} mt={3} opacity={0.6}>
+        <Text fontSize="2xs" fontFamily="var(--font-mono)" color={COLOR_TOKENS.textMuted}>
+          Shortcuts:{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            E
+          </kbd>{' '}
+          Enqueue •{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            D / Backspace
+          </kbd>{' '}
+          Dequeue •{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            F
+          </kbd>{' '}
+          Front •{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            C
+          </kbd>{' '}
+          Clear •{' '}
+          <kbd
+            style={{
+              padding: '1px 4px',
+              borderRadius: '4px',
+              background: 'var(--color-surface-light)',
+            }}
+          >
+            M
+          </kbd>{' '}
+          Sound
         </Text>
       </Flex>
     </Box>
