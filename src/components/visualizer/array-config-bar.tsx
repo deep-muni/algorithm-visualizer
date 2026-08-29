@@ -73,21 +73,21 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
       bg="var(--color-surface)"
       borderRadius="xl"
       border="1px solid"
-      borderColor="whiteAlpha.300"
-      p={4}
+      borderColor="var(--color-border)"
+      p={3}
       mb={4}
     >
       <Flex
         direction={{ base: 'column', lg: 'row' }}
-        gap={4}
+        gap={3}
         justify="space-between"
         align={{ base: 'stretch', lg: 'center' }}
       >
         <Flex align="center" gap={2} wrap="wrap">
           <Text
             fontSize="xs"
-            fontWeight="semibold"
-            color="whiteAlpha.700"
+            fontWeight="bold"
+            color="var(--color-text-muted)"
             fontFamily="var(--font-mono)"
           >
             Presets:
@@ -96,9 +96,9 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
           <Button
             size="xs"
             variant="outline"
-            borderColor="whiteAlpha.300"
-            color="whiteAlpha.900"
-            _hover={{ borderColor: 'indigo.400', bg: 'whiteAlpha.200' }}
+            borderColor="var(--color-border)"
+            color="var(--color-text)"
+            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
             onClick={() => handlePreset('random')}
             disabled={disabled}
           >
@@ -108,9 +108,9 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
           <Button
             size="xs"
             variant="outline"
-            borderColor="whiteAlpha.300"
-            color="whiteAlpha.900"
-            _hover={{ borderColor: 'indigo.400', bg: 'whiteAlpha.200' }}
+            borderColor="var(--color-border)"
+            color="var(--color-text)"
+            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
             onClick={() => handlePreset('reversed')}
             disabled={disabled}
           >
@@ -120,9 +120,9 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
           <Button
             size="xs"
             variant="outline"
-            borderColor="whiteAlpha.300"
-            color="whiteAlpha.900"
-            _hover={{ borderColor: 'indigo.400', bg: 'whiteAlpha.200' }}
+            borderColor="var(--color-border)"
+            color="var(--color-text)"
+            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
             onClick={() => handlePreset('nearly-sorted')}
             disabled={disabled}
           >
@@ -132,9 +132,9 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
           <Button
             size="xs"
             variant="outline"
-            borderColor="whiteAlpha.300"
-            color="whiteAlpha.900"
-            _hover={{ borderColor: 'indigo.400', bg: 'whiteAlpha.200' }}
+            borderColor="var(--color-border)"
+            color="var(--color-text)"
+            _hover={{ borderColor: 'var(--color-indigo)', bg: 'var(--color-surface-light)' }}
             onClick={() => handlePreset('few-unique')}
             disabled={disabled}
           >
@@ -144,7 +144,7 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
 
         <Flex align="center" gap={3} wrap="wrap">
           <Flex align="center" gap={1}>
-            <Text fontSize="xs" color="whiteAlpha.600" fontFamily="var(--font-mono)">
+            <Text fontSize="xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
               Size:
             </Text>
             {[8, 12, 16, 20].map((sz) => (
@@ -152,9 +152,12 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
                 key={sz}
                 size="xs"
                 variant={arraySize === sz ? 'solid' : 'ghost'}
-                bg={arraySize === sz ? 'indigo.600' : 'transparent'}
-                color={arraySize === sz ? 'white' : 'whiteAlpha.700'}
-                _hover={{ bg: arraySize === sz ? 'indigo.500' : 'whiteAlpha.200', color: 'white' }}
+                bg={arraySize === sz ? 'var(--color-indigo)' : 'transparent'}
+                color={arraySize === sz ? 'white' : 'var(--color-text-muted)'}
+                _hover={{
+                  bg: arraySize === sz ? 'var(--color-indigo)' : 'var(--color-surface-light)',
+                  color: 'var(--color-text)',
+                }}
                 onClick={() => handleSizeChange(sz)}
                 disabled={disabled}
                 fontFamily="var(--font-mono)"
@@ -174,10 +177,10 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
                 if (inputError) setInputError(null);
               }}
               disabled={disabled}
-              borderColor={inputError ? 'red.400' : 'whiteAlpha.300'}
-              bg="whiteAlpha.50"
-              color="white"
-              _focus={{ borderColor: 'indigo.400' }}
+              borderColor={inputError ? 'red.400' : 'var(--color-border)'}
+              bg="var(--color-surface-light)"
+              color="var(--color-text)"
+              _focus={{ borderColor: 'var(--color-indigo)' }}
               fontFamily="var(--font-mono)"
               maxW={{ base: 'full', md: '180px' }}
             />
@@ -185,9 +188,9 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
             <Button
               type="submit"
               size="xs"
-              bg="indigo.600"
+              bg="var(--color-indigo)"
               color="white"
-              _hover={{ bg: 'indigo.500' }}
+              _hover={{ bg: 'var(--color-indigo-dim)' }}
               disabled={disabled || !customInput.trim()}
             >
               Apply

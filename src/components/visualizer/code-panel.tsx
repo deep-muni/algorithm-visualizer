@@ -28,44 +28,48 @@ export function CodePanel({ code }: CodePanelProps) {
     <Box
       borderRadius="xl"
       border="1px solid"
-      borderColor="whiteAlpha.300"
+      borderColor="var(--color-border)"
       overflow="hidden"
-      bg="#0d0d14"
+      bg="var(--color-bg)"
     >
       <Flex
         align="center"
         justify="space-between"
-        px={4}
+        px={3}
         py={2}
-        bg="whiteAlpha.200"
+        bg="var(--color-surface-light)"
         borderBottom="1px solid"
-        borderColor="whiteAlpha.300"
+        borderColor="var(--color-border)"
       >
         <Flex gap={1}>
-          {languages.map((lang) => (
-            <Button
-              key={lang.id}
-              size="xs"
-              variant={activeLanguage === lang.id ? 'solid' : 'ghost'}
-              bg={activeLanguage === lang.id ? 'indigo.600' : 'transparent'}
-              color={activeLanguage === lang.id ? 'white' : 'whiteAlpha.800'}
-              _hover={{
-                bg: activeLanguage === lang.id ? 'indigo.500' : 'whiteAlpha.200',
-                color: 'white',
-              }}
-              borderRadius="md"
-              onClick={() => setActiveLanguage(lang.id)}
-            >
-              {lang.label}
-            </Button>
-          ))}
+          {languages.map((lang) => {
+            const isActive = activeLanguage === lang.id;
+            return (
+              <Button
+                key={lang.id}
+                size="xs"
+                variant={isActive ? 'solid' : 'ghost'}
+                bg={isActive ? 'var(--color-indigo)' : 'transparent'}
+                color={isActive ? 'white' : 'var(--color-text-muted)'}
+                _hover={{
+                  bg: isActive ? 'var(--color-indigo-dim)' : 'var(--color-surface)',
+                  color: 'var(--color-text)',
+                }}
+                borderRadius="md"
+                fontFamily="var(--font-mono)"
+                onClick={() => setActiveLanguage(lang.id)}
+              >
+                {lang.label}
+              </Button>
+            );
+          })}
         </Flex>
 
         <Button
           size="xs"
           variant="ghost"
-          color={copied ? 'green.400' : 'whiteAlpha.700'}
-          _hover={{ color: 'white' }}
+          color={copied ? '#34d399' : 'var(--color-text-muted)'}
+          _hover={{ color: 'var(--color-text)' }}
           onClick={handleCopy}
           fontFamily="var(--font-mono)"
         >
@@ -79,7 +83,7 @@ export function CodePanel({ code }: CodePanelProps) {
           whiteSpace="pre"
           fontFamily="var(--font-mono)"
           fontSize="13px"
-          color="whiteAlpha.900"
+          color="var(--color-text)"
           bg="transparent"
           lineHeight="1.7"
         >

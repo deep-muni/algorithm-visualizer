@@ -12,18 +12,19 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
         bg="var(--color-surface)"
         borderRadius="2xl"
         border="1px solid"
-        borderColor="whiteAlpha.300"
+        borderColor="var(--color-border)"
         p={5}
         h="full"
         cursor="pointer"
-        transition="border-color 0.2s, transform 0.2s"
+        transition="border-color 0.2s, transform 0.2s, box-shadow 0.2s"
         _hover={{
-          borderColor: 'indigo.500',
-          transform: 'translateY(-2px)',
+          borderColor: 'var(--color-indigo)',
+          transform: 'translateY(-3px)',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
         }}
       >
         <Flex justify="space-between" align="flex-start" mb={3}>
-          <Heading as="h3" fontSize="lg" color="white" fontWeight="semibold">
+          <Heading as="h3" fontSize="lg" color="var(--color-text)" fontWeight="bold">
             {algo.name}
           </Heading>
           <Badge
@@ -39,39 +40,60 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
           </Badge>
         </Flex>
 
-        <Text fontSize="sm" color="whiteAlpha.800" mb={4} lineHeight="tall">
+        <Text fontSize="sm" color="var(--color-text-muted)" mb={4} lineHeight="tall">
           {algo.shortDescription}
         </Text>
 
         <Flex gap={2} flexWrap="wrap">
-          <Box bg="whiteAlpha.100" borderRadius="md" px={2} py={1}>
-            <Text fontSize="xs" color="whiteAlpha.700">
+          <Box
+            bg="var(--color-surface-light)"
+            border="1px solid"
+            borderColor="var(--color-border)"
+            borderRadius="md"
+            px={2}
+            py={1}
+          >
+            <Text fontSize="xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
               Avg
+            </Text>
+            <Text fontSize="xs" fontFamily="var(--font-mono)" color="#fbbf24" fontWeight="bold">
+              {algo.complexity.average}
+            </Text>
+          </Box>
+          <Box
+            bg="var(--color-surface-light)"
+            border="1px solid"
+            borderColor="var(--color-border)"
+            borderRadius="md"
+            px={2}
+            py={1}
+          >
+            <Text fontSize="xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
+              Space
             </Text>
             <Text
               fontSize="xs"
               fontFamily="var(--font-mono)"
-              color="orange.300"
-              fontWeight="medium"
+              color="var(--color-indigo)"
+              fontWeight="bold"
             >
-              {algo.complexity.average}
-            </Text>
-          </Box>
-          <Box bg="whiteAlpha.100" borderRadius="md" px={2} py={1}>
-            <Text fontSize="xs" color="whiteAlpha.700">
-              Space
-            </Text>
-            <Text fontSize="xs" fontFamily="var(--font-mono)" color="blue.300" fontWeight="medium">
               {algo.complexity.space}
             </Text>
           </Box>
           {algo.stable !== undefined && (
-            <Box bg="whiteAlpha.100" borderRadius="md" px={2} py={1}>
+            <Box
+              bg="var(--color-surface-light)"
+              border="1px solid"
+              borderColor="var(--color-border)"
+              borderRadius="md"
+              px={2}
+              py={1}
+            >
               <Text
                 fontSize="xs"
                 fontFamily="var(--font-mono)"
-                color={algo.stable ? 'green.300' : 'red.300'}
-                fontWeight="medium"
+                color={algo.stable ? '#34d399' : '#f87171'}
+                fontWeight="bold"
               >
                 {algo.stable ? 'Stable' : 'Unstable'}
               </Text>
@@ -94,7 +116,7 @@ export default function HomePage() {
           as="h1"
           fontSize={{ base: '3xl', md: '5xl' }}
           fontWeight="bold"
-          color="white"
+          color="var(--color-text)"
           mb={4}
           lineHeight="1.1"
         >
@@ -102,7 +124,7 @@ export default function HomePage() {
         </Heading>
         <Text
           fontSize={{ base: 'md', md: 'lg' }}
-          color="whiteAlpha.800"
+          color="var(--color-text-muted)"
           maxW="640px"
           mx="auto"
           lineHeight="tall"
@@ -114,7 +136,7 @@ export default function HomePage() {
 
       <Box mb={12}>
         <Flex align="center" gap={3} mb={6}>
-          <Heading as="h2" fontSize="xl" color="white" fontWeight="semibold">
+          <Heading as="h2" fontSize="xl" color="var(--color-text)" fontWeight="bold">
             Sorting Algorithms
           </Heading>
           <Badge colorPalette="indigo" variant="subtle" borderRadius="full" px={2}>
@@ -131,7 +153,7 @@ export default function HomePage() {
 
       <Box mb={12}>
         <Flex align="center" gap={3} mb={6}>
-          <Heading as="h2" fontSize="xl" color="white" fontWeight="semibold">
+          <Heading as="h2" fontSize="xl" color="var(--color-text)" fontWeight="bold">
             Searching Algorithms
           </Heading>
           <Badge colorPalette="purple" variant="subtle" borderRadius="full" px={2}>

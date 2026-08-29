@@ -8,26 +8,21 @@ interface ComplexityCardProps {
 }
 
 function ComplexityBadge({ label, value }: { label: string; value: string }) {
-  const isGood = value.includes('n)') || value.includes('log n)');
-  const color = isGood ? 'green' : 'orange';
+  const isGood = value.includes('n)') || value.includes('log n)') || value === 'O(1)';
+  const color = isGood ? '#34d399' : '#fbbf24';
 
   return (
     <Box
-      bg="whiteAlpha.200"
+      bg="var(--color-surface-light)"
       borderRadius="lg"
       p={3}
       border="1px solid"
-      borderColor="whiteAlpha.300"
+      borderColor="var(--color-border)"
     >
-      <Text fontSize="xs" color="whiteAlpha.900" mb={1}>
+      <Text fontSize="xs" color="var(--color-text-muted)" mb={1} fontFamily="var(--font-mono)">
         {label}
       </Text>
-      <Text
-        fontSize="sm"
-        fontFamily="var(--font-mono)"
-        fontWeight="semibold"
-        color={`${color}.300`}
-      >
+      <Text fontSize="sm" fontFamily="var(--font-mono)" fontWeight="bold" color={color}>
         {value}
       </Text>
     </Box>
@@ -37,8 +32,16 @@ function ComplexityBadge({ label, value }: { label: string; value: string }) {
 export function ComplexityCard({ complexity, stable, inPlace }: ComplexityCardProps) {
   return (
     <Box>
-      <Text fontSize="sm" fontWeight="semibold" color="whiteAlpha.900" mb={3}>
-        Complexity
+      <Text
+        fontSize="xs"
+        fontWeight="semibold"
+        color="var(--color-text-muted)"
+        fontFamily="var(--font-mono)"
+        textTransform="uppercase"
+        letterSpacing="0.05em"
+        mb={3}
+      >
+        Complexity Analysis
       </Text>
 
       <Grid templateColumns="repeat(2, 1fr)" gap={2} mb={3}>

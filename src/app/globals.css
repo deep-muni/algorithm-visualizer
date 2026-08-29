@@ -10,7 +10,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   ::selection {
@@ -48,7 +50,7 @@
 }
 
 :root,
-[data-theme="dark"] {
+[data-theme='dark'] {
   --color-bg: #0d0d14;
   --color-surface: #16162a;
   --color-surface-light: #1f1f35;
@@ -64,7 +66,7 @@
   --font-mono: var(--font-jetbrains-mono);
 }
 
-[data-theme="light"] {
+[data-theme='light'] {
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
   --color-surface-light: #f1f5f9;

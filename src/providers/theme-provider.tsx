@@ -18,7 +18,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
-    const saved = (typeof window !== 'undefined' ? localStorage.getItem('theme') : null) as Theme | null;
+    const saved = (
+      typeof window !== 'undefined' ? localStorage.getItem('theme') : null
+    ) as Theme | null;
     const initialTheme = saved === 'light' || saved === 'dark' ? saved : 'dark';
     document.documentElement.setAttribute('data-theme', initialTheme);
   }, []);
@@ -32,11 +34,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {
