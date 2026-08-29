@@ -32,7 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
     "eslint-config-prettier": "^10.1.8",
-    "jsdom": "^30.0.1",
+    "happy-dom": "^20.11.15",
     "prettier": "^3.9.6",
     "sass": "^1.103.1",
     "typescript": "^5",
