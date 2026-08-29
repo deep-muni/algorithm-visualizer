@@ -1,12 +1,12 @@
 import type { AlgorithmId, VisualizationStep } from '@/types/algorithm';
-import { generateBubbleSortSteps } from './bubble-sort';
-import { generateSelectionSortSteps } from './selection-sort';
-import { generateInsertionSortSteps } from './insertion-sort';
-import { generateMergeSortSteps } from './merge-sort';
-import { generateQuickSortSteps } from './quick-sort';
-import { generateHeapSortSteps } from './heap-sort';
-import { generateLinearSearchSteps } from './linear-search';
-import { generateBinarySearchSteps } from './binary-search';
+import { generateBubbleSortSteps } from '../sorting/bubble-sort';
+import { generateSelectionSortSteps } from '../sorting/selection-sort';
+import { generateInsertionSortSteps } from '../sorting/insertion-sort';
+import { generateMergeSortSteps } from '../sorting/merge-sort';
+import { generateQuickSortSteps } from '../sorting/quick-sort';
+import { generateHeapSortSteps } from '../sorting/heap-sort';
+import { generateLinearSearchSteps } from '../searching/linear-search';
+import { generateBinarySearchSteps } from '../searching/binary-search';
 
 export {
   generateBubbleSortSteps,
