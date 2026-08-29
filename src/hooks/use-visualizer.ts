@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import type { AlgorithmId, VisualizationStep } from '@/types/algorithm';
 import { generateSteps, generateRandomArray, DEFAULT_ARRAY } from '@/lib/visualizers';
+import { soundEngine } from '@/lib/audio-synthesizer';
 
 type PlaybackState = 'idle' | 'playing' | 'paused' | 'done';
 
@@ -13,14 +14,19 @@ interface UseVisualizerReturn {
   currentStepData: VisualizationStep | null;
   playbackState: PlaybackState;
   speed: number;
+  comparisonCount: number;
+  swapCount: number;
+  isMuted: boolean;
   setSpeed: (speed: number) => void;
   play: () => void;
   pause: () => void;
   stepForward: () => void;
   stepBackward: () => void;
+  goToStep: (step: number) => void;
   reset: () => void;
   setCustomArray: (arr: number[]) => void;
   regenerate: () => void;
+  toggleSound: () => void;
 }
 
 export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
@@ -31,6 +37,7 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
   const [currentStep, setCurrentStep] = useState(0);
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle');
   const [speed, setSpeedState] = useState(450);
+  const [isMuted, setIsMuted] = useState(() => soundEngine.isMuted());
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const currentStepRef = useRef(currentStep);
@@ -56,6 +63,18 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
     }
   }, []);
 
+  const triggerSoundForStep = useCallback((stepData: VisualizationStep) => {
+    if (!stepData) return;
+    const maxVal = Math.max(...stepData.array, 100);
+    if (stepData.swapping && stepData.swapping.length > 0) {
+      const idx = stepData.swapping[0];
+      soundEngine.playTone(stepData.array[idx] || 50, maxVal, true);
+    } else if (stepData.comparing && stepData.comparing.length > 0) {
+      const idx = stepData.comparing[0];
+      soundEngine.playTone(stepData.array[idx] || 50, maxVal, false);
+    }
+  }, []);
+
   const pause = useCallback(() => {
     clearTimer();
     setPlaybackState('paused');
@@ -73,9 +92,14 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
         setPlaybackState('done');
         return;
       }
-      setCurrentStep((prev) => prev + 1);
+      const nextStep = currentStepRef.current + 1;
+      setCurrentStep(nextStep);
+      const stepData = stepsRef.current[nextStep];
+      if (stepData) {
+        triggerSoundForStep(stepData);
+      }
     }, speed);
-  }, [speed, clearTimer]);
+  }, [speed, clearTimer, triggerSoundForStep]);
 
   const setSpeed = useCallback(
     (newSpeed: number) => {
@@ -88,24 +112,46 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
             setPlaybackState('done');
             return;
           }
-          setCurrentStep((prev) => prev + 1);
+          const nextStep = currentStepRef.current + 1;
+          setCurrentStep(nextStep);
+          const stepData = stepsRef.current[nextStep];
+          if (stepData) {
+            triggerSoundForStep(stepData);
+          }
         }, newSpeed);
       }
     },
-    [clearTimer]
+    [clearTimer, triggerSoundForStep]
   );
 
   const stepForward = useCallback(() => {
     clearTimer();
     setPlaybackState('paused');
-    setCurrentStep((prev) => Math.min(prev + 1, stepsRef.current.length - 1));
-  }, [clearTimer]);
+    setCurrentStep((prev) => {
+      const next = Math.min(prev + 1, stepsRef.current.length - 1);
+      const stepData = stepsRef.current[next];
+      if (stepData) triggerSoundForStep(stepData);
+      return next;
+    });
+  }, [clearTimer, triggerSoundForStep]);
 
   const stepBackward = useCallback(() => {
     clearTimer();
     setPlaybackState('paused');
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   }, [clearTimer]);
+
+  const goToStep = useCallback(
+    (targetStep: number) => {
+      clearTimer();
+      setPlaybackState('paused');
+      const clamped = Math.max(0, Math.min(targetStep, stepsRef.current.length - 1));
+      setCurrentStep(clamped);
+      const stepData = stepsRef.current[clamped];
+      if (stepData) triggerSoundForStep(stepData);
+    },
+    [clearTimer, triggerSoundForStep]
+  );
 
   const reset = useCallback(() => {
     clearTimer();
@@ -129,6 +175,21 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
     const newArr = generateRandomArray(array.length);
     setCustomArray(newArr);
   }, [array.length, setCustomArray]);
+
+  const toggleSound = useCallback(() => {
+    const muted = soundEngine.toggleMute();
+    setIsMuted(muted);
+  }, []);
+
+  const { comparisonCount, swapCount } = useMemo(() => {
+    let comps = 0;
+    let swaps = 0;
+    for (let i = 0; i <= currentStep && i < steps.length; i++) {
+      if (steps[i].comparing && steps[i].comparing.length > 0) comps++;
+      if (steps[i].swapping && steps[i].swapping.length > 0) swaps++;
+    }
+    return { comparisonCount: comps, swapCount: swaps };
+  }, [currentStep, steps]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -157,6 +218,9 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
       } else if (e.code === 'KeyR') {
         e.preventDefault();
         reset();
+      } else if (e.code === 'KeyM') {
+        e.preventDefault();
+        toggleSound();
       }
     };
 
@@ -165,7 +229,7 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
       window.removeEventListener('keydown', handleKeyDown);
       clearTimer();
     };
-  }, [play, pause, stepForward, stepBackward, reset, clearTimer]);
+  }, [play, pause, stepForward, stepBackward, reset, toggleSound, clearTimer]);
 
   return {
     array,
@@ -174,13 +238,18 @@ export function useVisualizer(algorithmId: AlgorithmId): UseVisualizerReturn {
     currentStepData: steps[currentStep] ?? null,
     playbackState,
     speed,
+    comparisonCount,
+    swapCount,
+    isMuted,
     setSpeed,
     play,
     pause,
     stepForward,
     stepBackward,
+    goToStep,
     reset,
     setCustomArray,
     regenerate,
+    toggleSound,
   };
 }

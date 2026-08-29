@@ -21,14 +21,19 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
     currentStepData,
     playbackState,
     speed,
+    comparisonCount,
+    swapCount,
+    isMuted,
     setSpeed,
     play,
     pause,
     stepForward,
     stepBackward,
+    goToStep,
     reset,
     setCustomArray,
     regenerate,
+    toggleSound,
   } = useVisualizer(algorithm.id);
 
   const isRunning = playbackState === 'playing';
@@ -83,13 +88,18 @@ export function SearchingPageClient({ algorithm }: SearchingPageClientProps) {
           currentStep={currentStep}
           totalSteps={steps.length}
           speed={speed}
+          comparisonCount={comparisonCount}
+          swapCount={swapCount}
+          isMuted={isMuted}
           onPlay={play}
           onPause={pause}
           onStepBack={stepBackward}
           onStepForward={stepForward}
+          onGoToStep={goToStep}
           onReset={reset}
           onSpeedChange={setSpeed}
           onRegenerate={regenerate}
+          onToggleSound={toggleSound}
         />
       </Box>
 
