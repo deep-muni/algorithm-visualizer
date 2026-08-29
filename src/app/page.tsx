@@ -120,7 +120,7 @@ export default function HomePage() {
           mb={4}
           lineHeight="1.1"
         >
-          Sort & Search Visualizer
+          Algorithm Visualizer
         </Heading>
         <Text
           fontSize={{ base: 'md', md: 'lg' }}
