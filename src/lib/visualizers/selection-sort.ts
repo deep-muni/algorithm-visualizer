@@ -11,7 +11,8 @@ export function generateSelectionSortSteps(input: number[]): VisualizationStep[]
     comparing: [],
     swapping: [],
     sorted: [],
-    description: 'Starting Selection Sort. We find the minimum element in each pass and place it at the front.',
+    description:
+      'Starting Selection Sort. We find the minimum element in each pass and place it at the front.',
   });
 
   for (let i = 0; i < n - 1; i++) {

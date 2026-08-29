@@ -49,7 +49,10 @@ export function CodePanel({ code }: CodePanelProps) {
               variant={activeLanguage === lang.id ? 'solid' : 'ghost'}
               bg={activeLanguage === lang.id ? 'indigo.600' : 'transparent'}
               color={activeLanguage === lang.id ? 'white' : 'whiteAlpha.800'}
-              _hover={{ bg: activeLanguage === lang.id ? 'indigo.500' : 'whiteAlpha.200', color: 'white' }}
+              _hover={{
+                bg: activeLanguage === lang.id ? 'indigo.500' : 'whiteAlpha.200',
+                color: 'white',
+              }}
               borderRadius="md"
               onClick={() => setActiveLanguage(lang.id)}
             >

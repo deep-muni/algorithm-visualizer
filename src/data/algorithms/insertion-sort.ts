@@ -4,7 +4,8 @@ export const insertionSortInfo: AlgorithmInfo = {
   id: 'insertion-sort',
   name: 'Insertion Sort',
   category: 'sorting',
-  shortDescription: 'Builds the sorted array one element at a time by inserting each into its correct position.',
+  shortDescription:
+    'Builds the sorted array one element at a time by inserting each into its correct position.',
   description:
     'Insertion Sort builds the final sorted array one element at a time. It takes each element from the unsorted part and finds its correct position within the sorted part by shifting larger elements to the right. It is efficient for small datasets and nearly-sorted data, and is the algorithm of choice for sorting small arrays in practice.',
   complexity: {

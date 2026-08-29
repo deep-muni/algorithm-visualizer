@@ -19,7 +19,10 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
   const [inputError, setInputError] = useState<string | null>(null);
   const [arraySize, setArraySize] = useState<number>(12);
 
-  const handlePreset = (type: 'random' | 'reversed' | 'nearly-sorted' | 'few-unique', size = arraySize) => {
+  const handlePreset = (
+    type: 'random' | 'reversed' | 'nearly-sorted' | 'few-unique',
+    size = arraySize
+  ) => {
     let arr: number[] = [];
     if (type === 'random') arr = generateRandomArray(size);
     else if (type === 'reversed') arr = generateReversedArray(size);
@@ -74,9 +77,19 @@ export function ArrayConfigBar({ onArrayChange, disabled }: ArrayConfigBarProps)
       p={4}
       mb={4}
     >
-      <Flex direction={{ base: 'column', lg: 'row' }} gap={4} justify="space-between" align={{ base: 'stretch', lg: 'center' }}>
+      <Flex
+        direction={{ base: 'column', lg: 'row' }}
+        gap={4}
+        justify="space-between"
+        align={{ base: 'stretch', lg: 'center' }}
+      >
         <Flex align="center" gap={2} wrap="wrap">
-          <Text fontSize="xs" fontWeight="semibold" color="whiteAlpha.700" fontFamily="var(--font-mono)">
+          <Text
+            fontSize="xs"
+            fontWeight="semibold"
+            color="whiteAlpha.700"
+            fontFamily="var(--font-mono)"
+          >
             Presets:
           </Text>
 

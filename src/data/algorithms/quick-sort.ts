@@ -4,7 +4,8 @@ export const quickSortInfo: AlgorithmInfo = {
   id: 'quick-sort',
   name: 'Quick Sort',
   category: 'sorting',
-  shortDescription: 'Picks a pivot and partitions the array into elements less than and greater than it.',
+  shortDescription:
+    'Picks a pivot and partitions the array into elements less than and greater than it.',
   description:
     'Quick Sort is a highly efficient divide-and-conquer algorithm. It selects a "pivot" element and partitions the other elements into two groups — those less than the pivot and those greater. It then recursively sorts each group. With a good pivot strategy (like the median-of-three), it achieves O(n log n) average performance and is typically the fastest in-place sorting algorithm in practice.',
   complexity: {

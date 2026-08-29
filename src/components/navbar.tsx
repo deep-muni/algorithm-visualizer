@@ -69,11 +69,7 @@ export function Navbar() {
               _hover={{ borderColor: 'indigo.400', bg: 'whiteAlpha.100' }}
               fontFamily="var(--font-mono)"
             >
-              <a
-                href={siteConfig.github}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={siteConfig.github} target="_blank" rel="noreferrer">
                 GitHub ↗
               </a>
             </Button>

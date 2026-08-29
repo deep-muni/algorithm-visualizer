@@ -37,13 +37,7 @@ export function VisualizerBarChart({ step }: VisualizerBarChartProps) {
         } as React.CSSProperties
       }
     >
-      <Flex
-        h="full"
-        align="flex-end"
-        justify="center"
-        gap="3px"
-        px={2}
-      >
+      <Flex h="full" align="flex-end" justify="center" gap="3px" px={2}>
         {array.map((value, index) => {
           const heightPct = (value / max) * 100;
           const color = getBarColor(index, comparing, swapping, sorted);

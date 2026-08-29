@@ -4,6 +4,8 @@ import { algorithms } from '@/data';
 import type { AlgorithmInfo } from '@/types/algorithm';
 
 function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
+  const isSorting = algo.category === 'sorting';
+
   return (
     <Link href={`/algorithm/${algo.id}`} style={{ textDecoration: 'none' }}>
       <Box
@@ -25,7 +27,7 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
             {algo.name}
           </Heading>
           <Badge
-            colorPalette="indigo"
+            colorPalette={isSorting ? 'indigo' : 'purple'}
             variant="subtle"
             borderRadius="full"
             px={2}
@@ -42,16 +44,21 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
         </Text>
 
         <Flex gap={2} flexWrap="wrap">
-          <Box bg="whiteAlpha.200" borderRadius="md" px={2} py={1}>
-            <Text fontSize="xs" color="whiteAlpha.900">
+          <Box bg="whiteAlpha.100" borderRadius="md" px={2} py={1}>
+            <Text fontSize="xs" color="whiteAlpha.700">
               Avg
             </Text>
-            <Text fontSize="xs" fontFamily="var(--font-mono)" color="orange.300" fontWeight="medium">
+            <Text
+              fontSize="xs"
+              fontFamily="var(--font-mono)"
+              color="orange.300"
+              fontWeight="medium"
+            >
               {algo.complexity.average}
             </Text>
           </Box>
-          <Box bg="whiteAlpha.200" borderRadius="md" px={2} py={1}>
-            <Text fontSize="xs" color="whiteAlpha.900">
+          <Box bg="whiteAlpha.100" borderRadius="md" px={2} py={1}>
+            <Text fontSize="xs" color="whiteAlpha.700">
               Space
             </Text>
             <Text fontSize="xs" fontFamily="var(--font-mono)" color="blue.300" fontWeight="medium">
@@ -59,7 +66,7 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
             </Text>
           </Box>
           {algo.stable !== undefined && (
-            <Box bg="whiteAlpha.200" borderRadius="md" px={2} py={1}>
+            <Box bg="whiteAlpha.100" borderRadius="md" px={2} py={1}>
               <Text
                 fontSize="xs"
                 fontFamily="var(--font-mono)"
@@ -78,10 +85,11 @@ function AlgorithmCard({ algo }: { algo: AlgorithmInfo }) {
 
 export default function HomePage() {
   const sortingAlgos = algorithms.filter((a) => a.category === 'sorting');
+  const searchingAlgos = algorithms.filter((a) => a.category === 'searching');
 
   return (
-    <Container maxW="1200px" py={16} px={4}>
-      <Box textAlign="center" mb={16}>
+    <Container maxW="1200px" py={12} px={4}>
+      <Box textAlign="center" mb={12}>
         <Heading
           as="h1"
           fontSize={{ base: '3xl', md: '5xl' }}
@@ -90,16 +98,17 @@ export default function HomePage() {
           mb={4}
           lineHeight="1.1"
         >
-          Algorithm Visualizer
+          Sort & Search Visualizer
         </Heading>
         <Text
           fontSize={{ base: 'md', md: 'lg' }}
           color="whiteAlpha.800"
-          maxW="560px"
+          maxW="640px"
           mx="auto"
           lineHeight="tall"
         >
-          Watch sorting and searching algorithms come to life, step by step. Explore complexity, copy implementations in TypeScript, Java, or Python.
+          Interactive visualizations for classic computer science algorithms. Step through frames,
+          analyze time & space complexity, and copy implementations in TypeScript, Java, and Python.
         </Text>
       </Box>
 
@@ -115,6 +124,23 @@ export default function HomePage() {
 
         <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap={4}>
           {sortingAlgos.map((algo) => (
+            <AlgorithmCard key={algo.id} algo={algo} />
+          ))}
+        </SimpleGrid>
+      </Box>
+
+      <Box mb={12}>
+        <Flex align="center" gap={3} mb={6}>
+          <Heading as="h2" fontSize="xl" color="white" fontWeight="semibold">
+            Searching Algorithms
+          </Heading>
+          <Badge colorPalette="purple" variant="subtle" borderRadius="full" px={2}>
+            {searchingAlgos.length}
+          </Badge>
+        </Flex>
+
+        <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap={4}>
+          {searchingAlgos.map((algo) => (
             <AlgorithmCard key={algo.id} algo={algo} />
           ))}
         </SimpleGrid>

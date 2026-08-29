@@ -1,7 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { Box, Container, Flex, Grid, Text, Heading, Separator, Button } from '@chakra-ui/react';
+import {
+  Box,
+  Container,
+  Flex,
+  Grid,
+  Text,
+  Heading,
+  Separator,
+  Button,
+  Badge,
+} from '@chakra-ui/react';
 import { useVisualizer } from '@/hooks/use-visualizer';
 import { VisualizerBarChart } from '@/components/visualizer/visualizer-bar-chart';
 import { VisualizerControls } from '@/components/visualizer/visualizer-controls';
@@ -33,10 +43,24 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
   } = useVisualizer(algorithm.id);
 
   const isRunning = playbackState === 'playing';
+  const isSearch = algorithm.category === 'searching';
+
+  const legendItems = isSearch
+    ? [
+        { color: '#818cf8', label: 'Array Element' },
+        { color: '#fbbf24', label: 'Comparing / Inspecting' },
+        { color: '#34d399', label: 'Target Found' },
+      ]
+    : [
+        { color: '#818cf8', label: 'Unsorted' },
+        { color: '#fbbf24', label: 'Comparing' },
+        { color: '#f87171', label: 'Swapping' },
+        { color: '#34d399', label: 'Sorted' },
+      ];
 
   return (
     <Container maxW="1200px" py={8} px={4}>
-      <Flex justify="space-between" align="center" mb={4} wrap="wrap" gap={2}>
+      <Flex justify="space-between" align="center" mb={6} wrap="wrap" gap={2}>
         <Link href="/" style={{ textDecoration: 'none' }}>
           <Button
             size="xs"
@@ -72,15 +96,20 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
       </Flex>
 
       <Box mb={6}>
-        <Heading
-          as="h1"
-          fontSize={{ base: '2xl', md: '3xl' }}
-          fontWeight="bold"
-          color="white"
-          mb={2}
-        >
-          {algorithm.name}
-        </Heading>
+        <Flex align="center" gap={3} mb={2}>
+          <Heading as="h1" fontSize={{ base: '2xl', md: '3xl' }} fontWeight="bold" color="white">
+            {algorithm.name}
+          </Heading>
+          <Badge
+            colorPalette={algorithm.category === 'sorting' ? 'indigo' : 'purple'}
+            variant="subtle"
+            borderRadius="full"
+            px={2}
+            fontSize="xs"
+          >
+            {algorithm.category}
+          </Badge>
+        </Flex>
         <Text color="whiteAlpha.800" fontSize="md" maxW="700px">
           {algorithm.description}
         </Text>
@@ -111,11 +140,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               align="center"
               minH="44px"
             >
-              <Text
-                fontSize="sm"
-                color="whiteAlpha.900"
-                fontFamily="var(--font-mono)"
-              >
+              <Text fontSize="sm" color="whiteAlpha.900" fontFamily="var(--font-mono)">
                 {currentStepData?.description ?? ''}
               </Text>
             </Flex>
@@ -185,12 +210,7 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
               Color Legend
             </Text>
             <Flex direction="column" gap={2}>
-              {[
-                { color: '#818cf8', label: 'Unsorted' },
-                { color: '#fbbf24', label: 'Comparing' },
-                { color: '#f87171', label: 'Swapping' },
-                { color: '#34d399', label: 'Sorted' },
-              ].map(({ color, label }) => (
+              {legendItems.map(({ color, label }) => (
                 <Flex key={label} align="center" gap={3}>
                   <Box w="14px" h="14px" borderRadius="sm" bg={color} flexShrink={0} />
                   <Text fontSize="sm" color="whiteAlpha.900">
@@ -203,7 +223,8 @@ export function AlgorithmPageClient({ algorithm }: AlgorithmPageClientProps) {
             <Separator my={4} borderColor="whiteAlpha.300" />
 
             <Text fontSize="xs" color="whiteAlpha.800" lineHeight="tall">
-              Use the controls to step through the algorithm one frame at a time, or press play to watch it run automatically.
+              Use the controls to step through the algorithm one frame at a time, or press play to
+              watch it run automatically.
             </Text>
           </Box>
         </Box>

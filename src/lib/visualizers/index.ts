@@ -5,6 +5,8 @@ import { generateInsertionSortSteps } from './insertion-sort';
 import { generateMergeSortSteps } from './merge-sort';
 import { generateQuickSortSteps } from './quick-sort';
 import { generateHeapSortSteps } from './heap-sort';
+import { generateLinearSearchSteps } from './linear-search';
+import { generateBinarySearchSteps } from './binary-search';
 
 type StepGenerator = (input: number[]) => VisualizationStep[];
 
@@ -15,6 +17,8 @@ const generators: Partial<Record<AlgorithmId, StepGenerator>> = {
   'merge-sort': generateMergeSortSteps,
   'quick-sort': generateQuickSortSteps,
   'heap-sort': generateHeapSortSteps,
+  'linear-search': generateLinearSearchSteps,
+  'binary-search': generateBinarySearchSteps,
 };
 
 export function generateSteps(id: AlgorithmId, input: number[]): VisualizationStep[] {
