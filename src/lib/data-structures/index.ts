@@ -127,6 +127,7 @@ export interface LinkedListOperationResult {
   nextNodes: LinkedListNodeModel[];
   action: string;
   error?: string;
+  foundIndex?: number;
 }
 
 export function executeListInsertHead(
@@ -172,6 +173,51 @@ export function executeListInsertTail(
   return {
     nextNodes,
     action: `Appended node with value ${value} at the TAIL`,
+  };
+}
+
+export function executeListInsertAt(
+  nodes: LinkedListNodeModel[],
+  index: number,
+  value: number,
+  maxCapacity = 7
+): LinkedListOperationResult {
+  if (nodes.length >= maxCapacity) {
+    return {
+      nextNodes: nodes,
+      action: `List limit reached (${maxCapacity} nodes max for visualization)`,
+      error: `Max limit (${maxCapacity}) reached`,
+    };
+  }
+  const clampedIndex = Math.max(0, Math.min(index, nodes.length));
+  const newNode: LinkedListNodeModel = {
+    id: `node-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+    value,
+  };
+  const nextNodes = [...nodes.slice(0, clampedIndex), newNode, ...nodes.slice(clampedIndex)];
+  return {
+    nextNodes,
+    action: `Inserted node with value ${value} at index [${clampedIndex}]`,
+  };
+}
+
+export function executeListFind(
+  nodes: LinkedListNodeModel[],
+  value: number
+): LinkedListOperationResult {
+  const index = nodes.findIndex((n) => n.value === value);
+  if (index === -1) {
+    return {
+      nextNodes: nodes,
+      action: `Target value ${value} not found in the linked list`,
+      error: `Value ${value} not found`,
+      foundIndex: -1,
+    };
+  }
+  return {
+    nextNodes: nodes,
+    action: `Found value ${value} at index [${index}]`,
+    foundIndex: index,
   };
 }
 

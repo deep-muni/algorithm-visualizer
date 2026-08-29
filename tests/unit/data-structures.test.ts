@@ -8,6 +8,8 @@ import {
   executeQueueFront,
   executeListInsertHead,
   executeListInsertTail,
+  executeListInsertAt,
+  executeListFind,
   executeListDelete,
   executeListReverse,
   type LinkedListNodeModel,
@@ -106,6 +108,24 @@ describe('Linked List Data Structure Engine', () => {
     const res = executeListInsertTail(initialNodes, 30);
     expect(res.nextNodes.length).toBe(3);
     expect(res.nextNodes[2].value).toBe(30);
+  });
+
+  it('inserts node at middle index', () => {
+    const res = executeListInsertAt(initialNodes, 1, 15);
+    expect(res.nextNodes.length).toBe(3);
+    expect(res.nextNodes.map((n) => n.value)).toEqual([10, 15, 20]);
+  });
+
+  it('finds node by value', () => {
+    const res = executeListFind(initialNodes, 20);
+    expect(res.foundIndex).toBe(1);
+    expect(res.error).toBeUndefined();
+  });
+
+  it('handles find for nonexistent value', () => {
+    const res = executeListFind(initialNodes, 999);
+    expect(res.foundIndex).toBe(-1);
+    expect(res.error).toContain('not found');
   });
 
   it('deletes existing node by value', () => {
