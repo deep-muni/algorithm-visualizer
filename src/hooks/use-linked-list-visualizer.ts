@@ -40,16 +40,27 @@ export function useLinkedListVisualizer(isDoubly = false) {
   const [isMuted, setIsMuted] = useState(() => soundEngine.isMuted());
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nodesRef = useRef(nodes);
+  const isAnimatingRef = useRef(false);
 
   useEffect(() => {
     nodesRef.current = nodes;
   }, [nodes]);
+
+  useEffect(() => {
+    isAnimatingRef.current = isAnimating;
+  }, [isAnimating]);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, []);
 
   const resetVisualPointers = useCallback(() => {
@@ -63,7 +74,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
 
   const insertHead = useCallback(
     (value: number) => {
-      if (isAnimating) return;
+      if (isAnimatingRef.current) return;
       clearTimer();
       resetVisualPointers();
       setError(null);
@@ -77,12 +88,12 @@ export function useLinkedListVisualizer(isDoubly = false) {
       }
       setOperationLog(res.action);
     },
-    [isAnimating, clearTimer, resetVisualPointers]
+    [clearTimer, resetVisualPointers]
   );
 
   const insertTail = useCallback(
     (value: number) => {
-      if (isAnimating) return;
+      if (isAnimatingRef.current) return;
       clearTimer();
       resetVisualPointers();
       setError(null);
@@ -96,17 +107,17 @@ export function useLinkedListVisualizer(isDoubly = false) {
       }
       setOperationLog(res.action);
     },
-    [isAnimating, clearTimer, resetVisualPointers]
+    [clearTimer, resetVisualPointers]
   );
 
   const insertAt = useCallback(
     (index: number, value: number) => {
-      if (isAnimating) return;
+      if (isAnimatingRef.current) return;
       clearTimer();
       resetVisualPointers();
       setError(null);
 
-      const currentList = nodesRef.current;
+      const currentList = [...nodesRef.current];
       if (index === 0) {
         insertHead(value);
         return;
@@ -121,15 +132,15 @@ export function useLinkedListVisualizer(isDoubly = false) {
       let step = 0;
       const targetStep = index;
 
-      const traverseStep = () => {
+      const runStep = () => {
         if (step < targetStep) {
           setTraversingIndex(step);
           soundEngine.playTone(currentList[step]?.value ?? 50, 100, false);
           setOperationLog(
-            `Traversing [Step ${step + 1}/${targetStep}]: inspecting node [${step}] (value: ${currentList[step]?.value})...`
+            `Traversing [Step ${step + 1}/${targetStep}]: pointer at node [${step}] (val: ${currentList[step]?.value}), moving to insert index [${index}]...`
           );
           step++;
-          timerRef.current = setTimeout(traverseStep, 280);
+          timerRef.current = setTimeout(runStep, 350);
         } else {
           setTraversingIndex(null);
           setInsertingAtIndex(index);
@@ -143,23 +154,23 @@ export function useLinkedListVisualizer(isDoubly = false) {
             setNodes(res.nextNodes);
             resetVisualPointers();
             setOperationLog(res.action);
-          }, 450);
+          }, 500);
         }
       };
 
-      traverseStep();
+      runStep();
     },
-    [isAnimating, clearTimer, resetVisualPointers, insertHead, insertTail]
+    [clearTimer, resetVisualPointers, insertHead, insertTail]
   );
 
   const deleteNode = useCallback(
     (value: number) => {
-      if (isAnimating) return;
+      if (isAnimatingRef.current) return;
       clearTimer();
       resetVisualPointers();
       setError(null);
 
-      const currentList = nodesRef.current;
+      const currentList = [...nodesRef.current];
       if (currentList.length === 0) {
         setError('List is empty, cannot delete');
         soundEngine.playError();
@@ -173,7 +184,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       let step = 0;
       const maxTraverse = matchIdx !== -1 ? matchIdx : currentList.length - 1;
 
-      const traverseStep = () => {
+      const runStep = () => {
         if (step <= maxTraverse) {
           setTraversingIndex(step);
           soundEngine.playTone(currentList[step]?.value ?? 50, 100, false);
@@ -181,7 +192,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
             `Traversing [Step ${step + 1}/${maxTraverse + 1}]: inspecting node [${step}] with value ${currentList[step]?.value}...`
           );
           step++;
-          timerRef.current = setTimeout(traverseStep, 280);
+          timerRef.current = setTimeout(runStep, 350);
         } else {
           if (matchIdx !== -1) {
             setTraversingIndex(null);
@@ -202,9 +213,9 @@ export function useLinkedListVisualizer(isDoubly = false) {
               setNodes(res.nextNodes);
               resetVisualPointers();
               setOperationLog(
-                `Successfully unlinked and deleted node ${value}. Pointer chain reconstructed.`
+                `Successfully unlinked and deleted node ${value}. Pointer bridge complete.`
               );
-            }, 550);
+            }, 600);
           } else {
             resetVisualPointers();
             setError(`Value ${value} not found in the list`);
@@ -216,19 +227,19 @@ export function useLinkedListVisualizer(isDoubly = false) {
         }
       };
 
-      traverseStep();
+      runStep();
     },
-    [isAnimating, clearTimer, resetVisualPointers]
+    [clearTimer, resetVisualPointers]
   );
 
   const findValue = useCallback(
     (value: number) => {
-      if (isAnimating) return;
+      if (isAnimatingRef.current) return;
       clearTimer();
       resetVisualPointers();
       setError(null);
 
-      const currentList = nodesRef.current;
+      const currentList = [...nodesRef.current];
       if (currentList.length === 0) {
         setError('List is empty');
         soundEngine.playError();
@@ -242,7 +253,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
       let step = 0;
       const maxTraverse = matchIdx !== -1 ? matchIdx : currentList.length - 1;
 
-      const traverseStep = () => {
+      const runStep = () => {
         if (step <= maxTraverse) {
           setTraversingIndex(step);
           soundEngine.playTone(currentList[step]?.value ?? 50, 100, false);
@@ -250,7 +261,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
             `Searching [Step ${step + 1}/${maxTraverse + 1}]: inspecting node [${step}] (value: ${currentList[step]?.value}) for target ${value}...`
           );
           step++;
-          timerRef.current = setTimeout(traverseStep, 280);
+          timerRef.current = setTimeout(runStep, 350);
         } else {
           setTraversingIndex(null);
           if (matchIdx !== -1) {
@@ -270,13 +281,13 @@ export function useLinkedListVisualizer(isDoubly = false) {
         }
       };
 
-      traverseStep();
+      runStep();
     },
-    [isAnimating, clearTimer, resetVisualPointers]
+    [clearTimer, resetVisualPointers]
   );
 
   const reverseList = useCallback(() => {
-    if (isAnimating) return;
+    if (isAnimatingRef.current) return;
     clearTimer();
     resetVisualPointers();
     setError(null);
@@ -284,7 +295,7 @@ export function useLinkedListVisualizer(isDoubly = false) {
     setNodes(res.nextNodes);
     soundEngine.playReverse();
     setOperationLog(res.action);
-  }, [isAnimating, clearTimer, resetVisualPointers]);
+  }, [clearTimer, resetVisualPointers]);
 
   const clear = useCallback(() => {
     clearTimer();
@@ -300,35 +311,27 @@ export function useLinkedListVisualizer(isDoubly = false) {
     setIsMuted(muted);
   }, []);
 
-  const handleInsertHead = useCallback(
-    (e?: React.FormEvent) => {
-      if (e) e.preventDefault();
-      const num = parseInt(insertValue.trim(), 10);
-      if (isNaN(num) || num < 1 || num > 999) {
-        setError('Enter a number between 1 and 999');
-        soundEngine.playError();
-        return;
-      }
-      insertHead(num);
-      setInsertValue(String(Math.floor(Math.random() * 90) + 10));
-    },
-    [insertValue, insertHead]
-  );
+  const handleInsertHead = useCallback(() => {
+    const num = parseInt(insertValue.trim(), 10);
+    if (isNaN(num) || num < 1 || num > 999) {
+      setError('Enter a number between 1 and 999');
+      soundEngine.playError();
+      return;
+    }
+    insertHead(num);
+    setInsertValue(String(Math.floor(Math.random() * 90) + 10));
+  }, [insertValue, insertHead]);
 
-  const handleInsertTail = useCallback(
-    (e?: React.FormEvent) => {
-      if (e) e.preventDefault();
-      const num = parseInt(insertValue.trim(), 10);
-      if (isNaN(num) || num < 1 || num > 999) {
-        setError('Enter a number between 1 and 999');
-        soundEngine.playError();
-        return;
-      }
-      insertTail(num);
-      setInsertValue(String(Math.floor(Math.random() * 90) + 10));
-    },
-    [insertValue, insertTail]
-  );
+  const handleInsertTail = useCallback(() => {
+    const num = parseInt(insertValue.trim(), 10);
+    if (isNaN(num) || num < 1 || num > 999) {
+      setError('Enter a number between 1 and 999');
+      soundEngine.playError();
+      return;
+    }
+    insertTail(num);
+    setInsertValue(String(Math.floor(Math.random() * 90) + 10));
+  }, [insertValue, insertTail]);
 
   const handleInsertAtSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -379,6 +382,36 @@ export function useLinkedListVisualizer(isDoubly = false) {
     [searchValue, findValue]
   );
 
+  const keyHandlerRef = useRef({
+    insertHead,
+    insertTail,
+    findValue,
+    deleteNode,
+    reverseList,
+    clear,
+    toggleSound,
+    isDoubly,
+    insertValue,
+    searchValue,
+    deleteValue,
+  });
+
+  useEffect(() => {
+    keyHandlerRef.current = {
+      insertHead,
+      insertTail,
+      findValue,
+      deleteNode,
+      reverseList,
+      clear,
+      toggleSound,
+      isDoubly,
+      insertValue,
+      searchValue,
+      deleteValue,
+    };
+  });
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
@@ -390,53 +423,40 @@ export function useLinkedListVisualizer(isDoubly = false) {
         return;
       }
 
+      const h = keyHandlerRef.current;
       if (e.code === 'KeyH') {
         e.preventDefault();
-        const val = parseInt(insertValue.trim(), 10) || Math.floor(Math.random() * 90) + 10;
-        insertHead(val);
+        const val = parseInt(h.insertValue.trim(), 10) || Math.floor(Math.random() * 90) + 10;
+        h.insertHead(val);
       } else if (e.code === 'KeyT') {
         e.preventDefault();
-        const val = parseInt(insertValue.trim(), 10) || Math.floor(Math.random() * 90) + 10;
-        insertTail(val);
+        const val = parseInt(h.insertValue.trim(), 10) || Math.floor(Math.random() * 90) + 10;
+        h.insertTail(val);
       } else if (e.code === 'KeyF') {
         e.preventDefault();
-        const targetVal = parseInt(searchValue.trim(), 10) || (nodesRef.current[0]?.value ?? 28);
-        findValue(targetVal);
+        const targetVal = parseInt(h.searchValue.trim(), 10) || (nodesRef.current[0]?.value ?? 28);
+        h.findValue(targetVal);
       } else if (e.code === 'KeyD') {
         e.preventDefault();
-        const targetVal = parseInt(deleteValue.trim(), 10) || (nodesRef.current[0]?.value ?? 28);
-        deleteNode(targetVal);
-      } else if (e.code === 'KeyR' && !isDoubly) {
+        const targetVal = parseInt(h.deleteValue.trim(), 10) || (nodesRef.current[0]?.value ?? 28);
+        h.deleteNode(targetVal);
+      } else if (e.code === 'KeyR' && !h.isDoubly) {
         e.preventDefault();
-        reverseList();
+        h.reverseList();
       } else if (e.code === 'KeyC') {
         e.preventDefault();
-        clear();
+        h.clear();
       } else if (e.code === 'KeyM') {
         e.preventDefault();
-        toggleSound();
+        h.toggleSound();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      clearTimer();
     };
-  }, [
-    insertHead,
-    insertTail,
-    findValue,
-    deleteNode,
-    reverseList,
-    isDoubly,
-    clear,
-    toggleSound,
-    clearTimer,
-    insertValue,
-    searchValue,
-    deleteValue,
-  ]);
+  }, []);
 
   return {
     nodes,
