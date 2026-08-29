@@ -1,4 +1,4 @@
-name: Build & Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -7,18 +7,19 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: true
+  group: 'pages'
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
-    name: Build & Deploy Bundle
+  build:
+    name: Build & Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -34,30 +35,40 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Setup GitHub Pages Metadata
+        uses: actions/configure-pages@v5
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Verify Code Formatting
+      - name: Check Formatting
         run: pnpm format:check
 
       - name: Run ESLint
         run: pnpm lint
 
-      - name: Run TypeScript Check
+      - name: Run TypeScript Checks
         run: pnpm typecheck
 
-      - name: Run Vitest Unit Tests
+      - name: Run Unit Tests
         run: pnpm test
 
-      - name: Build Optimized Bundle
+      - name: Build Static Export Bundle
         run: pnpm build
 
-      - name: Deploy to deploy Branch
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
-          publish_branch: deploy
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: 'deploy: release build bundle from ${{ github.sha }}'
+          path: ./out
+
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
