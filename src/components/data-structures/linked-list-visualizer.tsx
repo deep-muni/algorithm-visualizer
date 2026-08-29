@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Box, Flex, Button, Input, Text, Badge, IconButton } from '@chakra-ui/react';
 import {
   useLinkedListVisualizer,
@@ -61,12 +62,19 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
     handleGetAtSubmit,
   } = useLinkedListVisualizer(isDoubly);
 
+  const [hoveredNodeIdx, setHoveredNodeIdx] = useState<number | null>(null);
+
   const tabs: { id: VisualizerTab; label: string; icon: string }[] = [
     { id: 'insert', label: 'Insert', icon: '➕' },
     { id: 'search', label: 'Search & Inspect', icon: '🔍' },
     { id: 'delete', label: 'Delete', icon: '🗑️' },
     { id: 'utils', label: 'Utilities', icon: '⚡' },
   ];
+
+  const getSimulatedAddress = (idx: number) => {
+    const base = 0x7ffe20;
+    return `0x${(base + idx * 0x20).toString(16).toUpperCase()}`;
+  };
 
   return (
     <Box>
@@ -621,6 +629,56 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
         overflowX="auto"
         position="relative"
       >
+        {hoveredNodeIdx !== null && hoveredNodeIdx < nodes.length && (
+          <Box
+            position="absolute"
+            top={2.5}
+            left="50%"
+            transform="translateX(-50%)"
+            zIndex={10}
+            px={3.5}
+            py={1.5}
+            bg="var(--color-surface)"
+            borderRadius="xl"
+            border="1px solid var(--color-border)"
+            boxShadow="0 8px 24px var(--color-shadow)"
+            backdropFilter="blur(12px)"
+            pointerEvents="none"
+          >
+            <Flex align="center" gap={3} wrap="wrap">
+              <Text
+                fontSize="xs"
+                fontFamily="var(--font-mono)"
+                color="var(--color-text)"
+                fontWeight="bold"
+              >
+                Addr:{' '}
+                <span style={{ color: 'var(--color-indigo)' }}>
+                  {getSimulatedAddress(hoveredNodeIdx)}
+                </span>
+              </Text>
+              <Text fontSize="xs" fontFamily="var(--font-mono)" color="var(--color-text)">
+                Val:{' '}
+                <span style={{ color: COLOR_TOKENS.default, fontWeight: 'bold' }}>
+                  {nodes[hoveredNodeIdx].value}
+                </span>
+              </Text>
+              <Text fontSize="2xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
+                Next &rarr;{' '}
+                {hoveredNodeIdx < nodes.length - 1
+                  ? getSimulatedAddress(hoveredNodeIdx + 1)
+                  : 'NULL (0x0)'}
+              </Text>
+              {isDoubly && (
+                <Text fontSize="2xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
+                  Prev &larr;{' '}
+                  {hoveredNodeIdx > 0 ? getSimulatedAddress(hoveredNodeIdx - 1) : 'NULL (0x0)'}
+                </Text>
+              )}
+            </Flex>
+          </Box>
+        )}
+
         {animatingStatus && (
           <Box position="absolute" top={3} right={4}>
             <Badge
@@ -660,9 +718,17 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
             const isUnlinking = idx === unlinkingIndex;
             const isFound = idx === foundIndex;
             const isInsertTarget = idx === insertingAtIndex;
+            const isHovered = hoveredNodeIdx === idx;
 
             return (
-              <Flex key={node.id} align="center" gap={2}>
+              <Flex
+                key={node.id}
+                align="center"
+                gap={2}
+                cursor="pointer"
+                onMouseEnter={() => setHoveredNodeIdx(idx)}
+                onMouseLeave={() => setHoveredNodeIdx(null)}
+              >
                 <Flex direction="column" align="center">
                   <Box minH="22px" mb={1}>
                     {isTraversing && (
@@ -723,9 +789,11 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                           ? COLOR_TOKENS.danger
                           : isTraversing
                             ? COLOR_TOKENS.compare
-                            : isHead
-                              ? COLOR_TOKENS.default
-                              : COLOR_TOKENS.border
+                            : isHovered
+                              ? 'var(--color-indigo)'
+                              : isHead
+                                ? COLOR_TOKENS.default
+                                : COLOR_TOKENS.border
                     }
                     boxShadow={
                       isFound
@@ -734,13 +802,15 @@ export function LinkedListVisualizer({ isDoubly = false }: LinkedListVisualizerP
                           ? '0 0 16px rgba(248, 113, 113, 0.6)'
                           : isTraversing
                             ? '0 0 16px rgba(251, 191, 36, 0.6)'
-                            : isHead
-                              ? '0 0 10px rgba(129, 140, 248, 0.3)'
-                              : 'none'
+                            : isHovered
+                              ? '0 0 16px rgba(129, 140, 248, 0.5)'
+                              : isHead
+                                ? '0 0 10px rgba(129, 140, 248, 0.3)'
+                                : 'none'
                     }
                     opacity={isUnlinking ? 0.6 : 1}
                     transform={
-                      isTraversing || isFound
+                      isTraversing || isFound || isHovered
                         ? 'scale(1.08)'
                         : isUnlinking
                           ? 'scale(0.92)'

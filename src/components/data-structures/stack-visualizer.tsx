@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Box, Flex, Button, Input, Text, Badge, IconButton } from '@chakra-ui/react';
 import { useStackVisualizer } from '@/hooks/use-stack-visualizer';
 import { COLOR_TOKENS } from '@/config/colors';
@@ -19,6 +20,13 @@ export function StackVisualizer() {
     toggleSound,
     handlePushSubmit,
   } = useStackVisualizer();
+
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  const getSimulatedAddress = (idx: number) => {
+    const base = 0x7fff40;
+    return `0x${(base - idx * 4).toString(16).toUpperCase()}`;
+  };
 
   return (
     <Box>
@@ -136,7 +144,52 @@ export function StackVisualizer() {
         border="1px solid"
         borderColor={COLOR_TOKENS.border}
         gap={2.5}
+        position="relative"
       >
+        {hoveredIdx !== null && hoveredIdx < items.length && (
+          <Box
+            position="absolute"
+            top={2.5}
+            left="50%"
+            transform="translateX(-50%)"
+            zIndex={10}
+            px={3.5}
+            py={1.5}
+            bg="var(--color-surface)"
+            borderRadius="xl"
+            border="1px solid var(--color-border)"
+            boxShadow="0 8px 24px var(--color-shadow)"
+            backdropFilter="blur(12px)"
+            pointerEvents="none"
+          >
+            <Flex align="center" gap={3}>
+              <Text
+                fontSize="xs"
+                fontFamily="var(--font-mono)"
+                color="var(--color-text)"
+                fontWeight="bold"
+              >
+                SP Offset:{' '}
+                <span style={{ color: 'var(--color-indigo)' }}>
+                  {getSimulatedAddress(hoveredIdx)}
+                </span>
+              </Text>
+              <Text fontSize="xs" fontFamily="var(--font-mono)" color="var(--color-text)">
+                Val:{' '}
+                <span style={{ color: COLOR_TOKENS.default, fontWeight: 'bold' }}>
+                  {items[hoveredIdx]}
+                </span>
+              </Text>
+              <Text fontSize="2xs" color="var(--color-text-muted)" fontFamily="var(--font-mono)">
+                •{' '}
+                {hoveredIdx === items.length - 1
+                  ? 'Top of Stack (TOS)'
+                  : `Offset +${(items.length - 1 - hoveredIdx) * 4}B`}
+              </Text>
+            </Flex>
+          </Box>
+        )}
+
         <Box
           w="180px"
           h="4px"
@@ -154,6 +207,7 @@ export function StackVisualizer() {
           items.map((val, idx) => {
             const isTop = idx === items.length - 1;
             const isPeeked = idx === peekedIndex;
+            const isHovered = hoveredIdx === idx;
 
             return (
               <Flex
@@ -165,7 +219,9 @@ export function StackVisualizer() {
                     ? COLOR_TOKENS.compare
                     : isTop
                       ? COLOR_TOKENS.default
-                      : COLOR_TOKENS.surfaceLight
+                      : isHovered
+                        ? 'var(--color-surface-light)'
+                        : COLOR_TOKENS.surfaceLight
                 }
                 color="white"
                 align="center"
@@ -173,16 +229,27 @@ export function StackVisualizer() {
                 px={4}
                 borderRadius="lg"
                 border="1px solid"
-                borderColor={isTop || isPeeked ? 'transparent' : COLOR_TOKENS.border}
+                borderColor={
+                  isHovered
+                    ? 'var(--color-indigo)'
+                    : isTop || isPeeked
+                      ? 'transparent'
+                      : COLOR_TOKENS.border
+                }
                 boxShadow={
                   isPeeked
                     ? '0 0 16px rgba(251, 191, 36, 0.5)'
                     : isTop
                       ? '0 0 12px rgba(129, 140, 248, 0.4)'
-                      : 'none'
+                      : isHovered
+                        ? '0 0 12px rgba(129, 140, 248, 0.3)'
+                        : 'none'
                 }
                 transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
-                transform={isPeeked ? 'scale(1.04)' : 'scale(1)'}
+                transform={isPeeked || isHovered ? 'scale(1.04)' : 'scale(1)'}
+                cursor="pointer"
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
               >
                 <Text
                   fontSize="xs"
